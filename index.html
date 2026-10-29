@@ -1,0 +1,804 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Technomancy Tavern</title>
+<meta name="description" content="Technomancy Tavern is an indie game studio conjuring games with code, pixels and AI.">
+<meta name="theme-color" content="#05071a">
+<meta property="og:title" content="Technomancy Tavern">
+<meta property="og:description" content="AI-powered game development. Pull up a stool, the first game is brewing.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@TmTvrn">
+<link rel="icon" id="favicon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #05071a; --ink: #e9ecff; --dim: #7f89c9;
+    --cyan: #3ef2ff; --mag: #c46bff; --gold: #ffd36b; --px: 4px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; background: var(--bg); color: var(--ink); overflow: hidden; }
+  body { font-family: 'VT323', ui-monospace, Menlo, monospace; -webkit-font-smoothing: none; -webkit-tap-highlight-color: transparent; }
+  #scene { position: fixed; left: 0; top: 0; display: block; image-rendering: pixelated; image-rendering: crisp-edges; touch-action: manipulation; }
+  body::after { /* scanlines aligned to the pixel grid */
+    content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 5;
+    background: repeating-linear-gradient(to bottom, transparent 0 var(--px), rgba(0,0,0,.14) var(--px) calc(var(--px) * 2));
+  }
+
+  .ui {
+    position: fixed; inset: 0; height: 100dvh; z-index: 2; pointer-events: none;
+    display: grid; grid-template-rows: auto 1fr auto;
+    padding: max(18px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(14px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+  }
+  .brand { text-align: center; }
+  .kicker { font-family: 'Press Start 2P', monospace; font-size: clamp(7px, 2.1vw, 11px); letter-spacing: .18em; color: var(--cyan); text-shadow: 2px 2px 0 #000; }
+  h1 {
+    font-family: 'Press Start 2P', monospace; font-weight: 400; line-height: 1.12;
+    font-size: clamp(20px, 7.6vw, 58px); margin: .55em 0 .45em;
+    display: flex; flex-direction: column; align-items: center; gap: .12em;
+  }
+  h1 span { background-clip: text; -webkit-background-clip: text; color: transparent; filter: drop-shadow(0 .09em 0 #120a33) drop-shadow(.09em 0 0 #120a33) drop-shadow(0 0 .25em rgba(62,242,255,.25)); }
+  h1 .t1 { background-image: linear-gradient(180deg, #ffffff 0 30%, #bff8ff 30% 52%, #3ef2ff 52% 74%, #8a6bff 74%); animation: glitch 7s steps(1) infinite; }
+  h1 .t2 { background-image: linear-gradient(180deg, #fff6d8 0 30%, #ffd36b 30% 52%, #f0a040 52% 74%, #c4612a 74%); }
+  @keyframes glitch {
+    0%, 93%, 100% { transform: none; clip-path: none; }
+    94% { transform: translateX(.08em); clip-path: inset(0 0 55% 0); }
+    95% { transform: translateX(-.06em); clip-path: inset(40% 0 0 0); }
+    96% { transform: translateX(.04em); clip-path: none; }
+  }
+  .tag { font-size: clamp(18px, 4.7vw, 26px); line-height: 1.05; color: #cfd6ff; text-shadow: 2px 2px 0 #000; }
+  .tag em { font-style: normal; color: var(--cyan); }
+  .tag b { font-weight: 400; color: var(--gold); }
+
+  .bottom { grid-row: 3; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .spellbook {
+    pointer-events: auto; width: min(100%, 520px);
+    background: rgba(4, 6, 24, .82); border: 2px solid #2b3a90;
+    box-shadow: 0 0 0 2px #05071a, 4px 4px 0 2px #000, inset 0 0 0 1px #121a52;
+    padding: 4px 10px 6px; font-size: clamp(17px, 4.3vw, 21px); line-height: 1.05;
+  }
+  .sb-head { display: flex; align-items: center; gap: 5px; color: var(--dim); font-size: .8em; border-bottom: 2px solid #18205a; padding-bottom: 3px; margin-bottom: 4px; }
+  .sb-head i { width: 6px; height: 6px; background: #ff5f7a; display: inline-block; }
+  .sb-head i:nth-child(2) { background: var(--gold); }
+  .sb-head i:nth-child(3) { background: #48ff9c; margin-right: 4px; }
+  #log { height: calc(3 * 1.05em); overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; }
+  #log div { white-space: pre-wrap; word-break: break-word; }
+  #log .pr { color: var(--mag); }
+  #log .dim, #log .sys { color: var(--dim); }
+  #log .out { color: #9ff7c6; }
+  #log .ok { color: var(--gold); }
+  .cur { display: inline-block; width: .5em; height: .9em; background: var(--cyan); vertical-align: -.1em; margin-left: 2px; animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .links { pointer-events: auto; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+  .links a {
+    --edge: var(--cyan);
+    font-family: 'Press Start 2P', monospace; font-size: clamp(9px, 2.6vw, 12px); color: var(--ink); text-decoration: none;
+    display: inline-flex; align-items: center; gap: 8px; padding: 10px 12px; min-height: 40px;
+    background: #0c1240; border: 2px solid var(--edge);
+    box-shadow: 4px 4px 0 #000, inset -2px -2px 0 #070a2a, inset 2px 2px 0 #2a3fa0;
+    transition: transform .1s steps(2), box-shadow .1s steps(2);
+  }
+  .links a svg { fill: currentColor; flex: none; }
+  .links a:hover, .links a:focus-visible { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 #000, inset -2px -2px 0 #070a2a, inset 2px 2px 0 #2a3fa0; color: var(--edge); background: #131c5c; outline: none; }
+  .links a:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 #000; }
+  .links .gh { --edge: var(--mag); }
+  .links .steam { --edge: var(--gold); }
+  .links .soon { cursor: default; }
+  .links .soon:hover { transform: none; }
+  .badge { font-size: .7em; padding: 3px 4px; background: var(--gold); color: #1a0f00; }
+  .foot { font-size: 16px; color: var(--dim); text-shadow: 1px 1px 0 #000; text-align: center; }
+
+  @media (min-aspect-ratio: 11/10) {
+    .ui { grid-template-columns: minmax(0, 56%) 1fr; padding-left: max(clamp(16px, 4vw, 72px), env(safe-area-inset-left)); }
+    .brand { grid-column: 1; text-align: left; padding-top: clamp(4px, 5vh, 64px); }
+    h1 { align-items: flex-start; font-size: clamp(20px, 4.4vw, 64px); }
+    .kicker { font-size: clamp(7px, 1vw, 12px); }
+    .tag { font-size: clamp(18px, 1.9vw, 30px); }
+    .bottom { grid-column: 1; align-items: flex-start; }
+    .links { justify-content: flex-start; }
+    .foot { text-align: left; }
+  }
+  @media (max-height: 540px) {
+    .spellbook, .foot { display: none; }
+    h1 { margin: .35em 0 .3em; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    h1 .t1, .cur { animation: none; }
+  }
+</style>
+</head>
+<body>
+<canvas id="scene" role="img" aria-label="Pixel-art Mancy, the tavern's technomancer barkeep, behind a glowing bar under a starry sky"></canvas>
+
+<main class="ui">
+  <header class="brand">
+    <p class="kicker">◆ AI-POWERED GAME DEVELOPMENT ◆</p>
+    <h1><span class="t1">TECHNOMANCY</span><span class="t2">TAVERN</span></h1>
+    <p class="tag">Code is our <em>spellbook</em>. AI is our <em>familiar</em>.<br>Pull up a stool, the first game is <b>brewing</b>.</p>
+  </header>
+
+  <section class="bottom">
+    <div class="spellbook">
+      <div class="sb-head"><i></i><i></i><i></i><span>spellbook.log</span></div>
+      <div id="log" aria-hidden="true"></div>
+    </div>
+    <nav class="links" aria-label="Technomancy Tavern elsewhere">
+      <a class="x" href="https://x.com/TmTvrn" target="_blank" rel="noopener"><i data-icon="x"></i><span>@TmTvrn</span></a>
+      <a class="gh" href="https://github.com/TmTvrn" target="_blank" rel="noopener"><i data-icon="gh"></i><span>GitHub</span></a>
+      <a class="steam soon" id="steam" aria-disabled="true" title="Steam page coming soon"><i data-icon="steam"></i><span>Steam</span><span class="badge">SOON</span></a>
+    </nav>
+    <p class="foot">© 2026 Technomancy Tavern · psst, poke Mancy</p>
+  </section>
+</main>
+
+<script>
+'use strict';
+// Paste the Steam store URL here once the page exists; the button switches from "SOON" to a live link.
+const STEAM_URL = '';
+
+/* ---------------------------------------------------------------- helpers */
+const hex = h => { const n = parseInt(h.slice(1), 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; };
+const mix = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
+const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+const BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5].map(v => (v + .5) / 16);
+const bayer = (x, y) => BAYER[(y & 3) * 4 + (x & 3)];
+const rand = seed => () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; };
+const mod = (v, m) => ((v % m) + m) % m;
+
+class Raster {
+  constructor(w, h) { this.w = w; this.h = h; this.img = new ImageData(w, h); this.d = this.img.data; }
+  set(x, y, c, a = 1) {
+    x = Math.round(x); y = Math.round(y);
+    if (x < 0 || y < 0 || x >= this.w || y >= this.h || a <= 0) return;
+    const d = this.d, i = (y * this.w + x) << 2;
+    if (a >= 1) { d[i] = c[0]; d[i + 1] = c[1]; d[i + 2] = c[2]; d[i + 3] = 255; return; }
+    const da = d[i + 3] / 255, oa = a + da * (1 - a);
+    for (let k = 0; k < 3; k++) d[i + k] = (c[k] * a + d[i + k] * da * (1 - a)) / oa;
+    d[i + 3] = oa * 255;
+  }
+  rgb(x, y) { const i = (y * this.w + x) << 2; return [this.d[i], this.d[i + 1], this.d[i + 2]]; }
+  canvas() { const c = document.createElement('canvas'); c.width = this.w; c.height = this.h; c.getContext('2d').putImageData(this.img, 0, 0); return c; }
+}
+
+function line(r, x0, y0, x1, y1, c, a = 1) {
+  x0 = Math.round(x0); y0 = Math.round(y0); x1 = Math.round(x1); y1 = Math.round(y1);
+  const dx = Math.abs(x1 - x0), dy = -Math.abs(y1 - y0), sx = x0 < x1 ? 1 : -1, sy = y0 < y1 ? 1 : -1;
+  let e = dx + dy;
+  for (;;) { r(x0, y0, c, a); if (x0 === x1 && y0 === y1) break; const e2 = 2 * e; if (e2 >= dy) { e += dy; x0 += sx; } if (e2 <= dx) { e += dx; y0 += sy; } }
+}
+
+function makeGlow(R, col, k = 1, a = .45) {
+  const s = 2 * R + 1, r = new Raster(s, s), c = hex(col);
+  for (let y = 0; y < s; y++) for (let x = 0; x < s; x++) {
+    const d = Math.hypot(x - R, y - R) / R;
+    if (d < 1 && bayer(x, y) < (1 - d) * (1 - d) * k) r.set(x, y, c, a);
+  }
+  return r.canvas();
+}
+
+/* ---------------------------------------------------------------- Mancy */
+const SW = 112, SH = 96, SCX = 56, HX = 45, HY = 26, SEAT = 82; // SEAT: sprite row that sits on the bar top
+const P = Object.fromEntries(Object.entries({
+  O: '#1c1018', H: '#f6dc96', h: '#d9b05e', d: '#9c7436', S: '#efb28a', s: '#d08b66', k: '#a2603f',
+  r: '#9c7238', B: '#d8b06a', b: '#a8823e', M: '#8a4636', W: '#eef4ff', I: '#3a8cff'
+}).map(([k, v]) => [k, hex(v)]));
+const HEAD_L = [ // left half; mirrored to make the full 22px head
+  '......OOOOO', '....OOHHHHH', '...OHHHhHHH', '..OHHhHHHHh', '..OHhHHhHHH', '.OHHhHHhHhH',
+  '.OdhHhSHhHS', '.OdhSSSSSSS', '.OdSSSSSSSS', '.OdSrrrrSSS', 'OsOSSkkSSSS', 'OsSSkWISSsS',
+  'OsSSSSSSSsS', '.OsSSSSSSsS', '.OkSSSSSSkS', '.OsBSSSSSkk', '.OsBBSSSBBB', '.OBBBBBBMMM',
+  '.OBbBBBBBBB', '..OBBbBBBBB', '..OBBBBbBBB', '...OBBBBBBB', '....OOBBBBB', '......OOOOO'
+];
+const HEAD = HEAD_L.map(r => r + [...r].reverse().join(''));
+HEAD[16] = HEAD[16].slice(0, 14) + 'M' + HEAD[16].slice(15); // the smirk
+const BODY = ['#0a1030', '#121b4e', '#1a286e', '#253a94', '#3f63d6', '#8fc2ff'].map(hex);
+const RIM = hex('#7fb6ff'), BLACK = [0, 0, 0];
+const HAT = Object.fromEntries(Object.entries({
+  n: '#232f8c', d: '#141b5a', b: '#3a4ab8', l: '#5f86ff', g: '#e0a842', gl: '#ffe08a', gd: '#9a6a22', gem: '#3ef2ff', gemd: '#1a8aa8', star: '#ffd36b'
+}).map(([k, v]) => [k, hex(v)]));
+const HAT_STARS = [[56, 23], [62, 21], [63, 18], [65, 15]];
+const HAIR = [P.H, P.h, P.H, P.d, P.h, P.H], TIP = hex('#fff1c4'), TIP_RIM = hex('#d8ecff');
+const TIE = hex('#1b2470'), TIE_HI = hex('#3f63d6'), CYAN = hex('#3ef2ff'), CYAN_HI = hex('#c9fbff'), WHITE = hex('#ffffff');
+
+function bodyHW(y) { if (y < 52) return -1; const t = (y - 52) / 14; return t >= 1 ? 46 : 16 + 30 * Math.sqrt(t); }
+
+function buildMancyBase() {
+  const r = new Raster(SW, SH);
+  // muscular torso in a knit sweater, backlit
+  for (let y = 52; y < SH; y++) {
+    const hw = bodyHW(y);
+    for (let x = Math.ceil(SCX - hw); x <= Math.floor(SCX + hw); x++) {
+      const adx = Math.abs(x - SCX), edge = hw - adx;
+      let top = 0; while (bodyHW(y - top - 1) >= adx) top++;
+      let l = 2;
+      if (top < 2) l = 3;
+      const py = 72 + Math.round(adx * 0.12);
+      if (adx > 2 && adx < 27) { if (y === py || y === py + 1) l = 1; else if (y === py - 2 || y === py - 3) l = 3; }
+      if (adx <= 1 && y > 59 && y < py) l = 1;
+      if (y > 60 && y < 86 && Math.abs(adx - (31 + (y - 60) * 0.18)) < 0.6) l = 1;
+      if (edge < 1) l = 5; else if (edge < 2.2) l = 4;
+      let c = BODY[l];
+      if (l < 4 && ((x ^ (y >> 1)) & 1)) c = mix(c, BLACK, .16);
+      r.set(x, y, c);
+    }
+  }
+  // turtleneck
+  for (let y = 44; y <= 58; y++) {
+    const hw = y < 50 ? 11.5 : 12.5 + (y - 50) * 0.4;
+    for (let x = Math.ceil(SCX - hw); x <= Math.floor(SCX + hw); x++) {
+      const edge = hw - Math.abs(x - SCX);
+      let l = (x & 1) ? 2 : 3;
+      if (y === 44 || y === 51) l = 3; else if (y === 50) l = 1;
+      if (edge < 1) l = 5; else if (edge < 2) l = 4;
+      r.set(x, y, BODY[l]);
+    }
+  }
+  for (let x = SCX - 15; x <= SCX + 15; x++) { r.set(x, 59, BLACK, .35); r.set(x, 60, BLACK, .18); }
+  // head
+  HEAD.forEach((row, j) => [...row].forEach((ch, i) => { if (ch !== '.') r.set(HX + i, HY + j, P[ch]); }));
+  const snap = new Uint8ClampedArray(r.d);
+  const A = (x, y) => (x < 0 || y < 0 || x >= SW || y >= SH) ? 0 : snap[((y * SW + x) << 2) + 3];
+  for (let y = HY; y < HY + 24; y++) for (let x = HX - 1; x <= HX + 22; x++) {
+    if (!A(x, y)) continue;
+    const c = r.rgb(x, y);
+    if (!A(x + 1, y)) r.set(x, y, mix(c, RIM, .65));
+    else if (!A(x - 1, y)) r.set(x, y, mix(c, RIM, .45));
+    else if (!A(x, y - 1)) r.set(x, y, mix(c, RIM, .35));
+  }
+  // tiny wizard hat, perched to the right
+  for (let y = 12; y <= 25; y++) {
+    const f = (25 - y) / 13, cx = 60 + f * 6, hw = 6.6 * (1 - f) + .4;
+    const x0 = Math.round(cx - hw), x1 = Math.round(cx + hw);
+    for (let x = x0; x <= x1; x++) {
+      let c = x === x1 ? HAT.l : x === x0 ? HAT.d : HAT.n;
+      if (y === 24) c = x > x1 - 3 ? HAT.gl : HAT.g;
+      if (y === 25) c = HAT.gd;
+      r.set(x, y, c);
+    }
+  }
+  r.set(60, 24, HAT.gem); r.set(61, 24, HAT.gem); r.set(60, 25, HAT.gemd); r.set(61, 25, HAT.gemd);
+  for (let x = 50; x <= 70; x++) r.set(x, 26, x >= 68 ? HAT.l : HAT.b);
+  for (let x = 51; x <= 69; x++) r.set(x, 27, x === 69 ? HAT.l : HAT.d);
+  r.set(67, 11, HAT.n); r.set(68, 11, HAT.l); r.set(69, 12, HAT.n);
+  return r;
+}
+
+const MANCY_BASE = buildMancyBase();
+const spr = new Raster(SW, SH);
+const sprCv = document.createElement('canvas'); sprCv.width = SW; sprCv.height = SH;
+const sctx = sprCv.getContext('2d');
+const sprSet = (x, y, c, a) => spr.set(x, y, c, a);
+
+function pigtail(side, t, casting) {
+  const tx = side < 0 ? HX - 1 : HX + 22, ty = HY + 6;
+  const base = side < 0 ? Math.PI - 0.28 : 0.28, R = rand(side < 0 ? 7 : 13);
+  const sway = Math.sin(t * 1.7 + (side < 0 ? 0 : 1.3)) * 0.07 + (casting ? Math.sin(t * 16) * 0.06 : 0);
+  const spread = casting ? 1.3 : 0.95, droop = casting ? 0.004 : 0.016, N = 26;
+  for (let pass = 0; pass < 2; pass++) for (let i = 0; i < N; i++) { // pass 0: shadowed under-layer, pass 1: lit strands
+    const f = i / (N - 1) - 0.5, ang = base + (side < 0 ? f : -f) * spread * (pass ? 1 : .8) + sway;
+    const len = (pass ? 11 : 9) + R() * 9, col = pass ? HAIR[i % HAIR.length] : P.d;
+    for (let k = 1; k <= len; k++) {
+      const x = tx + Math.cos(ang) * k, y = ty + Math.sin(ang) * k + droop * k * k + (pass ? 0 : 1);
+      spr.set(x, y, pass && k > len - 2 ? (i % 3 === 0 ? TIP_RIM : TIP) : col);
+      if (k < 7) spr.set(x, y + 1, col);
+    }
+  }
+  for (let dy = -1; dy <= 1; dy++) for (let dx = 0; dx <= 1; dx++) spr.set(tx + side * dx, ty + dy, dy < 0 ? TIE_HI : TIE);
+}
+
+function renderMancy(t, casting, look) {
+  spr.d.set(MANCY_BASE.d);
+  pigtail(-1, t, casting); pigtail(1, t, casting);
+  HAT_STARS.forEach(([x, y], i) => { if (casting || Math.sin(t * 3 + i * 1.9) > -0.2) spr.set(x, y, casting ? WHITE : HAT.star); });
+  const sx = Math.round(Math.sin(t * 2.3) * 1.4), cx = 69 + sx;
+  spr.set(69, 13, HAT.gd); spr.set(69 + Math.round(sx / 2), 14, HAT.gd);
+  [[0, -1], [-1, 0], [0, 0], [1, 0], [0, 1]].forEach(([dx, dy]) => spr.set(cx + dx, 16 + dy, dx || dy ? HAT.g : HAT.gl));
+  if (casting) { [[-1, -1], [1, -1], [-1, 1], [1, 1]].forEach(([dx, dy]) => spr.set(cx + dx * 2, 16 + dy * 2, WHITE, .8)); spr.set(60, 24, WHITE); }
+  // eyes: blink, follow the cursor, glow while casting
+  const ey = HY + 11, blink = (t % 4.2) < 0.13;
+  if (blink && !casting) [5, 6, 15, 16].forEach(i => spr.set(HX + i, ey, P.k));
+  else {
+    let L = [5, 6], Rt = [16, 15]; // [white, iris] columns; default irises sit inward
+    if (look < -0.35) L = [6, 5]; else if (look > 0.35) Rt = [15, 16];
+    const w = casting ? CYAN_HI : P.W, iris = casting ? CYAN : P.I;
+    spr.set(HX + L[0], ey, w); spr.set(HX + L[1], ey, iris);
+    spr.set(HX + Rt[0], ey, w); spr.set(HX + Rt[1], ey, iris);
+    if (casting) [5, 6, 15, 16].forEach(i => { spr.set(HX + i, ey - 1, CYAN, .4); spr.set(HX + i, ey + 1, CYAN, .3); });
+  }
+  sctx.putImageData(spr.img, 0, 0);
+}
+
+/* ---------------------------------------------------------------- glyphs + small sprites */
+const GLYPHS = [
+  ['..#', '.#.', '#..', '.#.', '..#'], ['#..', '.#.', '..#', '.#.', '#..'], ['..#', '..#', '.#.', '#..', '#..'],
+  ['#..', '.#.', '.#.', '#.#', '#.#'], ['###', '#..', '.#.', '#..', '###'], ['.##', '.#.', '#..', '.#.', '.##'],
+  ['##.', '.#.', '..#', '.#.', '##.'], ['.#.', '#.#', '#.#', '#.#', '.#.'], ['.#.', '##.', '.#.', '.#.', '###'],
+  ['.###.', '#.#.#', '.###.'], ['..#..', '.#.#.', '#####']
+];
+const POTION = ['..c..', '..c..', '.ggg.', '..g..', '.gLg.', 'gLlLg', 'gLLLg', 'gLLLg', '.ggg.'];
+const LANTERN = ['...b...', '..bbb..', '.bBBBb.', '.gfffg.', '.gfFfg.', '.gfFfg.', '.gfffg.', '.bBBBb.', '..bbb..'];
+
+/* ---------------------------------------------------------------- scene */
+const cvs = document.getElementById('scene'), ctx = cvs.getContext('2d');
+const bottomEl = document.querySelector('.bottom');
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const M = 16; // parallax margin baked into prerendered layers
+let W, H, S, CY, MX, landscape, L = {}, stars = [], islands = [], lights = [], flies = [], items = {}, lanterns = [], moon = {};
+
+const SPARK = ['#ffffff', '#c9fbff', '#3ef2ff', '#2a8cff', '#3a3aa0'];
+const MAGIC = ['#ffffff', '#f0c8ff', '#c46bff', '#7a3acc', '#3a1a6a'];
+const GOLDP = ['#fff6d8', '#ffd36b', '#e08a2e', '#8a4a1a'];
+const GREENP = ['#e8fff4', '#8affc8', '#2fe39a', '#167a54'];
+
+function gradient(r, stops, y0, y1) {
+  stops = stops.map(([t, c]) => [t, hex(c)]);
+  for (let y = y0; y < y1; y++) {
+    const t = (y - y0) / (y1 - y0);
+    let i = 0; while (i < stops.length - 2 && t > stops[i + 1][0]) i++;
+    const [ta, ca] = stops[i], [tb, cb] = stops[i + 1], f = clamp((t - ta) / (tb - ta), 0, 1);
+    for (let x = 0; x < r.w; x++) r.set(x, y, mix(ca, cb, Math.min(Math.floor(f * 3 + bayer(x, y)), 3) / 3));
+  }
+}
+
+function buildMoon(R) {
+  const G = Math.round(R * 1.1), s = 2 * (R + G) + 1, c = R + G, r = new Raster(s, s);
+  const halo = hex('#2a3c9a'), tones = ['#4a5aa8', '#7c8fd6', '#b3c2f0', '#eef3ff'].map(hex), trace = hex('#5ff3ff');
+  const craters = [[-.35, .3, .22], [.3, -.25, .16], [.1, .55, .12], [-.5, -.45, .1]];
+  for (let y = 0; y < s; y++) for (let x = 0; x < s; x++) {
+    const d = Math.hypot(x - c, y - c);
+    if (d > R) { if (d < R + G && bayer(x, y) < Math.pow(1 - (d - R) / G, 2) * .7) r.set(x, y, halo, .5); continue; }
+    const nx = (x - c) / R, ny = (y - c) / R;
+    let lv = Math.floor((0.55 - nx * 0.5 - ny * 0.4) * 3 + bayer(x, y));
+    if (craters.some(([cx, cy, cr]) => Math.hypot(nx - cx, ny - cy) < cr)) lv--;
+    r.set(x, y, tones[clamp(lv, 0, 3)]);
+  }
+  const put = (x, y, col, a) => { if (Math.hypot(x - c, y - c) < R - 1) r.set(x, y, col, a); };
+  [[[-.7, -.1], [-.3, -.1], [-.3, .35], [.2, .35]], [[.1, -.75], [.1, -.35], [.5, -.35], [.5, .05]], [[-.15, .75], [-.15, .58], [.45, .58]]]
+    .forEach(path => {
+      for (let i = 0; i < path.length - 1; i++) line(put, c + path[i][0] * R, c + path[i][1] * R, c + path[i + 1][0] * R, c + path[i + 1][1] * R, trace, .85);
+      const e = path[path.length - 1]; put(Math.round(c + e[0] * R), Math.round(c + e[1] * R), WHITE, 1);
+    });
+  return { cv: r.canvas(), s, c };
+}
+
+function buildFar() {
+  const r = new Raster(W + 2 * M, H + 2 * M), base = CY + M - 44, tones = ['#0f1438', '#172057', '#24306f'].map(hex), rim = hex('#4a64c8');
+  for (let x = 0; x < r.w; x++) {
+    const wx = x - M, top = Math.round(base - (Math.sin(wx * 0.045 + 1) * 9 + Math.sin(wx * 0.11 + 3) * 4 + Math.abs(Math.sin(wx * 0.023)) * 12));
+    for (let y = top; y < r.h; y++) r.set(x, y, tones[Math.min(Math.floor(clamp(1 - (y - top) / 26, 0, 1) * 2 + bayer(x, y)), 2)]);
+    r.set(x, top, rim, .8);
+  }
+  return r.canvas();
+}
+
+function buildNear() {
+  const r = new Raster(W + 2 * M, H + 2 * M), base = CY + M - 12, R = rand(42);
+  const fill = hex('#080a22'), rim = hex('#1e2a66'), house = hex('#0c0f2e'), roof = hex('#141a44');
+  const top = x => Math.round(base - (Math.sin((x - M) * 0.07) * 4 + Math.sin((x - M) * 0.031 + 2) * 5 + 4));
+  for (let x = 0; x < r.w; x++) { const t = top(x); for (let y = t; y < r.h; y++) r.set(x, y, fill); r.set(x, t, rim); }
+  lights = [];
+  for (let x = 4 + R() * 10 | 0; x < r.w - 10; x += 14 + (R() * 22 | 0)) {
+    const w = 5 + (R() * 4 | 0), h = 4 + (R() * 3 | 0), gy = top(x + (w >> 1)) + 1;
+    for (let y = gy - h; y < gy; y++) for (let i = 0; i < w; i++) r.set(x + i, y, house);
+    for (let i = 0; i <= (w >> 1); i++) for (let k = i; k < w - i; k++) r.set(x + k, gy - h - 1 - i, roof);
+    lights.push({ x: x + 1 + (R() * (w - 2) | 0) - M, y: gy - 2 - M, ph: R() * 6, warm: R() < .75 });
+  }
+  return r.canvas();
+}
+
+function buildIsland(w, seed, tower) {
+  const R = rand(seed), depth = Math.round(w * 0.5), top = 16, cw = w + 2, ch = top + depth + 2, cx = cw / 2;
+  const r = new Raster(cw, ch), grassL = hex('#46d6b4'), grass = hex('#23877e'), rock = ['#0d1036', '#171b4c', '#262f72'].map(hex);
+  for (let y = 0; y <= depth; y++) {
+    const f = y / depth, hw = (w / 2) * (1 - Math.pow(f, 0.75)) + (y > 1 ? (R() - .5) * 2 : 0);
+    for (let x = Math.round(cx - hw); x <= Math.round(cx + hw); x++) {
+      let c = y === 0 ? grassL : y === 1 ? grass : null;
+      if (!c) c = rock[clamp(Math.floor(((x - cx) / Math.max(hw, 1) * .5 + .5) * 2.2 + bayer(x, y) - .3 - f * .6), 0, 2)];
+      r.set(x, top + y, c);
+    }
+  }
+  for (let x = Math.round(cx - w / 2) + 1; x < cx + w / 2 - 1; x += 3) if (R() < .5) r.set(x, top - 1, grass);
+  const kx = Math.round(cx - w * 0.22), cl = hex('#9ffcff'), cd = hex('#1fa8c8');
+  [[0, -1], [0, -2], [0, -3], [0, -4], [-1, -1], [-1, -2], [1, -1], [1, -2]].forEach(([dx, dy]) => r.set(kx + dx, top + dy, dx === 0 ? cl : cd));
+  if (tower) {
+    const tx = Math.round(cx + w * 0.12), tn = hex('#1a1f50'), tl = hex('#3a4aa8'), rf = hex('#2b2f8f'), win = hex('#ffd36b');
+    for (let y = top - 11; y < top; y++) for (let x = tx; x < tx + 5; x++) r.set(x, y, x === tx + 4 ? tl : tn);
+    for (let i = 0; i < 4; i++) for (let x = tx - 1 + i; x <= tx + 5 - i; x++) r.set(x, top - 12 - i, rf);
+    r.set(tx + 2, top - 8, win); r.set(tx + 2, top - 4, win);
+  }
+  return { cv: r.canvas(), w: cw, h: ch, top, tipX: Math.round(cx), tipY: top + depth, kx, ky: top - 4 };
+}
+
+function buildFrame() {
+  const r = new Raster(W + 2 * M, H + 2 * M), wood = ['#1e120b', '#2a1a10', '#3d2618', '#5a3a22'].map(hex), postBottom = CY + M;
+  for (let y = 0; y < M + 5; y++) for (let x = 0; x < r.w; x++) {
+    const lv = y >= M + 4 ? 3 : y >= M + 3 ? 0 : 1 + ((((x * 3) ^ y) % 11) === 0 ? 1 : 0);
+    r.set(x, y, wood[lv]);
+  }
+  for (const [x0, x1] of [[0, M + 4], [r.w - M - 4, r.w]]) {
+    for (let y = M + 5; y < postBottom; y++) for (let x = x0; x < x1; x++) r.set(x, y, wood[x === x1 - 1 ? 3 : x === x0 ? 0 : 1]);
+  }
+  for (let i = 0; i < 8; i++) { r.set(M + 4 + i, M + 5 + 7 - i, wood[2]); r.set(r.w - M - 5 - i, M + 5 + 7 - i, wood[2]); }
+  return r.canvas();
+}
+
+function buildCounter() {
+  const cw = W + 2 * M, ch = H - CY + M + 4, r = new Raster(cw, ch), R = rand(99);
+  const top = ['#c98a50', '#a06a3a', '#82522c', '#5e3a1f', '#24140b'].map(hex);
+  const wood = hex('#3a2416'), seam = hex('#1e110a'), hi = hex('#4e3120'), grain = hex('#311e12'), brass = hex('#c9993f'), brassD = hex('#7a5a20');
+  for (let y = 0; y < ch; y++) for (let x = 0; x < cw; x++) {
+    let c;
+    if (y < 5) c = top[y];
+    else {
+      const p = (x + 3) % 16;
+      c = p === 0 ? seam : p === 1 ? hi : ((x * 7 + y * 13) % 23 === 0) ? grain : wood;
+      if (y === 8) c = brass; else if (y === 9) c = brassD;
+      if (y < 7) c = mix(c, BLACK, .35);
+    }
+    r.set(x, y, c);
+  }
+  for (let i = 0; i < cw / 3; i++) { const x = R() * cw | 0, y = 1 + (R() * 3 | 0), n = 2 + (R() * 6 | 0); for (let k = 0; k < n; k++) r.set(x + k, y, BLACK, .14); }
+  for (let i = 0; i < cw / 6; i++) r.set(R() * cw | 0, 0, hex('#f0c08a'), .7);
+  for (let x = 2; x < cw; x += 16) r.set(x, 8, hex('#ffe08a'));
+  return r.canvas();
+}
+
+function buildVignette() {
+  const r = new Raster(W, H), ink = hex('#02030c');
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+    const nx = x / W - .5, ny = y / H - .5;
+    let v = clamp((nx * nx * 1.1 + ny * ny * 1.3 - .08) * 1.6, 0, .7);
+    if (landscape) { if (x < W * .62 && y < CY) v += (1 - x / (W * .62)) * .5; }
+    else if (y < H * .36) v += (1 - y / (H * .36)) * .45;
+    const q = Math.floor(Math.min(v, .85) * 4 + bayer(x, y)) / 4;
+    if (q > 0) r.set(x, y, ink, Math.min(q, 1) * .82);
+  }
+  return r.canvas();
+}
+
+function build() {
+  const sky = new Raster(W + 2 * M, H + 2 * M);
+  gradient(sky, [[0, '#04061a'], [.4, '#0a1040'], [.72, '#1b1a5a'], [1, '#3b2470']], 0, CY + M);
+  gradient(sky, [[0, '#3b2470'], [1, '#3b2470']], CY + M, sky.h);
+  L.sky = sky.canvas();
+  const R = rand(7);
+  stars = Array.from({ length: Math.round(W * CY * 0.006) }, () => ({
+    x: R() * (W + 2 * M) - M | 0, y: R() * (CY - 30) | 0, b: .3 + R() * .7, sp: .6 + R() * 2.4, ph: R() * 7,
+    big: R() < .08, c: R() < .2 ? '#bff8ff' : R() < .1 ? '#ffd9a8' : '#ffffff'
+  }));
+  const mr = clamp(Math.round(Math.min(W, H) * .08), 12, 18);
+  moon = { ...buildMoon(mr), x: landscape ? W * .9 : W * .2, y: landscape ? H * .18 : H * .42 };
+  L.far = buildFar(); L.near = buildNear(); L.frame = buildFrame(); L.counter = buildCounter(); L.vig = buildVignette();
+  L.glow = makeGlow(56, '#2f5bff', 1.1, .5); L.lglow = makeGlow(14, '#3ef2ff', .9, .4);
+  L.bglow = makeGlow(16, '#9a6bff', .9, .45); L.sglow = makeGlow(8, '#c46bff', .9, .45); L.ggow = makeGlow(8, '#2fe39a', .9, .4);
+  const cfg = landscape
+    ? [[.40, .30, 30, 1], [.93, .44, 20, 0], [.60, .12, 14, 0]]
+    : [[.80, .40, 28, 1], [.46, .30, 18, 0], [.14, .22, 14, 0]];
+  islands = cfg.map(([fx, fy, w, tw], i) => ({ ...buildIsland(w, 11 + i * 17, tw), fx, fy, ph: i * 2.1 }));
+  flies = Array.from({ length: 22 }, () => ({ x: R() * W, y: R() * CY, ph: R() * 6.28, sp: .3 + R() * .6, c: R() < .5 ? '#3ef2ff' : '#ffd36b' }));
+  const fit = (x, w) => x >= 2 && x + w <= W - 2 ? x : null;
+  items = { mug: fit(MX - 58, 10), crt: fit(MX - 82, 14), ball: fit(MX + 48, 12), potA: fit(MX + 63, 5), potB: fit(MX + 70, 5) };
+  lanterns = (landscape ? [MX - 66, Math.min(MX + 66, W - 8)] : [W * .1, W * .9]).map((x, i) => ({ x: Math.round(x), len: Math.max(20, CY - 74), ph: i * 1.7 }));
+}
+
+function resize() {
+  const vw = Math.max(innerWidth, 320), vh = Math.max(innerHeight, 320); // hidden/zero-size viewports still get a valid scene
+  S = Math.max(2, Math.floor(Math.min(vw, vh) / 170));
+  W = Math.ceil(vw / S); H = Math.ceil(vh / S);
+  cvs.width = W; cvs.height = H; cvs.style.width = W * S + 'px'; cvs.style.height = H * S + 'px';
+  document.documentElement.style.setProperty('--px', S + 'px');
+  ctx.imageSmoothingEnabled = false;
+  landscape = vw / vh > 1.1;
+  CY = Math.round(clamp(bottomEl.getBoundingClientRect().top / S - 4, H * .55, H * .84));
+  MX = landscape ? Math.round(Math.min(W - 48, Math.max(W * .72, W * .56 + 44))) : Math.round(W / 2);
+  build();
+}
+
+/* ---------------------------------------------------------------- particles */
+const parts = [];
+function emit(x, y, n, o = {}) {
+  for (let i = 0; i < n; i++) {
+    const a = o.ang != null ? o.ang + (Math.random() - .5) * (o.spread ?? 1) : Math.random() * Math.PI * 2;
+    const sp = (o.speed ?? 20) * (.4 + Math.random() * .8);
+    parts.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: 0, max: (o.life ?? 1) * (.6 + Math.random() * .8),
+      g: o.g ?? 0, pal: o.pal ?? SPARK, glyph: o.glyph ? Math.random() * GLYPHS.length | 0 : -1, screen: !!o.screen });
+  }
+  if (parts.length > 600) parts.splice(0, parts.length - 600);
+}
+
+/* ---------------------------------------------------------------- draw helpers */
+const px = (x, y, c, a = 1) => { ctx.globalAlpha = a; ctx.fillStyle = c; ctx.fillRect(x | 0, y | 0, 1, 1); };
+function glyph(g, x, y, c, a = 1) {
+  ctx.globalAlpha = a; ctx.fillStyle = c;
+  GLYPHS[g].forEach((row, j) => { for (let i = 0; i < row.length; i++) if (row[i] === '#') ctx.fillRect(x + i | 0, y + j | 0, 1, 1); });
+}
+function sprite(map, pal, x, y) {
+  map.forEach((row, j) => { for (let i = 0; i < row.length; i++) { const c = pal[row[i]]; if (c) px(x + i, y + j, c); } });
+}
+
+function drawAurora(t, o) {
+  const top = Math.round(H * .05);
+  for (let x = 0; x < W; x++) {
+    const wx = x - o[0], y = top + 14 + Math.sin(wx * .035 + t * .35) * 7 + Math.sin(wx * .011 - t * .18) * 10;
+    const hg = 16 + Math.sin(wx * .05 + t * .6) * 8, inten = .5 + .5 * Math.sin(wx * .02 - t * .5), ray = mod(Math.round(wx), 7) < 3;
+    for (let k = 0; k < 4; k++) {
+      const a = inten * [.22, .16, .1, .05][k] * (ray ? 1 : .7);
+      if (a < .02) continue;
+      ctx.globalAlpha = a; ctx.fillStyle = k < 2 ? (ray ? '#3ef2ff' : '#5dffb0') : '#c46bff';
+      ctx.fillRect(x, Math.round(y + k * hg / 4 + o[1]), 1, Math.ceil(hg / 4));
+    }
+  }
+}
+
+let shoot = null, nextShoot = 3;
+function drawShootingStar(t, dt, o) {
+  if (!shoot && t > nextShoot && !reduce) { shoot = { x: Math.random() * W * .7, y: Math.random() * CY * .3, life: 0 }; nextShoot = t + 6 + Math.random() * 8; }
+  if (!shoot) return;
+  shoot.life += dt; shoot.x += 110 * dt; shoot.y += 40 * dt;
+  for (let i = 0; i < 10; i++) px(shoot.x - i * 2.75 + o[0], shoot.y - i + o[1], i < 2 ? '#ffffff' : '#9ffcff', (1 - i / 10) * (1 - shoot.life / 1.2));
+  if (shoot.life > 1.2) shoot = null;
+}
+
+function drawLights(t, o) {
+  // string lights along the rafters, with "data packets" running through them
+  const sag = landscape ? 10 : 8, yAt = x => 6 + sag * (1 - Math.pow((x - W / 2) / (W / 2), 2));
+  ctx.globalAlpha = 1; ctx.fillStyle = '#120c18';
+  for (let x = 0; x < W; x++) ctx.fillRect(x, Math.round(yAt(x - o[0]) + o[1]), 1, 1);
+  const span = W + 40, packets = [0, 1, 2].map(k => mod(t * 55 + k * span / 3, span) - 20), cols = ['#3ef2ff', '#c46bff', '#ffd36b'];
+  for (let x = 3; x < W; x += 7) {
+    const by = Math.round(yAt(x) + o[1]) + 1, bx = x + o[0];
+    let lit = 0, ci = 0;
+    packets.forEach((p, k) => { const v = 1 - Math.abs(p - x) / 14; if (v > lit) { lit = v; ci = k; } });
+    px(bx, by, lit > 0 ? cols[ci] : '#2a3a6a', 1);
+    if (lit > .3) { px(bx, by + 1, cols[ci], lit * .6); px(bx - 1, by, cols[ci], lit * .35); px(bx + 1, by, cols[ci], lit * .35); }
+  }
+  // swinging lanterns
+  const lp = { b: '#6a4a1c', B: '#c9993f', g: '#3a2a1a', f: '#2bb8d8', F: '#c9fbff' };
+  for (const ln of lanterns) {
+    const a = Math.sin(t * 1.1 + ln.ph) * .1, ex = ln.x + Math.sin(a) * ln.len + o[0], ey = 4 + Math.cos(a) * ln.len + o[1];
+    for (let k = 0; k < ln.len; k += 2) px(ln.x + Math.sin(a) * k + o[0], 4 + Math.cos(a) * k + o[1], '#3a2a1a');
+    ctx.globalAlpha = .65 + .25 * Math.sin(t * 7 + ln.ph);
+    ctx.drawImage(L.lglow, Math.round(ex - 14), Math.round(ey + 5 - 14));
+    lp.F = Math.sin(t * 13 + ln.ph) > 0 ? '#c9fbff' : '#7ff6ff';
+    sprite(LANTERN, lp, Math.round(ex - 3), Math.round(ey));
+  }
+  ctx.globalAlpha = 1;
+}
+
+function drawItems(t, o) {
+  const cy = CY + o[1];
+  if (items.mug != null) { // mana ale
+    const x = items.mug + o[0];
+    ctx.globalAlpha = .5; ctx.drawImage(L.lglow, x + 3 - 14, cy - 9 - 14); ctx.globalAlpha = 1;
+    for (let y = 1; y <= 8; y++) for (let i = 0; i < 7; i++) px(x + i, cy - y, (y === 7 || y === 2) ? '#c9993f' : i === 1 ? '#a8703d' : i === 6 ? '#5a361e' : '#8a5a32');
+    [[7, -6], [8, -6], [8, -5], [8, -4], [8, -3], [7, -3]].forEach(([dx, dy]) => px(x + dx, cy + dy, '#9a6a22'));
+    for (let i = -1; i < 8; i++) px(x + i, cy - 9, '#bff8ff');
+    for (let i = 0; i < 7; i += 2) if (Math.sin(t * 4 + i) > 0) px(x + i, cy - 10, '#e6fdff');
+  }
+  if (items.crt != null) { // a tiny terminal still running the build
+    const x = items.crt + o[0];
+    ctx.globalAlpha = .45; ctx.drawImage(L.ggow, x + 6 - 8, cy - 7 - 8); ctx.globalAlpha = 1;
+    for (let y = 1; y <= 11; y++) for (let i = 0; i < 14; i++) px(x + i, cy - y, y === 11 ? '#e0dac4' : (i === 13 || y === 1) ? '#8a8370' : '#bdb59a');
+    for (let y = 4; y <= 9; y++) for (let i = 2; i < 12; i++) px(x + i, cy - y, '#04140c');
+    const step = Math.floor(t * 4);
+    for (let r = 0; r < 3; r++) { const n = 2 + ((step + r * 5) * 7919 % 7); for (let i = 0; i < n; i++) px(x + 3 + i, cy - 8 + r * 2, '#48ff9c', .9); }
+    if (step % 2) px(x + 3, cy - 4, '#48ff9c');
+  }
+  if (items.ball != null) { // crystal ball with a neural net swirling inside
+    const bx = items.ball + 6 + o[0], by = cy - 11;
+    ctx.globalAlpha = .55 + .2 * Math.sin(t * 2); ctx.drawImage(L.bglow, bx - 16, by - 16); ctx.globalAlpha = 1;
+    [[9, 3], [7, 2], [5, 1]].forEach(([w, dy]) => { for (let i = 0; i < w; i++) px(bx - (w >> 1) + i, cy - dy, dy === 3 ? '#9a6a22' : '#c9993f'); });
+    for (let y = -6; y <= 6; y++) for (let x = -6; x <= 6; x++) { const d = Math.hypot(x, y); if (d <= 6.3) px(bx + x, by + y, d > 5.3 ? '#5ab0ff' : '#14205a', d > 5.3 ? .9 : .85); }
+    const nodes = [0, 1, 2, 3, 4].map(i => { const a = t * (.7 + i * .13) * (i % 2 ? -1 : 1) + i * 1.3, rr = 1.5 + i % 3 * 1.2; return [bx + Math.cos(a) * rr, by + Math.sin(a) * rr * .8]; });
+    const ln = (x, y, c, a) => px(x, y, c, a);
+    for (let i = 0; i < 5; i++) line(ln, ...nodes[i], ...nodes[(i + 2) % 5], '#8a6bff', .8);
+    nodes.forEach(([x, y]) => px(Math.round(x), Math.round(y), '#d9fbff'));
+    px(bx - 3, by - 3, '#ffffff'); px(bx - 2, by - 4, '#ffffff', .7);
+  }
+  [[items.potA, '#b44bff', '#f0a8ff', L.sglow], [items.potB, '#2fe39a', '#b8ffe0', L.ggow]].forEach(([x, Lc, lc, glow], i) => {
+    if (x == null) return;
+    x += o[0];
+    ctx.globalAlpha = .5; ctx.drawImage(glow, x + 2 - 8, cy - 4 - 8); ctx.globalAlpha = 1;
+    sprite(POTION, { c: '#9a6436', g: '#7f93c8', L: Lc, l: lc }, x, cy - 9);
+    px(x + 2, cy - 2 - (Math.floor(t * 3 + i) % 3), lc);
+  });
+  ctx.globalAlpha = 1;
+}
+
+/* ---------------------------------------------------------------- loop */
+let par = { x: 0, y: 0 }, tgt = { x: 0, y: 0 }, lastInput = -1e9, last = performance.now(), T = 0, castUntil = -1, emitAcc = 0;
+const off = d => [Math.round(-par.x * d * 14), Math.round(-par.y * d * 7)];
+
+function frame(now) {
+  const dt = Math.min(.05, (now - last) / 1000) * (reduce ? .4 : 1); last = now; T += dt;
+  const t = T, casting = t < castUntil;
+  if (now - lastInput > 4000 && !reduce) { tgt.x = Math.sin(t * .25) * .55; tgt.y = Math.sin(t * .19) * .35; }
+  par.x += (tgt.x - par.x) * .06; par.y += (tgt.y - par.y) * .06;
+
+  ctx.globalAlpha = 1;
+  let o = off(.03); ctx.drawImage(L.sky, -M + o[0], -M + o[1]);
+  o = off(.06);
+  for (const s of stars) {
+    const a = s.b * (.55 + .45 * Math.sin(t * s.sp + s.ph));
+    px(s.x + o[0], s.y + o[1], s.c, a);
+    if (s.big && a > .7) { ctx.globalAlpha = a * .45; ctx.fillRect(s.x + o[0] - 1, s.y + o[1], 3, 1); ctx.fillRect(s.x + o[0], s.y + o[1] - 1, 1, 3); }
+  }
+  drawShootingStar(t, dt, o);
+  drawAurora(t, off(.1));
+  o = off(.12); ctx.globalAlpha = 1;
+  ctx.drawImage(moon.cv, Math.round(moon.x - moon.c) + o[0], Math.round(moon.y - moon.c) + o[1]);
+  o = off(.22); ctx.drawImage(L.far, -M + o[0], -M + o[1]);
+  o = off(.35);
+  for (const is of islands) {
+    const x = Math.round(W * is.fx - is.w / 2) + o[0], y = Math.round(H * is.fy - is.top + Math.sin(t * .8 + is.ph) * 2) + o[1];
+    ctx.globalAlpha = 1; ctx.drawImage(is.cv, x, y);
+    for (let k = 0; k < 12; k++) { const yy = mod(t * 18 + k * 4.3, 30); px(x + is.tipX + (k & 1) - 1, y + is.tipY + yy, k % 3 ? '#3ef2ff' : '#c9fbff', (1 - yy / 30) * .9); }
+    px(x + is.kx, y + is.ky, '#ffffff', .5 + .5 * Math.sin(t * 3 + is.ph));
+  }
+  o = off(.5); ctx.globalAlpha = 1; ctx.drawImage(L.near, -M + o[0], -M + o[1]);
+  for (const l of lights) px(l.x + o[0], l.y + o[1], l.warm ? '#ffb85a' : '#3ef2ff', Math.sin(t * 1.3 + l.ph) > -.85 ? .95 : .2);
+  o = off(.7); ctx.globalAlpha = 1; ctx.drawImage(L.frame, -M + o[0], -M + o[1]);
+  drawLights(t, o);
+
+  // Mancy, the glow behind him and his orbiting runes
+  o = off(.82);
+  const bob = Math.sin(t * 1.7) > .35 ? -1 : 0, sy = CY - SEAT + bob + o[1], cx = MX + o[0], ocy = CY - 22 + o[1];
+  ctx.globalAlpha = (.75 + .25 * Math.sin(t * 1.3)) * (casting ? 1.3 : 1);
+  ctx.drawImage(L.glow, cx - 56, CY - 44 - 56 + o[1]);
+  const runes = [0, 1, 2, 3, 4, 5, 6].map(i => { const a = t * .6 + i * Math.PI * 2 / 7; return { i, a, x: cx + Math.cos(a) * (casting ? 60 : 50), y: ocy + Math.sin(a) * 8 + Math.sin(t * 2 + i) * 2 }; });
+  runes.filter(r => Math.sin(r.a) < 0).forEach(r => glyph((r.i * 3) % GLYPHS.length, r.x, r.y, r.i % 2 ? '#c46bff' : '#3ef2ff', .45));
+  renderMancy(t, casting, tgt.x);
+  ctx.globalAlpha = 1; ctx.drawImage(sprCv, cx - SCX, sy);
+  runes.filter(r => Math.sin(r.a) >= 0).forEach(r => { glyph((r.i * 3) % GLYPHS.length, r.x, r.y, r.i % 2 ? '#c46bff' : '#3ef2ff', .95); });
+
+  // the bar
+  o = off(1);
+  ctx.globalAlpha = 1; ctx.drawImage(L.counter, -M + o[0], CY + o[1]);
+  const pk = mod(t * 50, W + 60) - 30;
+  for (let gx = 8, gi = 0; gx < W; gx += 22, gi++) {
+    const a = .12 + .75 * Math.max(0, 1 - Math.abs(gx - pk) / 26);
+    glyph(gi % GLYPHS.length, gx + o[0], CY + 13 + o[1], '#3ef2ff', a);
+  }
+  drawItems(t, o);
+
+  // ambient emitters
+  emitAcc += dt;
+  while (emitAcc > .09) {
+    emitAcc -= .09;
+    if (items.potA != null && Math.random() < .5) emit(items.potA + 2, CY - 10, 1, { ang: -Math.PI / 2, spread: .6, speed: 10, life: 1.4, pal: MAGIC });
+    if (items.potB != null && Math.random() < .4) emit(items.potB + 2, CY - 10, 1, { ang: -Math.PI / 2, spread: .6, speed: 9, life: 1.4, pal: GREENP });
+    if (items.mug != null && Math.random() < .3) emit(items.mug + 3, CY - 11, 1, { ang: -Math.PI / 2, spread: .8, speed: 7, life: 1, pal: SPARK });
+    if (items.ball != null && Math.random() < .35) emit(items.ball + 6, CY - 18, 1, { ang: -Math.PI / 2, spread: 1.6, speed: 8, life: 1.2, pal: MAGIC });
+    if (casting) emit(MX + 13, CY - SEAT + 15, 2, { speed: 18, life: .7, pal: GOLDP });
+  }
+
+  // fireflies
+  o = off(.9);
+  for (const f of flies) {
+    const x = f.x + Math.sin(t * f.sp + f.ph) * 10 + o[0], y = mod(f.y - t * 4 * f.sp, CY) + Math.cos(t * f.sp * .8 + f.ph) * 4 + o[1];
+    px(x, y, f.c, .25 + .7 * Math.max(0, Math.sin(t * 2 * f.sp + f.ph)));
+  }
+
+  // particles
+  o = off(1.05);
+  for (let i = parts.length - 1; i >= 0; i--) {
+    const p = parts[i];
+    p.life += dt; if (p.life >= p.max) { parts.splice(i, 1); continue; }
+    p.vy += p.g * dt; p.vx *= .985; p.x += p.vx * dt; p.y += p.vy * dt;
+    const k = p.life / p.max, c = p.pal[Math.min(p.pal.length - 1, Math.floor(k * p.pal.length))];
+    const X = p.x + (p.screen ? 0 : o[0]), Y = p.y + (p.screen ? 0 : o[1]);
+    if (p.glyph >= 0) glyph(p.glyph, X, Y, c, 1 - k * .7); else px(X, Y, c, 1 - k * .5);
+  }
+
+  ctx.globalAlpha = 1; ctx.drawImage(L.vig, 0, 0);
+  requestAnimationFrame(frame);
+}
+
+/* ---------------------------------------------------------------- input */
+const hitMancy = (x, y) => x > MX - 36 && x < MX + 36 && y > CY - 76 && y < CY;
+let sparkTick = 0;
+addEventListener('pointermove', e => {
+  tgt.x = e.clientX / innerWidth * 2 - 1; tgt.y = e.clientY / innerHeight * 2 - 1; lastInput = performance.now();
+  const x = e.clientX / S, y = e.clientY / S;
+  if (e.pointerType === 'mouse' && ++sparkTick % 3 === 0) emit(x, y, 1, { speed: 6, life: .6, g: 10, pal: SPARK, screen: true });
+  cvs.style.cursor = hitMancy(x, y) ? 'pointer' : 'default';
+}, { passive: true });
+addEventListener('deviceorientation', e => {
+  if (e.gamma == null) return;
+  tgt.x = clamp(e.gamma / 30, -1, 1); tgt.y = clamp((e.beta - 45) / 30, -1, 1); lastInput = performance.now();
+});
+cvs.addEventListener('pointerdown', e => {
+  const x = e.clientX / S, y = e.clientY / S;
+  if (hitMancy(x, y)) castSpell();
+  else emit(x, y, 10, { speed: 30, life: .7, g: 20, pal: Math.random() < .5 ? SPARK : MAGIC, screen: true });
+});
+function castSpell() {
+  castUntil = T + 1.8;
+  emit(MX, CY - 40, 40, { speed: 45, life: 1.1, pal: SPARK, g: 10 });
+  emit(MX, CY - 40, 14, { speed: 30, life: 1.6, pal: MAGIC, glyph: true, g: -6 });
+  emit(MX + 13, CY - SEAT + 15, 16, { speed: 25, life: .8, pal: GOLDP });
+  spellbook.poke();
+}
+
+/* ---------------------------------------------------------------- spellbook */
+const spellbook = (() => {
+  const log = document.getElementById('log');
+  const SPELLS = [
+    ['summon_npc --role=barkeep --mood=grumpy', 'NPC conjured. He already dislikes you.'],
+    ['forge_dungeon --biome=crystal_caves --seed=0xBEEF', '128 rooms woven from latent space.'],
+    ['enchant_sprite mancy.png --style=16bit', 'Pigtails rendered. Magnificently.'],
+    ['brew_quest --tone=cozy --twist=true', 'Quest brewed. Serve warm.'],
+    ['balance_loot --fairness=0.97', '4,096 dice rerolled in the aether.'],
+    ['train_familiar --on=playtests', 'Familiar learns. Familiar judges.'],
+    ['compose_bgm --mood=tavern --bpm=96', 'Lute.wav manifested. Bard unionizing.'],
+    ['scry --for=bugs --depth=3', 'Bug foreseen 3 commits before it existed.'],
+    ['ship --platform=steam', 'Ritual 13% complete. Wishlists soon...']
+  ];
+  const POKE = [
+    ['fireball --target=bugs', 'Bugs remaining: 0. Probably.'],
+    ['haste --on=build_pipeline', 'Compile time halved. Coffee doubled.'],
+    ['polymorph --self --into=cat', 'Mancy refuses. Pigtails retained.'],
+    ['summon --familiar=llm', 'Familiar arrives. Asks clarifying questions.'],
+    ['flex', 'The sweater holds. Barely.']
+  ];
+  const cur = document.createElement('span'); cur.className = 'cur';
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+  let gen = 0, bag = [];
+  const next = () => { if (!bag.length) bag = SPELLS.slice().sort(() => Math.random() - .5); return bag.pop(); };
+  const add = cls => { const d = document.createElement('div'); if (cls) d.className = cls; log.appendChild(d); while (log.children.length > 8) log.firstChild.remove(); return d; };
+  async function cast([cmd, res], my) {
+    const l = add(), s = document.createElement('span');
+    l.innerHTML = '<span class="pr">mancy</span><span class="dim">❯</span> '; l.append(s, cur);
+    const full = 'cast ' + cmd;
+    for (const ch of full) { if (my !== gen) { s.textContent += ' ^C'; return; } s.textContent += ch; await wait(16 + Math.random() * 40); }
+    await wait(300); if (my !== gen) return;
+    const out = add('out'); out.textContent = '⟡ conjuring'; out.append(cur);
+    for (let i = 0; i < 3; i++) { await wait(200); if (my !== gen) return; out.insertBefore(document.createTextNode('.'), cur); }
+    out.innerHTML = '<span class="ok">✦</span> '; out.append(res, cur);
+  }
+  async function run(first) {
+    const my = ++gen;
+    if (first) { await cast(first, my); if (my !== gen) return; await wait(2400); }
+    while (my === gen) { await cast(next(), my); if (my !== gen) return; await wait(2600); }
+  }
+  add('sys').textContent = '⟡ tavern online · familiar awake';
+  setTimeout(() => run(), 700);
+  return { poke: () => run(POKE[Math.random() * POKE.length | 0]) };
+})();
+
+/* ---------------------------------------------------------------- links, icons, favicon */
+const ICONS = {
+  x: ['##.....#', '.##...#.', '..##.#..', '...##...', '..#.##..', '.#...##.', '#.....##'],
+  gh: ['.#.....#.', '.##...##.', '.#######.', '#########', '##.###.##', '#########', '.#######.', '..#...#..'],
+  steam: ['.#########.', '###.###.###', '##...#.#.##', '###.###.###', '###########', '###.....###', '.#.......#.']
+};
+document.querySelectorAll('[data-icon]').forEach(el => {
+  const m = ICONS[el.dataset.icon], w = m[0].length, h = m.length;
+  let svg = `<svg viewBox="0 0 ${w} ${h}" width="${w * 2}" height="${h * 2}" shape-rendering="crispEdges" aria-hidden="true">`;
+  m.forEach((row, y) => [...row].forEach((c, x) => { if (c === '#') svg += `<rect x="${x}" y="${y}" width="1" height="1"/>`; }));
+  el.outerHTML = svg + '</svg>';
+});
+if (STEAM_URL) {
+  const a = document.getElementById('steam');
+  a.href = STEAM_URL; a.target = '_blank'; a.rel = 'noopener';
+  a.classList.remove('soon'); a.removeAttribute('aria-disabled'); a.removeAttribute('title'); a.querySelector('.badge').remove();
+}
+
+resize();
+renderMancy(0, false, 0);
+(() => { // favicon: Mancy's head, hat and pigtails
+  const f = document.createElement('canvas'); f.width = f.height = 48;
+  const g = f.getContext('2d'); g.fillStyle = '#05071a'; g.fillRect(0, 0, 48, 48);
+  g.drawImage(sprCv, SCX - 24, 8, 48, 48, 0, 0, 48, 48);
+  document.getElementById('favicon').href = f.toDataURL();
+})();
+let rz; addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(resize, 80); });
+document.fonts && document.fonts.ready.then(resize);
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
