@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="A perspective-camera level with a spider on the ceiling: the one we threw out, kept for the lessons.">
-<meta property="og:title" content="The Silk Spire · Square Off devlog (study)">
-<meta property="og:description" content="A perspective-camera level with a spider on the ceiling: the one we threw out, kept for the lessons.">
+<meta name="description" content="Saint Rime, circled: a chapel you walk round, the whole miniature turning a quarter at each corner.">
+<meta property="og:title" content="The Rime Chapel · Save Sparky devlog (study)">
+<meta property="og:description" content="Saint Rime, circled: a chapel you walk round, the whole miniature turning a quarter at each corner.">
 <meta property="og:type" content="website">
-<title>The Silk Spire · Square Off devlog (study)</title>
+<title>The Rime Chapel · Save Sparky devlog (study)</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@500&display=swap">
@@ -21,8 +21,8 @@
 	--line: #232a3c;
 	--ink: #e2e7f2;
 	--muted: #8d96ad;
-	--ember: #b8aee0;
-	--ember-soft: #eeecfa;
+	--ember: #a8dcff;
+	--ember-soft: #e4f6ff;
 	--display: "Chakra Petch", "Trebuchet MS", sans-serif;
 	--body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
 	--mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
@@ -65,9 +65,9 @@ footer a { color: var(--ember-soft); }
 <body>
 <div class="wrap">
 	<header>
-		<div class="eyebrow">Square Off devlog · study · level study · a realm of the climb</div>
-		<h1>The Silk Spire</h1>
-		<p class="lede">A level, not a diorama: one realm of the climb, with its one boss. Elfy arrives from below, up the steps from the bridge she came by. She meets Nana Nightloom, a knitting granny spider who walks the floor, the walls and the ceiling. She wins, the web over the hatch unravels, and she climbs out to the terrace, where the realm's gate is its checkpoint and the next realm hangs above her, lit gold. The game is still a flat 2D plane (the inset). The world around it is built in depth all the way out: a colonnade you see straight through, floating stairs and islands, towers, a city of spires in the fog, a sea of cloud far below. Everything is drawn by code.</p>
+		<div class="eyebrow">Save Sparky devlog · study · level study · Saint Rime, all the way round</div>
+		<h1>The Rime Chapel</h1>
+		<p class="lede">Saint Rime, the Frost Chandelier from realm 3 (the one that skitters across the ceiling and down the walls), in a miniature. A frozen chapel sits on a floating rock under an aurora, with a cloister walk round all four sides and open rafters overhead for it to hang from. The camera is close, looking at one side almost face on, and the track runs right round the building. When the fight goes round a corner, the whole miniature turns a quarter with it, the way Fez turns its world. Some attacks are dodged by ducking round the corner. Everything is drawn by code.</p>
 		<div class="controls">
 			<button id="pause" type="button" aria-pressed="false">Pause<kbd>Space</kbd></button>
 			<button id="slow" type="button" aria-pressed="false">Slow motion<kbd>S</kbd></button>
@@ -75,22 +75,22 @@ footer a { color: var(--ember-soft); }
 			<button id="track" type="button" aria-pressed="true">Track view<kbd>T</kbd></button>
 		</div>
 	</header>
-	<section class="study" aria-labelledby="h-spire">
-		<h2 class="name" id="h-spire">Nana Nightloom's chamber</h2>
-		<div class="stage"><canvas id="stage-spire" width="1280" height="720" aria-label="Elfy climbs up a series of floating steps inside an open stone spire at night, a long bridge behind her running off into the fog, and comes up through a hole into a chamber framed by pillars, with a colonnade of tall arches behind it opening onto towers, floating stairs and islands and a city of spires; a granny spider in a lace bonnet and spectacles knits upside down on the chamber's ceiling, drops on a thread, runs a lap of the whole room along the floor, up the wall, across the ceiling and down the other wall, drops twice onto Elfy's spot, spits web onto the floor, then runs another lap trailing silk, snags in her own thread and dangles in a cocoon while Elfy jumps and hits her; she comes apart in silk, the web over the ceiling hatch unravels, light pours down, and Elfy jumps up to the terrace where a gate lights up as the checkpoint, a golden island floating high above"></canvas></div>
-		<div class="controls"><span class="readout" id="readout-spire">idle</span></div>
+	<section class="study" aria-labelledby="h-chapel">
+		<h2 class="name" id="h-chapel">Saint Rime, the Frost Chandelier</h2>
+		<div class="stage"><canvas id="stage-chapel" width="1280" height="720" aria-label="A snow-covered stone chapel with stained-glass windows floats on a rock under an aurora, a cloister walk with wooden rafters round all four sides; a chandelier of black iron with six hooked legs, cold blue candles and a porcelain mask hangs from the rafters over Elfy, crawls along them growing icicles that drop onto the walk, then crawls round the corner; the whole miniature turns a quarter as Elfy follows it; on the next side it climbs down the chapel wall and screams a beam of frost the length of the side and out past the corner, while Elfy hides round the corner; it crosses back over her and drops, a wave of ice spikes running along the walk, and lies wrecked while she hits it; it winches up and crawls round the next corner, the miniature turns again, and it swings on a chain like a pendulum until the chain snaps"></canvas></div>
+		<div class="controls"><span class="readout" id="readout-chapel">idle</span></div>
 		<div class="notes">
 			<ul>
-				<li><strong>The camera trick.</strong> Instead of lowering the camera to see the ceiling, the camera's eye rides at Elfy's height with a gentle perspective. Anything above her eye shows its underside, so the ceiling Nana walks on is always in view while Elfy is below it. Anything below shows its top, so the floor she stands on, and the steps she came up, read as surfaces. Nothing tilts, and her controls never change.</li>
-				<li><strong>The plane is 1:1.</strong> The camera's distance equals its focal length, so the play plane renders at exactly one world unit per pixel. Elfy, Nana, the platforms' front edges and every warning are crisp, unscaled pixel art. Only things in front of or behind the plane grow or shrink.</li>
-				<li><strong>Walls and ceilings in 2D.</strong> In the inset, the chamber is a box of lines: floor, two walls, a ceiling with the hatch, two ledges. Nana is a red square that walks all of them; her lap is one path round the box. On screen she is drawn in her own frame (her surface below her), then turned onto the floor, a wall or the ceiling.</li>
-				<li><strong>No void.</strong> The spire is open: a colonnade behind the chamber, and below it a bare framework of pillars, beams and hanging lanterns, so the world shows through. Around it, at every depth: two towers and a bridge, flights of floating stairs, small islands with lit houses, a city of spires, an aqueduct, a cloud sea. Fog thickens with distance, so it fades instead of ending, and everything slides past at its own rate as the camera rises.</li>
-				<li><strong>Where you came from, where you are going.</strong> At the start the camera is low: the terrace, the long bridge off into the fog, the bathhouse far down it (the last realm), and the chamber's underside above. At the end it rises past the terrace to the gate, the checkpoint, and the next realm's golden island overhead.</li>
-				<li><strong>One enemy, once.</strong> A realm has its boss; when she is beaten, its top opens (here, the web over the hatch unravels), and the gate at the top is the save point. An enemy you left unbeaten could follow you up through that hatch into the next realm, so two fights overlap.</li>
+				<li><strong>The miniature, up close.</strong> The same isometric pixel-art renderer as the bathhouse, but the camera is in close, so you see one side of the chapel at a time: the stone wall with its stained-glass lancet, the walk, the rafters, the lanterns, the snow-heavy roof. The far mountains, aurora and floating rocks are painted flat behind and slide as it turns, so there is always something out there.</li>
+				<li><strong>Round and round.</strong> The track is a loop round the chapel, four sides long. When the fight goes round a corner, the miniature turns a quarter under the camera, so the side you are on always faces you and forward is always to the right. The columns of whichever side is nearest the camera are cut away, dollhouse-style; the rafters stay, because it hangs from them.</li>
+				<li><strong>Dodge round the corner.</strong> The frost breath shoots straight down one side of the building and out past the corner into the air. Its whole line is dashed first. The answer is to run back round the corner, out of the line, and wait for it to finish. A wall at a corner is cover.</li>
+				<li><strong>Following it round.</strong> It crawls the rafters round corners too, and Elfy has to follow. Its spike waves run along the track, so they can come round a corner at you.</li>
+				<li><strong>Its moves</strong> (from realm 3): the crawl that grows icicles along the rafters (their shadows sharpen on the walk before they snap); the frost breath; the drop with a wave of ice spikes, then the wreck you hit; and in phase two, the pendulum swing on a chain (crouch), the snap, the crash. Its mask ticks round to a new face before each one.</li>
+				<li><strong>The game is still 2D.</strong> The inset shows the loop unrolled into one long line, with the corners dashed. Elfy (green) and the chandelier (red, up at rafter height) move along it, and that is all the game knows about.</li>
 			</ul>
 		</div>
 	</section>
-	<footer>A study for Square Off. All drawing and code here are new. Elfy is the game's own sprite.</footer>
+	<footer>A study for Esper Elfy: Save Sparky. All drawing and code here are new. Elfy is the game's own sprite.</footer>
 </div>
 <script>
 "use strict";
@@ -211,6 +211,24 @@ function drawElfy(name, time, fx, fy, flash = 0, flip = false) {
 	glow(fx + (flip ? -8 : 8), fy - 24, 14, "#4dff6a", 0.12);
 }
 
+// tongues of flame: hot white at the root, cooling to red at a wavering tip
+function tongue(bx, by, h, w, heat, seed, t, pal = FIRE) {
+	const n = Math.round(h);
+	const sway = (noise1(t * 2.3, seed) - 0.5) * 3;
+	for (let j = 0; j < n; j++) {
+		const v = j / n, y = by - j;
+		const cx = bx + sway * v * v + (noise1(t * 7 + j * 0.4, seed + 9) - 0.5) * 1.6 * v;
+		const hw = w * Math.pow(1 - v, 0.65) + 0.3;
+		for (let x = Math.floor(cx - hw); x <= Math.ceil(cx + hw); x++) {
+			const dd = Math.abs(x + 0.5 - cx) / hw;
+			if (dd > 1) continue;
+			const k = heat * (1 - v * 0.8) * (1 - dd * 0.5) + (bayer(x, y) - 0.5) * 0.14;
+			put(x, y, k > 0.84 ? pal[0] : k > 0.68 ? pal[1] : k > 0.52 ? pal[2] : k > 0.36 ? pal[3] : k > 0.2 ? pal[4] : pal[5]);
+		}
+	}
+}
+function impactFrame(hi, lo, cut = 0.32) { const H1 = hx(hi), L1 = hx(lo); for (let i = 0; i < N * 3; i += 3) { const l = 0.3 * (col[i] + lit[i] * 0.5) + 0.59 * (col[i + 1] + lit[i + 1] * 0.5) + 0.11 * (col[i + 2] + lit[i + 2] * 0.5), c = l > cut ? H1 : L1; col[i] = c[0]; col[i + 1] = c[1]; col[i + 2] = c[2]; lit[i] *= 0.15; lit[i + 1] *= 0.15; lit[i + 2] *= 0.15; } }
+function focusLines(cx, cy, k, t, c = "#ffffff", r0min = 60) { const seed = Math.floor(t * 20); for (let i = 0; i < 44; i++) { const a = hash(i, seed) * TAU, r0 = r0min + hash(i + 99, seed) * 60, sn = Math.sin(a), r2 = sn > 0.05 ? Math.min(320, (FEET - cy) / sn) : 320; if (r2 < r0) continue; line(cx + Math.cos(a) * r0, cy + sn * r0, cx + Math.cos(a) * r2, cy + sn * r2, c, 0.22 * k); } }
 // ================================================================ more enemies: shared tools
 // A part painter for creature sprites (the knight's, generalized): limbs, shells and custom fills land in a
 // cell with a depth per part; then nearer parts darken the pixels behind their edges, the cold rim catches
@@ -700,373 +718,610 @@ function soundWord(word, x, y, k, fill = GOLDM[4], edge = INK9, s = 2) {
 	}
 }
 
-// ================================================================ the Silk Spire: a realm of the climb
-// A level study. The game stays a 2D plane (X along, Z up), but the world around that plane is built in depth and
-// seen through a gentle perspective camera whose eye rides at Elfy's height: anything above her shows its underside
-// (where a spider walks), anything below shows its top (where she came from), and everything at other depths slides
-// past at its own rate. The play plane sits at exactly 1:1, so the sprites stay crisp; walls facing the camera stay
-// rectangles. Fog thickens with distance, so the world goes on instead of ending in a void.
+// ================================================================ Saint Rime, the Frost Chandelier
+// A cathedral chandelier that became a predator. A cage of black iron rimed with frost, six long jointed legs
+// ending in hooks that carry it upside-down across the ceiling and down the walls, candles burning with cold
+// blue flame, crystal prisms swinging under it, a torn veil of frozen lace. At its heart a drum of porcelain
+// masks: serene, weeping, screaming, sleeping. It ticks round to a new face before every attack.
+const IRON = ["#030306", "#0a0a10", "#15151e", "#22222e", "#34344a"];
+const WAX = ["#8a90a8", "#c8d0e0", "#eef2fa"];
+const COLDFIRE = ["#ffffff", "#d8f6ff", "#7ad8ff", "#3a8ae0", "#1a3a8a", "#0a1430"];
+const PORCELAIN = ["#5a5a6a", "#a8a8b8", "#dcdce6", "#f6f6fa"];
 
-// ---------------------------------------------------------------- the camera and the buffers
-const ZB = new Float32Array(N), SBASE = new Float32Array(N * 3), SBZ = new Float32Array(N);
-let ZT = null;
-const CD = 760; // the camera's distance from the play plane (and its focal length, so the plane is 1:1)
-const SCAM = { x: 160, z: -160 };
-const FOG = hx("#3a3466"), PLANE_D = 1 / CD;
-const sxOf = (X, d) => W / 2 + (X - SCAM.x) * CD / d, syOf = (Z, d) => H / 2 - (Z - SCAM.z) * CD / d;
-const LAV = ["#1c1a30", "#2a2644", "#3c3660", "#544c80", "#6e64a0", "#9086c0", "#b8aee0"];
-const PLUM = ["#1e0c20", "#3a1838", "#5a2a56", "#7e4078", "#a8609c"];
-const SILK = ["#8a88a8", "#c8c6e0", "#eeecfa", "#ffffff"];
-const CANDLE = ["#7a3010", "#e07a30", "#ffc070", "#fff0c8"];
-const GOLDR = ["#3a2408", "#7a5014", "#c08a28", "#f0c050", "#ffe8a0"];
-// a pixel of the static scene: fogged by its distance d, written if nearer than what is there
-function wpix(px, py, d, h) {
-	const i = py * W + px, z = 1 / d;
-	if (z <= SBZ[i]) return;
-	const c = hx(h), f = clamp((d - CD - 140) / 2600) ** 0.75 * 0.88;
-	SBZ[i] = z; SBASE[i * 3] = lerp(c[0], FOG[0], f); SBASE[i * 3 + 1] = lerp(c[1], FOG[1], f); SBASE[i * 3 + 2] = lerp(c[2], FOG[2], f);
-}
-// a wall facing the camera, at depth Y: spans x0..x1, z0..z1; fn(u, v, d) is the color at (X - x0, Z - z0), or null
-function frontQ(Y, x0, x1, z0, z1, fn) {
-	const d = Y + CD; if (d < 20) return;
-	const a = Math.max(0, Math.floor(sxOf(x0, d))), b = Math.min(W - 1, Math.ceil(sxOf(x1, d))), c = Math.max(0, Math.floor(syOf(z1, d))), e = Math.min(H - 1, Math.ceil(syOf(z0, d)));
-	const s = CD / d;
-	for (let py = c; py <= e; py++) { const Z = SCAM.z - (py + 0.5 - H / 2) / s; if (Z < z0 || Z >= z1) continue; for (let px = a; px <= b; px++) { const X = SCAM.x + (px + 0.5 - W / 2) / s; if (X < x0 || X >= x1) continue; const h = fn(X - x0, Z - z0, d); if (h) wpix(px, py, d, h); } }
-}
-// a horizontal face at height Z (its top if the eye is above it, its underside if below)
-function horizQ(Z, x0, x1, y0, y1, fn) {
-	const dz = Z - SCAM.z; if (Math.abs(dz) < 0.01) return;
-	const r0 = syOf(Z, y0 + CD), r1 = syOf(Z, y1 + CD), c = Math.max(0, Math.floor(Math.min(r0, r1))), e = Math.min(H - 1, Math.ceil(Math.max(r0, r1)));
-	for (let py = c; py <= e; py++) {
-		const t = py + 0.5 - H / 2; if (Math.abs(t) < 0.01) continue;
-		const d = -dz * CD / t; if (d <= 20) continue; const Y = d - CD; if (Y < y0 || Y > y1) continue;
-		const a = Math.max(0, Math.floor(sxOf(x0, d))), b = Math.min(W - 1, Math.ceil(sxOf(x1, d)));
-		for (let px = a; px <= b; px++) { const X = SCAM.x + (px + 0.5 - W / 2) * d / CD; if (X < x0 || X >= x1) continue; const h = fn(X - x0, Y - y0, d, dz < 0); if (h) wpix(px, py, d, h); }
-	}
-}
-// a side face at X (seen from whichever side the eye is on)
-function sideQ(X, y0, y1, z0, z1, fn) {
-	const dx = X - SCAM.x; if (Math.abs(dx) < 0.01) return;
-	const q0 = sxOf(X, y0 + CD), q1 = sxOf(X, y1 + CD), a = Math.max(0, Math.floor(Math.min(q0, q1))), b = Math.min(W - 1, Math.ceil(Math.max(q0, q1)));
-	for (let px = a; px <= b; px++) {
-		const t = px + 0.5 - W / 2; if (Math.abs(t) < 0.01) continue;
-		const d = dx * CD / t; if (d <= 20) continue; const Y = d - CD; if (Y < y0 || Y > y1) continue;
-		const c = Math.max(0, Math.floor(syOf(z1, d))), e = Math.min(H - 1, Math.ceil(syOf(z0, d)));
-		for (let py = c; py <= e; py++) { const Z = SCAM.z - (py + 0.5 - H / 2) * d / CD; if (Z < z0 || Z >= z1) continue; const h = fn(Y - y0, Z - z0, d); if (h) wpix(px, py, d, h); }
-	}
-}
-// a box: front, top/bottom and the one side the eye can see; m = { front, top, bot, side } color fns (or a hex)
-function sbox(x0, x1, y0, y1, z0, z1, m) {
-	const F = (f) => (typeof f === "string" ? () => f : f);
-	if (m.front) frontQ(y0, x0, x1, z0, z1, F(m.front));
-	if (SCAM.z > z1 && m.top) horizQ(z1, x0, x1, y0, y1, F(m.top));
-	if (SCAM.z < z0 && m.bot) horizQ(z0, x0, x1, y0, y1, F(m.bot));
-	if (m.side) { if (SCAM.x < x0) sideQ(x0, y0, y1, z0, z1, F(m.side)); else if (SCAM.x > x1) sideQ(x1, y0, y1, z0, z1, F(m.side)); }
-}
-
-// ---------------------------------------------------------------- materials
-const R2 = (a, b) => hash(Math.floor(a), Math.floor(b));
-const brick = (pal, bw = 14, bh = 7) => (u, v, d) => { const row = Math.floor(v / bh), off = row % 2 ? bw / 2 : 0, seam = v % bh < 1 || (u + off) % bw < 1; if (d > 1800) return pal[2]; return seam ? pal[1] : R2((u + off) / bw, row) < 0.25 ? pal[2] : pal[3]; };
-const stone = brick(LAV);
-const trim = (u, v) => (v < 1.5 ? LAV[6] : LAV[5]);
-// a wall with round-topped arches cut through it (null = see through to what is behind)
-function arches(pal, w, gap, top, sill, glowFn) { return (u, v, d) => { const k = ((u % gap) + gap) % gap, cx = gap / 2, inside = Math.abs(k - cx) < w / 2 && v > sill && (v < top - w / 2 || Math.hypot(k - cx, v - (top - w / 2)) < w / 2); if (inside) return glowFn ? glowFn(k - cx, v, d) : null; const rim = Math.abs(k - cx) < w / 2 + 2 && v > sill - 2 && (v < top - w / 2 + 2 || Math.hypot(k - cx, v - (top - w / 2)) < w / 2 + 2); return rim ? pal[5] : brick(pal)(u, v, d); }; }
-
-// ---------------------------------------------------------------- the level: the plane's own geometry (gameplay) and the world around it
-const CH = { x0: 20, x1: 300, floor: 0, ceil: 220, hole: [138, 186], hatch: [134, 190] };
-const L1 = { x0: 20, x1: 82, z: 80 }, L2 = { x0: 238, x1: 300, z: 132 };
-const STEPS = [{ x0: -60, x1: 420, z: -250 }, { x0: 40, x1: 104, z: -190 }, { x0: 170, x1: 236, z: -130 }, { x0: 96, x1: 150, z: -70 }];
-const SKYC = new Float32Array(N * 3);
-function skyFor() {
-	// the sky slides a little with the camera's height, so climbing reads even against it
-	const sh = SCAM.z * 0.06;
-	for (let y = 0; y < H; y++) { const v = clamp((y + sh + 120) / (H + 240)) * 5, i = Math.min(4, Math.floor(v)), f = v - i, A = ["#070820", "#0e1030", "#1a1a44", "#2a2656", "#3e3468", "#5a4880"]; for (let x = 0; x < W; x++) { const h = f > bayer(x, y) ? A[i + 1] : A[i], c = hx(h), k = (y * W + x) * 3; SBASE[k] = c[0]; SBASE[k + 1] = c[1]; SBASE[k + 2] = c[2]; } }
-	for (let i = 0; i < 120; i++) { const x = Math.floor(hash(i, 1) * W), y = Math.floor(hash(i, 2) * H * 1.4 - sh * 0.5) % H; if (y < 0) continue; const k = (y * W + x) * 3, c = hx(hash(i, 3) < 0.3 ? "#d8d8ff" : "#6a6aa0"); SBASE[k] = c[0]; SBASE[k + 1] = c[1]; SBASE[k + 2] = c[2]; }
-	const my = 60 - sh * 0.3; for (let y = -16; y <= 16; y++) for (let x = -16; x <= 16; x++) { const dd = Math.hypot(x, y); if (dd > 15) continue; const X = 540 + x, Y = Math.round(my + y); if (Y < 0 || Y >= H) continue; const k = (Y * W + X) * 3, c = hx(dd > 13.5 ? "#a8acd8" : R2((x + 20) / 4, (y + 20) / 4) < 0.22 ? "#c8cae8" : "#eceefc"); SBASE[k] = c[0]; SBASE[k + 1] = c[1]; SBASE[k + 2] = c[2]; }
-	SBZ.fill(-1);
-}
-const LAVD = ["#100e20", "#181630", "#221e40", "#2e2852", "#3c3466", "#4e447c", "#645a96"];
-function world() {
-	const dstone = brick(LAVD), arch = (pal, w, gap, top, sill, g) => arches(pal, w, gap, top, sill, g);
-	// far away: a sea of cloud far below, a city of spires in the fog all round, an aqueduct
-	horizQ(-760, -6000, 6000, 300, 6000, (u, v, d) => { const n = noise1(u * 0.004 + v * 0.002, 3) + noise1(u * 0.013 - v * 0.006, 4) * 0.5; return n > 0.95 ? "#5a5288" : n > 0.7 ? "#3e3a68" : "#2c2a52"; });
-	for (let i = 0; i < 18; i++) { const x = -3000 + i * 380 + hash(i, 5) * 200, y = 1800 + hash(i, 6) * 1800, w = 120 + hash(i, 7) * 200, h = 700 + hash(i, 8) * 1700; sbox(x, x + w, y, y + w, -760, -760 + h, { front: arch(LAVD, 40, 110, h - 60, h - 260, () => (hash(i, 9) < 0.6 ? CANDLE[2] : null)), top: LAVD[5], side: LAVD[2] }); sbox(x + w * 0.3, x + w * 0.7, y + w * 0.3, y + w * 0.7, -760 + h, -760 + h + 160, { front: LAVD[4], side: LAVD[2] }); }
-	sbox(-1600, 2000, 1100, 1160, -760, -320, { front: arch(LAVD, 80, 170, 380, 0, null), top: LAVD[4] });
-	// the next realm, high above and far out: a floating island lit gold from beneath, its buildings on top
-	{ const ix0 = -700, ix1 = 1100, iy = 1800, iz = 1000; for (let k = 0; k < 9; k++) { const s2 = k / 9, w = (ix1 - ix0) * (1 - s2 * 0.85) / 2, cx = (ix0 + ix1) / 2 + Math.sin(k * 2.1) * 80; sbox(cx - w, cx + w, iy + k * 40, iy + 700 - k * 40, iz - 56 - k * 56, iz - k * 56, { front: (u, v) => (v > 44 ? GOLDR[4] : R2(u / 50, k) < 0.4 ? GOLDR[2] : GOLDR[3]), bot: (u, v) => (noise1(u * 0.01 + v * 0.006, k) > 0.6 ? GOLDR[4] : GOLDR[3]), side: GOLDR[2] }); } for (let i = 0; i < 8; i++) { const x = ix0 + 160 + i * 190, h = 260 + hash(i, 12) * 380; sbox(x, x + 110, iy + 160, iy + 300, iz, iz + h * 0.6, { front: arch(["#3a2408", "#5a3a10", "#8a6020", "#b08030", "#d0a040", "#f0c860"], 40, 80, h - 40, 60, () => "#fff0b0"), top: GOLDR[3], side: GOLDR[1] }); } }
-	// the near world, through the arches and past the pillars: two towers, a bridge, floating stairs and islands
-	const towerF = arch(LAVD, 26, 80, 1500, 40, (k, v) => (v % 300 < 120 && Math.abs(k) < 6 ? CANDLE[2] : null));
-	sbox(-640, -440, 380, 580, -900, 900, { front: towerF, top: LAVD[5], side: LAVD[2] });
-	sbox(-660, -420, 370, 590, 900, 940, { front: (u, v) => (v < 2 ? LAVD[6] : LAVD[5]), top: LAVD[6], bot: LAVD[1], side: LAVD[3] });
-	sbox(-600, -480, 420, 540, 940, 1100, { front: LAVD[4], side: LAVD[2] });
-	sbox(660, 860, 460, 660, -900, 780, { front: towerF, top: LAVD[5], side: LAVD[2] });
-	sbox(640, 880, 450, 670, 780, 820, { front: (u, v) => (v < 2 ? LAVD[6] : LAVD[5]), top: LAVD[6], bot: LAVD[1], side: LAVD[3] });
-	sbox(334, 660, 330, 370, 132, 146, { front: (u, v) => (v < 2 ? LAVD[6] : LAVD[4]), top: LAVD[5], bot: LAVD[2], side: LAVD[3] });
-	for (let i = 0; i < 4; i++) sbox(380 + i * 70, 398 + i * 70, 334, 366, -600, 132, { front: dstone, side: LAVD[2], top: LAVD[4] });
-	const stair = (x, y, z, n, dx, dz, w = 28) => { for (let i = 0; i < n; i++) sbox(x + i * dx, x + i * dx + w, y, y + 36, z + i * dz, z + i * dz + 8, { front: (u, v) => (v > 6 ? LAVD[6] : LAVD[4]), top: LAVD[5], bot: LAVD[1], side: LAVD[3] }); };
-	stair(-380, 180, -220, 10, 26, 24); stair(420, 220, 360, 8, 24, -22); stair(-320, 420, 420, 7, 30, 30);
-	// floating islands at mid depth, each with a little house and a lit window
-	for (const [x, y, z, w] of [[-520, 260, -40, 120], [500, 300, -260, 150], [-220, 600, 620, 160], [420, 520, 520, 110]]) { for (let k = 0; k < 4; k++) sbox(x + k * w * 0.1, x + w - k * w * 0.1, y + k * 6, y + 60 - k * 6, z - 14 - k * 22, z - k * 22, { front: (u, v) => (v > 10 && k === 0 ? "#26404a" : LAVD[2 + (k % 2)]), bot: LAVD[1], side: LAVD[1] }); sbox(x + w * 0.3, x + w * 0.6, y + 14, y + 40, z, z + 34, { front: (u, v) => (u > 8 && u < 14 && v > 10 && v < 22 ? CANDLE[2] : LAVD[4]), top: LAVD[5], side: LAVD[2] }); sbox(x + w * 0.27, x + w * 0.63, y + 10, y + 44, z + 34, z + 42, { front: "#1a2240", top: "#28305a", side: "#141a30" }); }
-	// where she came from: a long bridge off to the left, and down it in the fog, the bathhouse
-	sbox(-1100, -60, 0, 36, -262, -250, { front: (u, v) => (v > 9 ? LAV[6] : u % 40 < 2 ? LAV[2] : LAV[4]), top: (u, v) => (u % 9 < 1 ? LAV[3] : LAV[5]), bot: LAV[1], side: LAV[3] });
-	for (let x = -1100; x < -60; x += 160) sbox(x, x + 14, 6, 30, -760, -262, { front: dstone, side: LAVD[2] });
-	{ const bx = -1700, by = 1400, bz = -420; sbox(bx, bx + 260, by, by + 120, bz - 40, bz, { front: "#2a1c14", top: "#3a2a1c", side: "#1e140e" }); sbox(bx + 20, bx + 240, by + 20, by + 100, bz, bz + 90, { front: (u, v) => (v > 40 && v < 70 && u % 40 > 12 && u % 40 < 30 ? CANDLE[2] : u % 6 < 1 ? "#24160e" : "#3a2414"), side: "#24160e" }); sbox(bx + 4, bx + 256, by + 10, by + 110, bz + 90, bz + 104, { front: "#1a2034", top: "#283052", side: "#141a2c" }); }
-	// the spire: a colonnade of tall arches behind the chamber (you see straight through), open framework below
-	sbox(-14, 334, 70, 96, -10, 236, { front: arch(LAVD, 46, 64, 196, 18, null), top: LAVD[5], bot: LAVD[2] });
-	for (let x = -14; x <= 334; x += 64) sbox(x - 4, x + 4, 66, 70, -10, 236, { front: (u, v) => (v % 24 < 1 ? LAVD[3] : LAVD[5]), side: LAVD[3] });
-	for (const z of [-80, -170]) sbox(-14, 334, 60, 72, z - 6, z, { front: (u, v) => (v > 4 ? LAVD[5] : LAVD[3]), top: LAVD[4], bot: LAVD[1] });
-	for (const [x0, x1] of [[-14, 20], [300, 334]]) sbox(x0, x1, -36, 70, -760, 236, { front: (u, v) => (u < 2 || u > 31 ? LAV[5] : brick(LAV)(u, v)), side: (u, v) => (v % 7 < 1 ? LAV[2] : u < 2 ? LAV[4] : LAV[3]) });
-	const plank = (u, v) => (u % 9 < 1 ? LAV[3] : R2(u / 9, v / 30) < 0.2 ? LAV[5] : LAV[6]);
-	const slab = { front: (u, v, d) => (v > 7 ? SILK[1] : v < 1 ? LAV[1] : LAV[5]), top: plank, bot: (u, v) => (u % 14 < 1 || v % 14 < 1 ? LAV[1] : LAV[3]), side: LAV[4] };
-	sbox(CH.x0, CH.hole[0], -36, 70, -10, 0, slab); sbox(CH.hole[1], CH.x1, -36, 70, -10, 0, slab);
-	sbox(-14, CH.hatch[0], -36, 70, CH.ceil, CH.ceil + 16, slab); sbox(CH.hatch[1], 334, -36, 70, CH.ceil, CH.ceil + 16, slab);
-	sbox(L1.x0, L1.x1, -20, 50, L1.z - 8, L1.z, slab); sbox(L2.x0, L2.x1, -20, 50, L2.z - 8, L2.z, slab);
-	for (const s2 of STEPS) sbox(s2.x0, s2.x1, -24, s2 === STEPS[0] ? 160 : 50, s2.z - (s2 === STEPS[0] ? 20 : 8), s2.z, slab);
-	// hanging chains with lanterns in the open drop below
-	for (const [x, y] of [[-40, 30], [360, 40], [230, 200]]) { for (let z = -230; z < 236; z += 6) sbox(x, x + 2, y, y + 2, z, z + 4, { front: LAVD[4], side: LAVD[2] }); sbox(x - 5, x + 7, y - 5, y + 7, -244, -230, { front: (u, v) => (v > 3 && v < 11 ? CANDLE[2] : LAVD[2]), side: LAVD[2], top: LAVD[4], bot: LAVD[1] }); }
-	// the terrace on top: a railing, and the gate that is this realm's checkpoint
-	for (let x = -10; x < 334; x += 18) sbox(x, x + 4, -32, -28, CH.ceil + 16, CH.ceil + 34, { front: LAV[5], side: LAV[3], top: LAV[6] });
-	sbox(-14, 334, -34, -26, CH.ceil + 32, CH.ceil + 36, { front: LAV[6], top: LAV[6], bot: LAV[2], side: LAV[4] });
-	for (const x of [124, 192]) sbox(x, x + 12, 10, 24, CH.ceil + 16, CH.ceil + 120, { front: (u, v) => (v % 20 < 1 ? LAV[3] : LAV[5]), side: LAV[3] });
-	sbox(112, 216, 6, 28, CH.ceil + 120, CH.ceil + 134, { front: (u, v) => (v > 11 ? LAV[6] : LAV[5]), top: LAV[6], bot: LAV[2], side: LAV[4] });
-	sbox(104, 224, 4, 30, CH.ceil + 134, CH.ceil + 140, { front: LAV[6], top: SILK[2], bot: LAV[3], side: LAV[4] });
-}
-function renderStaticS() { skyFor(); world(); }
-
-// ---------------------------------------------------------------- the stage
-function makeSpireStage(cv, readout) {
-	const T = { DROP_W: 3.8, DROP: 4.2, LANDED: 4.4, LAP_W: 4.7, LAP: 5.1, D1W: 7.9, D1: 8.25, D2W: 9.1, D2: 9.45, SPIT: 10.3, SPLAT: 10.9, LAP2: 11.2, SNAG: 12.2, DANGLE: 12.6, HITS: [13.0, 13.4, 13.8], UNRAVEL: 14.0, HATCH: 14.4, OPEN: 15.2, UP: 15.6, ON_TOP: 16.2, CHECK: 16.7, FADE: 18.6, LOOP: 19.0 };
-	const SPITS = [60, 160, 252];
-	let S, parts, J;
-	const reset = () => { S = { t: 0, flags: {}, pops: [], quips: [] }; parts = []; J = makeJuice(); };
+function makeRimeStage(cv, readout) {
+	const CY = 20, WALLX = 366, EX0 = 110;
+	const T = { LOOP: 18.6, CRAWL: 1.0, ARRIVE: 3.0, SNAP0: 3.15, TURN: 4.3, CORNER: 5.0, WALL: 5.6, GATHER: 6.1, BREATH: 6.75, BREATHEND: 7.7, CLIMB: 7.9, OVER: 8.9, LETGO: 9.4, CRASH: 9.68, WINCH: 11.0, UP: 11.8 };
+	const ICICLES = [276, 246, 216, 186, 156, 126, 96, 66].map((x, i) => ({ x, grow: T.CRAWL + 0.25 * i, snap: T.SNAP0 + 0.11 * i }));
+	const DROPX = 128, SPIKE_V = 150;
+	// the second half: it lowers itself on a chain from the middle of the ceiling and swings the room like a
+	// pendulum, legs out, candles flaring; the chain snaps and it crashes; crumpled; it winches up and crawls home
+	const Q = { MOVE: 12.4, AT: 12.7, SWING: 12.95, SNAP: 15.2, CRASH: 15.45, WINCH: 17.2, UPQ: 17.8, PX: 200, AMP: 0.8 };
+	const QL = FEET - 70 - CY, HITS = [16.5, 16.85];
+	const swingA = (t) => t < Q.SWING ? Q.AMP * smooth(Q.AT, Q.SWING, t) : Q.AMP * Math.cos(TAU * (t - Q.SWING));
+	let S, parts, rings, J, EM;
+	const reset = () => { S = { t: 0, flags: {}, lastPos: null, ic: ICICLES.map((q) => ({ ...q })) }; parts = []; rings = []; J = makeJuice(); EM = makeEmbers(); for (let i = 0; i < 400; i++) EM.update(i / 60, 1 / 60); };
 	reset();
 	const once = (k) => (S.flags[k] ? false : (S.flags[k] = true));
-	const pop = (w, x, z, t, c) => S.pops.push({ w, x, z, t0: t, c });
-	const say = (w, t) => { const p = spider(t); S.quips.push({ w, t0: t, x: p.x, z: p.z }); };
-	const arcP = (a, b, h, k) => [lerp(a[0], b[0], k), lerp(a[1], b[1], k) + 4 * h * k * (1 - k)];
-	// ---------------------------------------------------------------- Elfy, on the plane: x along, z up
+	const spring = (dt, amp, freq = 16, damp = 7) => (dt < 0 ? 0 : amp * Math.exp(-dt * damp) * Math.cos(dt * freq));
+	function keys(K, t) {
+		if (t <= K[0][0]) return K[0].slice(1);
+		for (let i = 1; i < K.length; i++) if (t < K[i][0]) { const a = K[i - 1], b = K[i], u = (t - a[0]) / (b[0] - a[0]), k = b[4] === "in" ? u * u : smooth(0, 1, u); return [lerp(a[1], b[1], k), lerp(a[2], b[2], k), lerp(a[3], b[3], k)]; }
+		const z = K[K.length - 1]; return z.slice(1, 4);
+	}
+	// ---------------------------------------------------------------- where it is: position of its hub, and which way is "up" (toward what it clings to)
+	const HANG = 26; // hub to the surface
+	const PATH = [[0, 300, CY + HANG, 0], [T.CRAWL, 300, CY + HANG, 0], [T.ARRIVE, 70, CY + HANG, 0], [T.TURN, 70, CY + HANG, 0], [T.CORNER, 328, CY + HANG, 0], [T.WALL, WALLX - HANG, CY + 40, Math.PI / 2], [T.GATHER, WALLX - HANG, FEET - 58, Math.PI / 2], [T.CLIMB, WALLX - HANG, FEET - 58, Math.PI / 2], [T.CLIMB + 0.5, WALLX - HANG, CY + 40, Math.PI / 2], [T.CLIMB + 0.8, 328, CY + HANG, 0], [T.OVER, DROPX, CY + HANG, 0], [T.LETGO, DROPX, CY + HANG, 0], [T.CRASH, DROPX, FEET - 14, 0, "in"], [T.WINCH, DROPX, FEET - 14, 0], [T.UP, DROPX, CY + HANG, 0], [T.LOOP, 300, CY + HANG, 0]];
+	function rime(t) {
+		if (t >= Q.MOVE) {
+			const o = { x: Q.PX, y: CY + HANG, rot: 0, sx: 1, sy: 1, flare: 0, legsFold: 0, crumple: 0, open: 0, walking: false };
+			if (t < Q.AT) { const p0 = keys(PATH, Q.MOVE); o.x = lerp(p0[0], Q.PX, smooth(Q.MOVE, Q.AT, t)); o.walking = true; return o; }
+			if (t < Q.SNAP) { const a = swingA(t), L = lerp(HANG, QL, smooth(Q.AT, Q.SWING, t)); o.x = Q.PX + Math.sin(a) * L; o.y = CY + Math.cos(a) * L; o.rot = a; o.flare = 1; o.open = 0.7; o.legsFold = 0; o.sx = 1.05; o.sy = 0.95; return o; }
+			if (t < Q.CRASH) { const a0 = swingA(Q.SNAP), u = (t - Q.SNAP) / (Q.CRASH - Q.SNAP); o.x = Q.PX + Math.sin(a0) * QL + 40 * u; o.y = lerp(CY + Math.cos(a0) * QL, FEET - 14, u * u); o.rot = a0 * (1 - u); o.legsFold = u; o.sy = 1.2; o.sx = 0.85; o.flare = 1; return o; }
+			const CX2 = Q.PX + Math.sin(swingA(Q.SNAP)) * QL + 40;
+			if (t < Q.WINCH) { const a = t - Q.CRASH; o.x = CX2; o.y = FEET - 14; o.crumple = 1; o.legsFold = 0.3; o.sy = a < 0.08 ? 0.6 : 0.85 + 0.1 * spring(a - 0.08, 1, 14, 5); o.sx = 2 - o.sy; return o; }
+			if (t < Q.UPQ) { const k = smooth(Q.WINCH, Q.UPQ, t); o.x = CX2; o.y = lerp(FEET - 14, CY + HANG, k); o.legsFold = 0.9 * (1 - k); o.sy = 1.1; return o; }
+			o.x = lerp(CX2, 300, smooth(Q.UPQ, T.LOOP - 0.2, t)); o.walking = true; return o;
+		}
+		let [x, y, rot] = keys(PATH, t);
+		let sx = 1, sy = 1, flare = 0, legsFold = 0, crumple = 0, open = 0;
+		const walking = (t > T.CRAWL && t < T.ARRIVE) || (t > T.TURN && t < T.GATHER) || (t > T.CLIMB && t < T.OVER) || (t > T.UP && t < T.LOOP);
+		y += Math.sin(t * 1.1) * 1.2;
+		// the breath: it pulls back against the wall (anticipation), the mask's mouth opening, then recoils with the blast
+		if (t > T.GATHER && t < T.BREATH) { const k = smooth(T.GATHER, T.BREATH, t); x += 6 * k; flare = k; open = k * 0.6; sy = 1 - 0.12 * k; }
+		if (t >= T.BREATH && t < T.BREATHEND) { open = 1; flare = 1; x += 6 - 2 * Math.sin(t * 50); }
+		if (t >= T.BREATHEND && t < T.BREATHEND + 0.5) { open = 1 - (t - T.BREATHEND) / 0.5; x += 6 * (1 - (t - T.BREATHEND) / 0.5) + 3 * spring(t - T.BREATHEND, 1, 14, 6); }
+		// the drop: candles flare, it hangs still, lets go, legs folding in as it falls, crashes and crumples
+		if (t > T.OVER && t < T.LETGO) { flare = smooth(T.OVER, T.LETGO, t); sy = 1 + 0.1 * flare; }
+		if (t >= T.LETGO && t < T.CRASH) { legsFold = smooth(T.LETGO, T.LETGO + 0.12, t); sy = 1.25; sx = 0.85; }
+		if (t >= T.CRASH && t < T.WINCH) { const a = t - T.CRASH; crumple = 1; legsFold = 0.3; sy = a < 0.08 ? 0.6 : 0.85 + 0.1 * spring(a - 0.08, 1, 14, 5); sx = 2 - sy; }
+		if (t >= T.WINCH && t < T.UP) { legsFold = 0.9 * (1 - smooth(T.UP - 0.3, T.UP, t)); sy = 1.1; }
+		return { x, y, rot, sx, sy, flare, legsFold, crumple, open, walking };
+	}
+	// the mask on its drum: which face, and how far through a turn it is
+	const FACES = [[0, "serene"], [T.CRAWL - 0.3, "weeping"], [T.TURN - 0.2, "serene"], [T.GATHER - 0.35, "scream"], [T.OVER - 0.4, "sleep"], [T.LETGO - 0.12, "scream"], [T.WINCH + 0.4, "serene"], [Q.MOVE + 0.1, "scream"], [Q.CRASH, "weeping"], [Q.WINCH + 0.3, "serene"]];
+	function mask(t) { let f = "serene", t0 = -9; for (const [ft, name] of FACES) if (t >= ft) { f = name; t0 = ft; } return { face: f, turn: clamp((t - t0) / 0.22) }; }
 	function elfy(t) {
-		const J2 = (t0, d, a, b, h, flip) => { const k = clamp((t - t0) / d), p = arcP(a, b, h, k); return { a: k < 0.25 ? "jump" : k < 0.45 ? "air_jump" : k < 0.6 ? "apex" : "fall", at: k < 0.25 || k >= 0.45 ? k : (k - 0.25) * d, x: p[0], z: p[1], flip }; };
-		const idle = (x, z, flip, a = "idle", at = t) => ({ a, at, x, z, flip });
-		// the climb in: terrace, three steps, up through the hole in the chamber floor
-		if (t < 0.4) return idle(60, -250);
-		if (t < 0.9) return J2(0.4, 0.5, [60, -250], [72, -190], 34);
-		if (t < 1.05) return idle(72, -190, false, "land", t - 0.9);
-		if (t < 1.6) return J2(1.05, 0.55, [72, -190], [204, -130], 36);
-		if (t < 1.75) return idle(204, -130, true, "land", t - 1.6);
-		if (t < 2.25) return J2(1.75, 0.5, [204, -130], [124, -70], 36, true);
-		if (t < 2.4) return idle(124, -70, false, "land", t - 2.25);
-		if (t < 2.95) return J2(2.4, 0.55, [124, -70], [162, 0], 44);
-		if (t < 3.2) return idle(162, 0, false, "land", t - 2.95);
-		if (t < 3.4) return { a: "run", at: t, x: lerp(162, 120, smooth(3.2, 3.4, t)), z: 0, flip: true };
-		// the fight
-		const jump = (t0, x, h = 30, flip = false) => { const k = clamp((t - t0) / 0.36); return { a: k < 0.3 ? "jump" : k < 0.6 ? "apex" : "fall", at: k, x, z: 4 * h * k * (1 - k), flip }; };
-		const lapPass = T.LAP + (220 - 120) / 440;
-		if (t >= lapPass - 0.17 && t < lapPass + 0.19) return jump(lapPass - 0.17, 120, 30);
-		if (t < 8.05) return idle(120, 0, !(t > 7.0 && t < 8.0));
-		if (t < 8.3) return { a: "dash", at: t - 8.05, x: lerp(120, 190, smooth(8.05, 8.3, t)), z: 0 };
-		if (t < 9.25) return idle(190, 0, true);
-		if (t < 9.5) return { a: "dash", at: t - 9.25, x: lerp(190, 110, smooth(9.25, 9.5, t)), z: 0, flip: true };
-		if (t < 12.7) return idle(110, 0, t < 11.2);
-		if (t < 12.85) return { a: "run", at: t, x: lerp(110, 138, smooth(12.7, 12.85, t)), z: 0 };
-		for (const h of T.HITS) if (t >= h - 0.2 && t < h + 0.2) { const k = (t - h + 0.2) / 0.4; return { a: k < 0.35 ? "jump" : k < 0.65 ? "strike_side" : "fall", at: k < 0.35 ? k : k < 0.65 ? (k - 0.35) * 0.4 + 0.04 : k, x: 138, z: 4 * 34 * k * (1 - k) }; }
-		if (t < T.UP) return idle(138, 0, false, t > T.OPEN ? "idle" : "idle");
-		if (t < T.ON_TOP) { const k = (t - T.UP) / (T.ON_TOP - T.UP); return J2(T.UP, T.ON_TOP - T.UP, [138, 0], [162, CH.ceil + 16], 60); }
-		if (t < T.ON_TOP + 0.15) return idle(162, CH.ceil + 16, false, "land", t - T.ON_TOP);
-		if (t < 17.2) return { a: "run", at: t, x: lerp(162, 150, smooth(T.ON_TOP + 0.15, 17.2, t)), z: CH.ceil + 16, flip: true };
-		return idle(150, CH.ceil + 16);
+		if (t >= Q.MOVE) {
+			if (t < 13.0) return { a: "idle", at: t, x: EX0 };
+			if (t < 13.2) return { a: "run", at: t - 13.0, x: lerp(EX0, 170, (t - 13.0) / 0.2) };
+			if (t < 15.4) return { a: t < 13.32 ? "crouch_down" : "crouch", at: t - 13.2, x: 170 };
+			if (t < 15.65) return { a: "idle", at: t, x: 170 };
+			if (t < 16.05) { const k = (t - 15.65) / 0.4; return { a: k < 0.4 ? "jump" : k < 0.6 ? "apex" : "fall", at: t - 15.65, x: 170, y: FEET - 4 * 28 * k * (1 - k) }; }
+			if (t < 16.4) return { a: t < 16.15 ? "land" : "run", at: t - 16.15, x: lerp(170, 212, smooth(16.15, 16.4, t)) };
+			if (t < 17.4) { const h = HITS.findLast((h) => t >= h - 0.06); return h !== undefined && t - h < 0.3 ? { a: "strike_side", at: t - h + 0.06, x: 212 } : { a: "idle", at: t, x: 212 }; }
+			if (t < 17.8) return { a: "run", at: t - 17.4, x: lerp(212, EX0, smooth(17.4, 17.8, t)), flip: true };
+			return { a: "idle", at: t, x: EX0 };
+		}
+		const runs = [[2.55, EX0, 50], [T.UP + 0.1, 50, EX0]];
+		for (const [t0, a, b] of runs) if (t >= t0 && t < t0 + 0.32) return { a: "run", at: t - t0, x: lerp(a, b, (t - t0) / 0.32), flip: b < a };
+		if (t > T.BREATH - 0.15 && t < T.BREATHEND + 0.15) return { a: t < T.BREATH ? "crouch_down" : "crouch", at: t - T.BREATH + 0.15, x: 50 };
+		const tj = T.CRASH + (DROPX - 50 - 8) / SPIKE_V - 0.18;
+		if (t >= tj && t < tj + 0.4) { const k = (t - tj) / 0.4; return { a: k < 0.4 ? "jump" : k < 0.6 ? "apex" : "fall", at: t - tj, x: 50, y: FEET - 4 * 26 * k * (1 - k) }; }
+		return { a: "idle", at: t, x: t < 2.55 || t > T.UP + 0.42 ? EX0 : 50 };
 	}
-	// ---------------------------------------------------------------- Nana Nightloom: where she is and which way is down for her
-	// surface: "floor" (down is -z), "lwall" (down is -x), "ceil" (down is +z), "rwall" (down is +x), "thread" (hanging)
-	function lap(t, t0, slow = 1) {
-		const runs = [[0.45, (k) => ({ x: lerp(220, CH.x0 + 2, k), z: 0, surf: "floor", face: -1 })], [0.4, (k) => ({ x: CH.x0 + 2, z: lerp(0, CH.ceil, k), surf: "lwall", face: -1 })], [0.65, (k) => ({ x: lerp(CH.x0 + 2, CH.x1 - 2, k), z: CH.ceil, surf: "ceil", face: 1 })], [0.4, (k) => ({ x: CH.x1 - 2, z: lerp(CH.ceil, 0, k), surf: "rwall", face: 1 })]];
-		let a = (t - t0) / slow;
-		for (const [d, f] of runs) { if (a < d) return { ...f(a / d), run: 1 }; a -= d; }
-		return null;
+	const frozenFalls = (t) => [0, 1, 2].map((i) => { const fx = FALLS[i].x, reach = WALLX - 34 - fx, tr = T.BREATH + reach / 420; return t > tr ? smooth(tr, tr + 0.2, t) * (1 - smooth(T.LOOP - 3.2, T.LOOP - 0.6, t)) : 0; });
+	// ---------------------------------------------------------------- the sim
+	function update(dt) {
+		if (juiceStep(J, dt)) return;
+		const t = (S.t += dt), R = Math.random;
+		if (t >= T.LOOP) { reset(); return; }
+		const r = rime(t), fz = frozenFalls(t);
+		if (t > Q.SWING && t < Q.SNAP && R() < dt * 30) parts.push({ k: "glint", x: r.x + (R() - 0.5) * 30, y: r.y + R() * 20, vx: 0, vy: 10, life: 0.8, age: 0, ph: R() * 9, c: FROST[4] });
+		if (t > Q.SWING && t < Q.SNAP && Math.abs(Math.sin(TAU * (t - Q.SWING))) > 0.97 && R() < dt * 20) kick(J, 0.5, 0.06);
+		if (t >= Q.SNAP && once("qsnap")) { kick(J, 1.6, 0.12, 0.05); for (let n = 0; n < 12; n++) parts.push({ k: "spark", x: Q.PX, y: CY + 2, vx: (R() - 0.5) * 120, vy: R() * 60, g: 300, life: 0.4, age: 0, pal: ["#ffffff", FROST[4], FROST[3]] }); }
+		if (t >= Q.CRASH && once("qcrash")) { const cx = r.x; kick(J, 4.6, 0.5, 0.2); rings.push({ x: cx, y: FEET, r0: 6, r1: 70, flat: 0.18, age: 0, life: 0.45, pal: ["#ffffff", FROST[3]], thick: true, lit: 0.5 }); EM.snuff(cx, FEET - 10, 120, parts); for (let n = 0; n < 30; n++) { const a = -Math.PI / 2 + (R() - 0.5) * 2.6, sp = 80 + R() * 220; parts.push({ k: "chunk", x: cx + (R() - 0.5) * 20, y: FEET - 6, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, g: 420, floor: true, life: 1.4, age: 0, s: 1 + Math.floor(R() * 3), ang: R() * TAU, rot: (R() - 0.5) * 20 }); } }
+		for (const h of HITS) if (t >= h && once("hit" + h)) { kick(J, 2.2, 0.16, 0.07); for (let n = 0; n < 12; n++) { const a = (R() - 0.5) * 1.6, sp = 60 + R() * 120; parts.push({ k: "spark", x: r.x - 18, y: FEET - 20, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 20, g: 200, life: 0.35, age: 0, pal: ["#ffffff", COLDFIRE[1], FROST[3]] }); } rings.push({ x: r.x - 18, y: FEET - 20, r0: 2, r1: 16, age: 0, life: 0.2, pal: ["#ffffff", FROST[4]], lit: 0.5 }); }
+		EM.frozen = fz.map((k) => k > 0.5);
+		EM.update(t, dt);
+		EM.snuff(r.x, r.y, 30, parts); // the cold round it kills every ember that comes near
+		if (R() < dt * 6) parts.push({ k: "glint", x: r.x + (R() - 0.5) * 40, y: r.y + (R() - 0.5) * 30, vx: 0, vy: 8, life: 1.2, age: 0, ph: R() * 9, c: COLDFIRE[1] });
+		// icicles: they grow where it passed, drip and tremble, snap off their roots and drop
+		for (const [i, ic] of S.ic.entries()) {
+			if (t >= ic.snap && once("snap" + i)) { ic.y = CY + 14; ic.vy = 0; ic.falling = true; for (let n = 0; n < 4; n++) parts.push({ k: "bit", x: ic.x, y: CY + 2, vx: (R() - 0.5) * 30, vy: 10, g: 300, life: 0.6, age: 0, c: FROST[4] }); }
+			if (ic.falling && !ic.landed) { ic.vy += 700 * dt; ic.y += ic.vy * dt; if (ic.y >= FEET) { ic.landed = true; kick(J, 1.2, 0.1, 0.02); rings.push({ x: ic.x, y: FEET, r0: 2, r1: 16, flat: 0.25, age: 0, life: 0.3, pal: ["#ffffff", FROST[3]] }); for (let n = 0; n < 10; n++) { const a = -Math.PI / 2 + (R() - 0.5) * 2.8, sp = 50 + R() * 120; parts.push({ k: "chunk", x: ic.x, y: FEET - 3, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, g: 420, floor: true, life: 1.2, age: 0, s: 1 + (n % 2), ang: R() * TAU, rot: (R() - 0.5) * 16 }); } EM.snuff(ic.x, FEET - 10, 18, parts); } }
+			if (ic.landed && !ic.gone && t > ic.snap + 1.2) ic.gone = true;
+		}
+		// the breath: frost puffs, wind streaks, tumbling crystals, out of the mask's screaming mouth across the room
+		if (t > T.BREATH && t < T.BREATHEND) {
+			const m = mouthPos(t, r), len = Math.min(330, (t - T.BREATH) * 420);
+			if (once("breath")) kick(J, 3, 0.3, 0.1);
+			for (let n = 0; n < 3; n++) if (R() < dt * 70) { const a = Math.PI + (R() - 0.5) * 0.22 - 0.06, sp = 220 + R() * 140; parts.push({ k: "puff", x: m[0], y: m[1], vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, drag: 0.9, r: 2 + R() * 2, grow: 9, life: 0.9 + R() * 0.3, age: 0, pal: ["#ffffff", FROST[4], FROST[3], FROST[2]] }); }
+			if (R() < dt * 50) { const a = Math.PI + (R() - 0.5) * 0.16 - 0.06; parts.push({ k: "spark", x: m[0], y: m[1], vx: Math.cos(a) * 420, vy: Math.sin(a) * 420, life: 0.6, age: 0, pal: ["#ffffff", FROST[4], FROST[3]] }); }
+			for (let d = 20; d < len; d += 18) EM.snuff(m[0] - d, m[1] - d * 0.06, 8 + d * 0.07, parts);
+			if (R() < dt * 12) kick(J, 1, 0.1);
+		}
+		// the drop: the crash, a frost nova, then a wave of ice spikes racing out along the floor both ways
+		if (t >= T.LETGO && once("letgo")) kick(J, 0.8, 0.08);
+		if (t >= T.CRASH && once("crash")) {
+			kick(J, 4, 0.45, 0.2);
+			rings.push({ x: DROPX, y: FEET - 6, r0: 6, r1: 70, flat: 0.3, age: 0, life: 0.5, pal: ["#ffffff", FROST[3]], thick: true, lit: 0.8 });
+			rings.push({ x: DROPX, y: FEET - 20, r0: 4, r1: 40, age: 0, life: 0.3, pal: ["#ffffff", COLDFIRE[2]], lit: 0.6 });
+			for (let n = 0; n < 30; n++) { const a = -Math.PI / 2 + (R() - 0.5) * 3, sp = 80 + R() * 200; parts.push({ k: "chunk", x: DROPX, y: FEET - 8, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, g: 420, floor: true, life: 1.4, age: 0, s: 1 + (n % 3), ang: R() * TAU, rot: (R() - 0.5) * 18 }); }
+			EM.snuff(DROPX, FEET - 20, 90, parts);
+		}
+		for (const d of [-1, 1]) { const fx = DROPX + d * (t - T.CRASH) * SPIKE_V; if (t > T.CRASH && fx > -10 && fx < W + 10 && R() < dt * 30) parts.push({ k: "glint", x: fx, y: FEET - 1, vx: 0, vy: 0, life: 0.5, age: 0, ph: 0, c: "#ffffff" }); }
+		for (const [i, b] of SPIKES.entries()) if (t >= b.t + 0.5 && once("shatter" + i)) { for (let n = 0; n < 4; n++) { const a = -Math.PI / 2 + (R() - 0.5) * 2.4; parts.push({ k: "chunk", x: b.x, y: FEET - 4, vx: Math.cos(a) * 70, vy: Math.sin(a) * 90, g: 420, floor: true, life: 1, age: 0, s: 1, ang: R() * TAU, rot: (R() - 0.5) * 16 }); } }
+		// the winch: chain links rattling as it hauls itself up
+		if (t > T.WINCH && t < T.UP && R() < dt * 20) parts.push({ k: "bit", x: DROPX + (R() - 0.5) * 2, y: CY + R() * (r.y - CY), vx: (R() - 0.5) * 20, vy: 0, g: 300, life: 0.4, age: 0, c: FROST[4] });
+		for (const q of parts) if (q.k === "chunk") { q.ang += q.rot * dt; if (q.y >= FEET - 1) q.rot *= 0.9; }
+		parts = stepParts(parts, dt);
+		rings = stepRings(rings, dt);
 	}
-	function spider(t) {
-		const base = { x: 230, z: CH.ceil, surf: "ceil", face: -1, run: 0, knit: 1, eyes: "open", brow: "kind", mouth: "smile", thread: null, cocoon: 0 };
-		if (t < T.DROP_W) return { ...base, eyes: t > 3.0 && t < 3.6 ? "wide" : "open" };
-		if (t < T.DROP) return { ...base, eyes: "sly", brow: "sly", mouth: "grin", knit: 0 };
-		if (t < T.LANDED) { const k = (t - T.DROP) / (T.LANDED - T.DROP); return { ...base, x: 220, z: lerp(CH.ceil, 30, k * k), surf: "thread", thread: [220, CH.ceil], knit: 0 }; }
-		if (t < T.LAP) return { ...base, x: 220, z: 0, surf: "floor", knit: 0, brow: "fierce", mouth: "grin", eyes: t > T.LAP_W ? "sly" : "open" };
-		const L = lap(t, T.LAP); if (L && t < 7.0) return { ...base, ...L, knit: 0, brow: "fierce", mouth: "grin" };
-		if (t < 7.2) return { ...base, x: CH.x1 - 2, z: 0, surf: "floor", face: -1, knit: 0, mouth: "laugh", eyes: "happy" };
-		if (t < 7.6) return { ...base, x: CH.x1 - 2, z: lerp(0, CH.ceil, (t - 7.2) / 0.4), surf: "rwall", face: 1, run: 1, knit: 0 };
-		// the drops: scuttle over Elfy on the ceiling, a dashed thread to her spot, down fast, and reel back up
-		const drop = (tw, td, x, from) => {
-			if (t < tw) { const k = smooth(tw - 0.3, tw, t); return { ...base, x: lerp(from, x, k), z: CH.ceil, surf: "ceil", run: 1, knit: 0, face: x < from ? -1 : 1 }; }
-			if (t < td) return { ...base, x, z: CH.ceil, surf: "ceil", knit: 0, eyes: "sly", brow: "sly", mouth: "grin" };
-			if (t < td + 0.15) { const k = (t - td) / 0.15; return { ...base, x, z: lerp(CH.ceil, 30, k * k), surf: "thread", thread: [x, CH.ceil], knit: 0, mouth: "laugh" }; }
-			if (t < td + 0.35) return { ...base, x, z: 30, surf: "thread", thread: [x, CH.ceil], knit: 0, eyes: "wide", mouth: "o" };
-			const k = smooth(td + 0.35, td + 0.65, t); return { ...base, x, z: lerp(30, CH.ceil, k), surf: k < 1 ? "thread" : "ceil", thread: [x, CH.ceil], knit: 0 };
-		};
-		if (t < T.D1 + 0.65) return drop(T.D1W, T.D1, 120, 298);
-		if (t < T.D2 + 0.65) return drop(T.D2W, T.D2, 190, 120);
-		if (t < T.LAP2) { const k = smooth(T.D2 + 0.65, T.SPIT - 0.1, t); return { ...base, x: lerp(190, 160, k), z: CH.ceil, surf: "ceil", knit: 0, run: k < 1 ? 1 : 0, mouth: t > T.SPIT - 0.2 && t < T.SPIT + 0.3 ? "o" : "grin", brow: "fierce", eyes: "sly" }; }
-		// the second lap, too fast, trailing silk, and she runs into her own thread
-		if (t < T.SNAG) { const L2 = lap(t, T.LAP2 - 0.55, 0.55); if (L2 && (L2.surf !== "ceil" || L2.x < 160)) return { ...base, ...L2, knit: 0, brow: "fierce", mouth: "laugh" }; return { ...base, x: 160, z: CH.ceil, surf: "ceil", knit: 0, eyes: "wide", mouth: "o", brow: "worry" }; }
-		if (t < T.DANGLE) { const k = (t - T.SNAG) / (T.DANGLE - T.SNAG); return { ...base, x: 160, z: lerp(CH.ceil, 78, k * k), surf: "thread", thread: [160, CH.ceil], cocoon: k, knit: 0, eyes: "wide", mouth: "o", brow: "worry" }; }
-		if (t < T.UNRAVEL) { const hit = T.HITS.some((h) => t >= h && t < h + 0.12); return { ...base, x: 160 + Math.sin(t * 3) * 3, z: 78, surf: "thread", thread: [160, CH.ceil], cocoon: 1, knit: 0, eyes: t > T.HITS[0] ? "dizzy" : "wide", mouth: "o", brow: "worry", flash: hit ? 1 : 0 }; }
-		return { ...base, x: 160, z: 78, surf: "gone" };
+	// the ice spikes: clusters along the floor, each rising when the frost line reaches it, glinting, then shattering
+	const SPIKES = [];
+	for (const d of [-1, 1]) for (let k = 1; k < 18; k++) { const x = DROPX + d * k * 9; if (x < 0 || x > W) continue; SPIKES.push({ x, t: T.CRASH + (k * 9) / SPIKE_V, h: 10 + 6 * hash(k, d + 5) - k * 0.2, n: 2 + Math.floor(hash(k, d) * 3) }); }
+	function mouthPos(t, r) { const P = xf(r); return P(0, 24); }
+	function xf(r) { const c = Math.cos(r.rot), s = Math.sin(r.rot); return (lx, ly) => [r.x + (lx * r.sx) * c - (ly * r.sy) * s, r.y + (lx * r.sx) * s + (ly * r.sy) * c]; }
+	// ---------------------------------------------------------------- drawing
+	function drawRime(t) {
+		const r = rime(t), P = xf(r), px = (lx, ly, h, a = 1) => { const p = P(lx, ly); put(p[0], p[1], h, a); put(p[0] + 0.6, p[1], h, a); put(p[0], p[1] + 0.6, h, a); };
+		const thick = (a, b, h, w = 1.4) => { const n = Math.ceil(Math.hypot(b[0] - a[0], b[1] - a[1]) * 1.5); for (let j = 0; j <= n; j++) { const u = j / n; disc(lerp(a[0], b[0], u), lerp(a[1], b[1], u), w, h); } };
+		// how fast it's moving, for the prisms' swing (follow-through)
+		const prev = S.lastPos || [r.x, r.y]; const vx = (r.x - prev[0]) * 60; S.lastPos = [r.x, r.y];
+		// the chain while it winches up
+		if (t > T.CRASH && t < T.UP + 0.2) { const top = [DROPX, CY]; for (let y = CY; y < r.y - 6; y += 3) { put(DROPX, y, IRON[4]); put(DROPX + ((y / 3) & 1 ? 1 : -1), y + 1, IRON[3]); } }
+		// six legs: long, jointed, black iron rimed with frost, hooking into the surface; tripod gait when it walks
+		const OFF = [-46, -30, -14, 14, 30, 46];
+		for (const [i, o] of OFF.entries()) {
+			const g = i % 2, dist = r.walking ? t * 3.2 : 0, fr = ((dist + g * 0.5) % 1 + 1) % 1, lift = r.walking && fr > 0.5 ? Math.sin(((fr - 0.5) / 0.5) * Math.PI) * 6 : 0, slide = r.walking ? (fr < 0.5 ? lerp(6, -6, fr / 0.5) : lerp(-6, 6, (fr - 0.5) / 0.5)) : 0;
+			const fold = r.legsFold, cr = r.crumple;
+			const foot = cr ? [o * 0.9, 8 + Math.abs(o) * 0.1 + Math.sin(t * 9 + i) * (t < T.WINCH ? 1.5 : 0)] : [lerp(o + slide, o * 0.35, fold), lerp(-HANG + lift, 18, fold)];
+			const hip = [o * 0.22, -4], knee = [lerp(hip[0], foot[0], 0.5) + Math.sign(o) * (10 - fold * 4), Math.min(hip[1], foot[1]) - 14 + fold * 16 + (cr ? 18 : 0)];
+			const a = P(...hip), b = P(...knee), c = P(...foot);
+			thick(a, b, IRON[2], 1.5); thick(b, c, IRON[2], 1.1);
+			line(a[0], a[1] - 1, b[0], b[1] - 1, FROST[2], 0.6); line(b[0], b[1] - 1, c[0], c[1] - 1, FROST[2], 0.5);
+			disc(b[0], b[1], 2, IRON[3]); put(b[0], b[1] - 1, FROST[4]);
+			const hk = P(foot[0] + Math.sign(o) * 3, foot[1] + (cr ? 0 : 3)); line(c[0], c[1], hk[0], hk[1], IRON[4]); put(hk[0], hk[1], FROST[4]);
+		}
+		// the cage: a crown of iron with spikes, frost along its rims
+		for (let a = 0; a < TAU; a += 0.05) { const p = P(Math.cos(a) * 14, Math.sin(a) * 4); put(p[0], p[1], Math.sin(a) < 0 ? IRON[4] : IRON[2]); const q = P(Math.cos(a) * 10, 8 + Math.sin(a) * 3); put(q[0], q[1], IRON[3]); }
+		for (let k = 0; k < 9; k++) { const lx = -12 + k * 3; thick(P(lx, 0), P(lx * 0.75, 8), IRON[1], 0.7); const sp = P(lx, -4 - (k % 2 ? 5 : 3)); line(P(lx, -2)[0], P(lx, -2)[1], sp[0], sp[1], IRON[4]); put(sp[0], sp[1], FROST[4]); }
+		// candle arms curling out and down, cold blue flames burning upward whatever way it hangs
+		for (const sd of [-1, 1]) for (let k = 0; k < 3; k++) {
+			const tip = [sd * (16 + k * 9), 6 + (k === 1 ? -4 : 3)], mid = [sd * (10 + k * 6), 12 + k * 2];
+			const a = P(sd * 10, 4), m = P(...mid), b = P(...tip);
+			thick(a, m, IRON[3], 0.8); thick(m, b, IRON[3], 0.8);
+			const cb = P(tip[0], tip[1] - 1), ct = P(tip[0], tip[1] - 6);
+			line(cb[0], cb[1], ct[0], ct[1], WAX[1]); line(cb[0] + 1, cb[1], ct[0] + 1, ct[1], WAX[0]); put(ct[0], ct[1] + 2, WAX[2]);
+			tongue(ct[0], ct[1], 4 + 3 * r.flare + Math.sin(t * 9 + k + sd) * 1, 1.6, 0.8, k * 7 + sd * 3, t, COLDFIRE);
+			glow(ct[0], ct[1] - 3, 10 + 8 * r.flare, COLDFIRE[2], 0.3 + 0.3 * r.flare);
+			// a crystal prism hanging from the arm, swinging behind its every move
+			const sw = Math.sin(t * 3 + k * 2 + sd) * 2 - vx * 0.03;
+			const p0 = m, p1 = [p0[0] + sw, p0[1] + 8], p2 = [p0[0] + sw * 1.3, p0[1] + 13];
+			line(p0[0], p0[1], p1[0], p1[1], IRON[4], 0.7);
+			for (let j = 0; j < 5; j++) { const u = j / 5; const w = 2 * Math.sin(u * Math.PI); for (let d = -w; d <= w; d++) put(lerp(p1[0], p2[0], u) + d, lerp(p1[1], p2[1], u), Math.abs(d) < 0.6 ? "#ffffff" : FROST[3]); }
+			if (Math.sin(t * 5 + k * 3 + sd) > 0.9) { put(p2[0], p2[1] - 2, "#ffffff"); light(p2[0], p2[1] - 2, COLDFIRE[1], 0.5); }
+		}
+		// the veil: torn frozen lace hanging round the drum, rippling
+		for (let lx = -10; lx <= 10; lx += 1) { const len = 16 + 6 * hash(lx + 20, 4) + Math.sin(t * 2 + lx) * 1.5; for (let ly = 9; ly < 9 + len; ly += 1) { if (hash(lx + 30, Math.floor(ly)) < 0.22) continue; const sw = Math.sin(t * 2.4 + ly * 0.25 + lx) * (ly - 9) * 0.06 - vx * 0.004 * (ly - 9); px(lx * (1 + (ly - 9) * 0.02) + sw, ly, (ly + lx) % 4 === 0 ? FROST[4] : FROST[2], 0.55); } }
+		// the mask on its drum
+		drawMask(t, r, P, px);
+		glow(P(0, 14)[0], P(0, 14)[1], 34, COLDFIRE[3], 0.18 + 0.2 * r.flare);
+		return r;
 	}
-	// ---------------------------------------------------------------- the camera: rides with Elfy, holds the chamber for the fight, rises at the end
-	function camAt(t) {
+	function drawMask(t, r, P, px) {
+		const m = mask(t), turnSq = m.turn < 1 ? Math.abs(Math.cos(m.turn * Math.PI)) : 1, w = 7 * Math.max(0.15, turnSq), cy = 17;
+		// the drum's rim showing as it turns
+		if (m.turn < 1) for (let ly = cy - 9; ly <= cy + 9; ly++) { px(-w - 1.5, ly, IRON[3]); px(w + 1.5, ly, IRON[2]); }
+		for (let ly = cy - 9; ly <= cy + 9; ly++) { const hw = w * Math.sqrt(Math.max(0, 1 - ((ly - cy) / 9.5) ** 2)); for (let lx = -hw; lx <= hw; lx += 0.7) px(lx, ly, PORCELAIN[clamp(Math.floor((0.7 - 0.35 * lx / 7 - 0.2 * (ly - cy) / 9) * 4), 0, 3)]); }
+		if (turnSq < 0.6) return;
+		const f = m.face, cold = (lx, ly) => { const p = P(lx, ly); glow(p[0], p[1], 4, COLDFIRE[2], 0.5); };
+		const eye = (sd) => [sd * 2.8, cy - 2.5];
+		if (f === "serene" || f === "sleep") for (const sd of [-1, 1]) { const [ex, ey] = eye(sd); for (let x = -1.5; x <= 1.5; x += 0.5) px(ex + x, ey + Math.abs(x) * (f === "sleep" ? -0.4 : 0.4), PORCELAIN[0]); }
+		if (f === "weeping" || f === "scream") for (const sd of [-1, 1]) { const [ex, ey] = eye(sd); for (let y = -1.6; y <= 1.6; y += 0.5) for (let x = -1.4; x <= 1.4; x += 0.5) if (x * x + y * y < 2.4) px(ex + x, ey + y * (f === "scream" ? 1.3 : 1), "#06060c"); px(ex, ey, COLDFIRE[1]); cold(ex, ey); }
+		if (f === "weeping") for (const sd of [-1, 1]) for (let j = 0; j < 9; j++) px(sd * 2.8 + Math.sin(j) * 0.3, cy + j * 0.8, "#06060c", 0.9); // black tears down to the rim
+		// mouth
+		if (f === "serene") for (let x = -1.5; x <= 1.5; x += 0.5) px(x, cy + 4, PORCELAIN[0]);
+		if (f === "sleep") for (let x = -1, y = 0; x <= 1; x += 0.5) px(x, cy + 4.5, PORCELAIN[0]);
+		if (f === "weeping") for (let x = -2; x <= 2; x += 0.5) px(x, cy + 4.6 - Math.abs(x) * -0.4 - 0.8, "#06060c");
+		if (f === "scream") { const oh = 2 + 3.5 * r.open; for (let y = -oh; y <= oh; y += 0.5) for (let x = -2.2; x <= 2.2; x += 0.5) if ((x / 2.2) ** 2 + (y / oh) ** 2 <= 1) px(x, cy + 5 + y * 0.8, r.open > 0.4 ? (Math.abs(y) < oh * 0.5 ? "#ffffff" : COLDFIRE[2]) : "#06060c"); if (r.open > 0.4) { const mp = P(0, cy + 5); glow(mp[0], mp[1], 10, COLDFIRE[1], 0.7 * r.open); } }
+		// a fine crack across the porcelain
+		for (let j = 0; j < 6; j++) px(-6 + j * 1.2, cy - 6 + j * 0.7 + (j % 2) * 0.5, PORCELAIN[0], 0.8);
+	}
+	function paint() {
+		const t = S.t;
+		col.set(hellBase); lit.fill(0);
+		juiceShake(J, t);
+		const fz = frozenFalls(t);
+		drawFalls(t, fz);
+		for (let i = 0; i < 3; i++) riverIce(FALLS[i].x, 50 * fz[i], t);
+		heatHaze(t, Math.max(...fz) * 0.7);
+		EM.draw(t, "back");
+		drawSoulfire(t);
+		// the right wall it climbs: basalt columns, rimed where it has been
+		for (let y = 0; y < FEET - 6; y++) for (let x = WALLX; x < W; x++) put(x, y, x === WALLX ? BASALT[4] : (x + Math.floor(y / 6)) % 5 === 0 ? BASALT[1] : BASALT[2]);
+		for (let y = CY + 20; y < FEET - 30; y += 2) if (t > T.WALL && hash(y, 3) < 0.5) put(WALLX - 1, y, FROST[3], 0.6);
+		// icicles: growing where it passed, trembling, the shadow of each sharpening on the floor before it drops
+		for (const ic of S.ic) {
+			if (t < ic.grow || ic.gone) continue;
+			const len = 14 * smooth(ic.grow, ic.grow + 0.6, t), tr = t > ic.snap - 0.5 && !ic.falling ? Math.sin(t * 60) * 0.7 : 0, top = ic.falling ? ic.y - 14 : CY;
+			if (!ic.landed) { for (let j = 0; j < len; j++) { const w = 2.4 * (1 - j / len); for (let d = -w; d <= w; d++) put(ic.x + d + tr, top + j, d < -w + 1 ? "#ffffff" : d > w - 1 ? FROST[2] : FROST[3]); } if (!ic.falling && len > 10 && (t * 3 + ic.x) % 1 < 0.1) put(ic.x + tr, top + len + 1, FROST[4]); }
+			if (!ic.falling && t > ic.snap - 0.7) { const k = smooth(ic.snap - 0.7, ic.snap, t); disc(ic.x, FEET - 1, 2 + 3 * k, "#0a0a14", 0.5 * k); put(ic.x, FEET - 1, FROST[3], k); }
+			if (ic.landed && t < ic.snap + 1.2) { const k = 1 - clamp((t - ic.snap - 0.5) / 0.7); for (let j = 0; j < 8; j++) put(ic.x + (j % 2), FEET - 1 - j, FROST[3], k); }
+		}
+		// warnings: the breath's corridor outlined while it gathers; the drop's target and the spikes' reach
+		if (t > T.GATHER && t < T.BREATH) { const r = rime(t), m = mouthPos(t, r), on = Math.sin(t * 30) > -0.2, k = smooth(T.GATHER, T.GATHER + 0.2, t); for (let d = 6; d < 330; d += 3) for (const sd of [-1, 1]) put(m[0] - d, m[1] - d * 0.06 + sd * (5 + d * 0.06), FROST[3], (on ? 0.85 : 0.3) * k); }
+		if (t > T.OVER && t < T.CRASH) { const on = Math.sin(t * 30) > -0.2, k = smooth(T.OVER, T.OVER + 0.3, t); for (let a = 0; a < TAU; a += 0.1) put(DROPX + Math.cos(a) * 16, FEET + Math.sin(a) * 3, FROST[3], (on ? 0.9 : 0.3) * k); for (let x = 0; x < W; x += 4) put(x, FEET + 2, FROST[2], (on ? 0.5 : 0.15) * k); }
+		// the ice spikes: jagged blades bursting up behind the racing frost line, glinting, then shattering
+		for (const b of SPIKES) { const a = t - b.t; if (a < 0 || a > 0.5) continue; const h = b.h * Math.min(1, a / 0.06) * (a > 0.4 ? 1 - (a - 0.4) / 0.1 : 1); for (let n = 0; n < b.n; n++) { const bx = b.x - 3 + n * 3, hh = h * (0.6 + 0.4 * hash(n, Math.round(b.x))), lean = (n - b.n / 2) * 0.25; for (let y = 0; y < hh; y++) { const w = 1.6 * (1 - y / hh); for (let d = -w; d <= w; d++) put(bx + d + lean * y, FEET - 1 - y, d < -w + 0.8 ? "#ffffff" : FROST[3]); } } if (a > 0.32 && a < 0.4) glow(b.x, FEET - 6, 8, "#ffffff", 0.6); }
+		for (const d of [-1, 1]) { const fx = DROPX + d * (t - T.CRASH) * SPIKE_V; if (t > T.CRASH && fx > -10 && fx < W + 10) for (let k = 0; k < 10; k++) put(fx - d * k, FEET, "#ffffff", 1 - k / 10); }
+		// warnings for the second half: the swing's whole arc dashed out under the ceiling; the shock's reach after the crash
+		if (t > Q.AT && t < Q.SWING + 0.6) { const on = Math.sin(t * 30) > -0.2, k = smooth(Q.AT, Q.AT + 0.15, t) * (1 - smooth(Q.SWING + 0.3, Q.SWING + 0.6, t)); for (let a = -Q.AMP; a <= Q.AMP; a += 0.03) { const x = Q.PX + Math.sin(a) * (QL + 30), y = CY + Math.cos(a) * (QL + 30); put(x, y, FROST[4], (on ? 0.85 : 0.3) * k); } }
+		if (t > Q.SNAP - 0.25 && t < Q.CRASH) { const cx = Q.PX + Math.sin(swingA(Q.SNAP)) * QL + 40; landMark(cx, 24, t > Q.CRASH - 0.1 ? "#ffffff" : FROST[4], 1, t); }
+		if (t > Q.CRASH && t < Q.CRASH + 0.9) { const a = t - Q.CRASH, cx = Q.PX + Math.sin(swingA(Q.SNAP)) * QL + 40, k = 1 - smooth(0.6, 0.9, a); for (const sd of [-1, 1]) { const x0 = cx + sd * (16 + a * SPIKE_V); for (let n = 0; n < 3; n++) { const bx = x0 - sd * n * 6, h = (12 - n * 3) * k; for (let j = 0; j < h; j++) { const w = 2.2 * (1 - j / h); for (let d = -w; d <= w; d++) put(bx + d, FEET - 1 - j, d < -w + 1 ? "#ffffff" : FROST[3]); } } } }
+		// the chain it hangs and swings from
+		if (t > Q.AT && t < Q.SNAP) { const r0 = rime(t); for (let j = 0; j < 60; j++) { const u = j / 60; put(lerp(Q.PX, r0.x, u), lerp(CY, r0.y - 10, u), j % 3 ? "#8a8aa0" : "#d8d8e8", 0.9); } }
+		const r = drawRime(t);
+		// the breath itself: a corridor of cold light behind the puffs
+		if (t > T.BREATH && t < T.BREATHEND) { const m = mouthPos(t, r), len = Math.min(330, (t - T.BREATH) * 420); for (let d = 4; d < len; d += 2) { const w = 4 + d * 0.06; for (let k2 = -w; k2 <= w; k2 += 2) put(m[0] - d, m[1] - d * 0.06 + k2 + Math.sin(t * 40 + d) * 1, Math.abs(k2) < 2 ? "#ffffff" : FROST[4], 0.18); } }
 		const e = elfy(t);
-		let z = t < 3.4 ? Math.min(110, e.z + 96) : t < T.OPEN ? 110 : lerp(110, 400, smooth(T.OPEN, 17.6, t));
-		return { x: 160 + Math.sin(t * 0.25) * 10, z };
+		drawElfy(e.a, e.at, Math.round(e.x), Math.round(e.y ?? FEET), 0, !!e.flip);
+		EM.draw(t, "mid");
+		drawRings(rings);
+		for (const q of parts) if (q.k === "chunk") { const a = 1 - q.age / q.life, s = q.s; for (let y = -s; y <= s; y++) for (let x = -s; x <= s; x++) { const rx = x * Math.cos(q.ang) - y * Math.sin(q.ang), ry = x * Math.sin(q.ang) + y * Math.cos(q.ang); if (Math.abs(rx) + Math.abs(ry) > s * 1.3) continue; put(q.x + x, q.y + y, y < 0 ? FROST[4] : FROST[3], a); } put(q.x - 1, q.y - 1, "#ffffff", a); }
+		drawParts(parts.filter((q) => q.k !== "chunk"), t);
+		EM.draw(t, "front");
+		if (t >= Q.CRASH && t < Q.CRASH + 0.05) impactFrame("#f2f8ff", "#0a0c18", 0.34);
+		OX = 0; OY = 0;
+		if (t >= Q.MOVE) { readout.textContent = t < Q.AT ? "phase two · the screaming mask; it crawls to the middle of the ceiling" : t < Q.SWING ? "warning · it lowers itself on a chain; the swing's whole arc dashed out · get low" : t < Q.SNAP ? "the pendulum · it swings the room, legs out, candles flaring · stay crouched" : t < Q.CRASH ? "the chain snaps; its landing outlined" : t < Q.CRASH + 0.6 ? "the crash · ice spikes race out both ways · jump" : t < Q.WINCH ? "weak window · crumpled on the floor, the weeping mask · hit it" : "it winches itself up and crawls home"; return; }
+		readout.textContent = t < T.CRAWL ? "it hangs from the ceiling, candles burning cold; the serene mask" : t < T.SNAP0 - 0.4 ? "tick · the weeping mask; it crawls the ceiling and icicles grow in its wake" : t < T.TURN ? "icicle fall · they tremble, their shadows sharpen, they snap and stab the floor in sequence" : t < T.GATHER ? "it turns back, over the corner and down the wall" : t < T.BREATH ? "tick · the screaming mask; it draws back against the wall, mouth opening; the breath's corridor outlined · crouch" : t < T.BREATHEND ? "frost breath · across the room; every ember dies; the lava falls turn to glass" : t < T.OVER ? "it climbs back up and crosses the ceiling to hang over Elfy" : t < T.LETGO ? "tick · the sleeping mask; candles flare; a target, and the spikes' reach" : t < T.WINCH ? "it lets go · the crash, a frost nova, a wave of ice spikes · jump · then it lies wrecked" : "weak window ends · it winches itself back up on its chain";
+	}
+	return { cv, update, paint, reset };
+}
+
+// ================================================================ Saint Rime's chapel: a miniature you walk all the way round
+// A frozen chapel on a floating rock, with a cloister walk round all four sides under open rafters. The track runs
+// round the walk, so the fight circles the building. Each side is seen almost face on; when the fight goes round a
+// corner the whole miniature turns a quarter with it (Fez), so forward stays to the right. The near side's columns
+// are left out (a dollhouse cut), the rafters stay (the chandelier hangs from them), and an attack can be dodged by
+// ducking round the corner out of its line.
+
+// ---------------------------------------------------------------- the renderer (as in the bathhouse study)
+const ZB = new Float32Array(N), BASE = new Float32Array(N * 3), BASEZ = new Float32Array(N);
+let ZT = null;
+const TH0 = -0.42;
+const CAM = { th: TH0, F: [130, 286, 60], sx: 320, sy: 206 };
+const FROST = ["#0e2a48", "#2a5a8a", "#5aa0d8", "#a8dcff", "#e4f6ff", "#ffffff"];
+const CSTONE = ["#141a2a", "#202a40", "#2e3a56", "#425070", "#5a6a8c", "#7a8aac", "#a8b8d4"];
+const SNOWC = ["#8a9ac0", "#b8c8e4", "#dce8f8", "#f4f8ff"];
+const WOODC = ["#1a100c", "#2e1c14", "#4a2e1e", "#6a4428", "#8e5e36"];
+const GLASS = ["#1a2a6a", "#3a4ab0", "#7a5ad0", "#c8a0ff", "#ffd080"];
+const LAMPC = ["#4a1808", "#a03a14", "#e07a30", "#ffc070", "#fff0c8"];
+function proj(X, Y, Z) {
+	const c = Math.cos(CAM.th), s = Math.sin(CAM.th), dx = X - CAM.F[0], dy = Y - CAM.F[1];
+	const xr = dx * c - dy * s, yr = dx * s + dy * c;
+	return [CAM.sx + xr - yr, CAM.sy + (xr + yr) / 2 - (Z - CAM.F[2]), xr + yr + Z];
+}
+function quad(dst, dstZ, O, U, V, n, fn, st = 0.5) {
+	const c = Math.cos(CAM.th), s = Math.sin(CAM.th);
+	if (n && (n[0] * c - n[1] * s) + (n[0] * s + n[1] * c) + n[2] <= 0.001) return;
+	const lu = Math.hypot(U[0], U[1], U[2]), lv = Math.hypot(V[0], V[1], V[2]);
+	const p0 = proj(O[0], O[1], O[2]), pu = proj(O[0] + U[0], O[1] + U[1], O[2] + U[2]), pv = proj(O[0] + V[0], O[1] + V[1], O[2] + V[2]);
+	const ux = (pu[0] - p0[0]) / lu, uy = (pu[1] - p0[1]) / lu, uz = (pu[2] - p0[2]) / lu, vx = (pv[0] - p0[0]) / lv, vy = (pv[1] - p0[1]) / lv, vz = (pv[2] - p0[2]) / lv;
+	const det = ux * vy - uy * vx;
+	if (lu * lv >= 40 && Math.abs(det) > 0.02) {
+		const xs = [p0[0], pu[0], pv[0], pu[0] + pv[0] - p0[0]], ys = [p0[1], pu[1], pv[1], pu[1] + pv[1] - p0[1]];
+		const x0 = Math.max(0, Math.floor(Math.min(...xs))), x1 = Math.min(W - 1, Math.ceil(Math.max(...xs))), y0 = Math.max(0, Math.floor(Math.min(...ys))), y1 = Math.min(H - 1, Math.ceil(Math.max(...ys)));
+		const ia = vy / det, ib = -vx / det, ic = -uy / det, id = ux / det;
+		for (let py = y0; py <= y1; py++) for (let px = x0; px <= x1; px++) {
+			const dx = px + 0.5 - p0[0], dy = py + 0.5 - p0[1], u = ia * dx + ib * dy, v = ic * dx + id * dy;
+			if (u < 0 || v < 0 || u >= lu || v >= lv) continue;
+			const i = py * W + px, z = p0[2] + uz * u + vz * v; if (z < dstZ[i]) continue;
+			const h = fn(u, v, px, py); if (!h) continue;
+			const cc = hx(h); dstZ[i] = z; dst[i * 3] = cc[0]; dst[i * 3 + 1] = cc[1]; dst[i * 3 + 2] = cc[2];
+		}
+		return;
+	}
+	for (let u = 0; u < lu; u += st) { const rx = p0[0] + ux * u, ry = p0[1] + uy * u, rz = p0[2] + uz * u; for (let v = 0; v < lv; v += st) { const px = Math.floor(rx + vx * v), py = Math.floor(ry + vy * v); if (px < 0 || py < 0 || px >= W || py >= H) continue; const i = py * W + px, z = rz + vz * v; if (z < dstZ[i]) continue; const h = fn(u, v, px, py); if (!h) continue; const cc = hx(h); dstZ[i] = z; dst[i * 3] = cc[0]; dst[i * 3 + 1] = cc[1]; dst[i * 3 + 2] = cc[2]; } }
+}
+function box(x0, y0, z0, x1, y1, z1, f) {
+	const B = BASE, Z = BASEZ, dx = x1 - x0, dy = y1 - y0, dz = z1 - z0, F = (g) => (typeof g === "string" ? () => g : g);
+	if (f.top) quad(B, Z, [x0, y0, z1], [dx, 0, 0], [0, dy, 0], [0, 0, 1], F(f.top));
+	if (f.side || f.yp) quad(B, Z, [x0, y1, z0], [dx, 0, 0], [0, 0, dz], [0, 1, 0], F(f.yp || f.side));
+	if (f.side || f.yn) quad(B, Z, [x0, y0, z0], [dx, 0, 0], [0, 0, dz], [0, -1, 0], F(f.yn || f.side));
+	if (f.side || f.xp) quad(B, Z, [x1, y0, z0], [0, dy, 0], [0, 0, dz], [1, 0, 0], F(f.xp || f.side));
+	if (f.side || f.xn) quad(B, Z, [x0, y0, z0], [0, dy, 0], [0, 0, dz], [-1, 0, 0], F(f.xn || f.side));
+}
+function glowW(X, Y, Z, r, h, k) { const p = proj(X, Y, Z), px = Math.floor(p[0]), py = Math.floor(p[1]); if (px < 0 || py < 0 || px >= W || py >= H) return; if (ZB[py * W + px] > p[2] + 3) return; glow(p[0], p[1], r, h, k); }
+
+// ---------------------------------------------------------------- the place: the chapel, the walk round it, the track
+const CORE = 260, WALK = 44, TOFF = 26, PURL = 14, BEAMZ = 112;
+const SEG = CORE + 2 * TOFF; // 312: one side of the track
+// the track: four sides, anticlockwise seen from above; s from 0 at the front-left corner
+function trackAt(s) {
+	s = ((s % (4 * SEG)) + 4 * SEG) % (4 * SEG);
+	const a = -TOFF, b = CORE + TOFF, k = Math.floor(s / SEG), u = s - k * SEG;
+	return [[a + u, b], [b, b - u], [b - u, a], [a, a + u]][k];
+}
+// which way is "out" from the wall on each side (toward the camera when that side is in front)
+const SIDE_OUT = [[0, 1], [1, 0], [0, -1], [-1, 0]];
+function sideOf(s) { return Math.floor((((s % (4 * SEG)) + 4 * SEG) % (4 * SEG)) / SEG); }
+// a point beside the track: dOff toward the wall (negative) or out (positive)
+function trackOff(s, dOff) { const p = trackAt(s), o = SIDE_OUT[sideOf(s)]; return [p[0] + o[0] * dOff, p[1] + o[1] * dOff]; }
+let FRONT = 0; // which side is nearest the camera now: its columns are cut away
+
+function backdrop() {
+	const set = (x, y, h) => { if (x < 0 || y < 0 || x >= W || y >= H) return; const c = hx(h), k = (y * W + x) * 3; BASE[k] = c[0]; BASE[k + 1] = c[1]; BASE[k + 2] = c[2]; };
+	const pan = (CAM.th - TH0) * 260; // turning the miniature pans the far world past behind it
+	const A = ["#060a1c", "#0a1230", "#121a40", "#1c2450", "#2a2e5e", "#3a3a6a"];
+	for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { const v = clamp(y / H) * 5, i = Math.min(4, Math.floor(v)), f = v - i; set(x, y, f > bayer(x, y) ? A[i + 1] : A[i]); }
+	for (let i = 0; i < 110; i++) set(Math.floor(((hash(i, 1) * W * 3 - pan * 0.1) % W + W) % W), Math.floor(hash(i, 2) * 160), hash(i, 3) < 0.3 ? "#e0e8ff" : "#6a74a8");
+	// an aurora in cyan, violet and rose (no green: that is Elfy's)
+	for (let x = 0; x < W; x++) { const xx = x + pan * 0.15, top = 30 + 26 * Math.sin(xx * 0.012) + 12 * Math.sin(xx * 0.031 + 2); for (let j = 0; j < 46; j++) { const y = Math.floor(top + j); const k = (1 - j / 46) * (0.5 + 0.5 * Math.sin(xx * 0.02 + j * 0.05)); if (k > 0.25 + bayer(x, y) * 0.5) set(x, y, j < 8 ? "#8a7ad8" : j < 22 ? "#4a8ab8" : "#6a4a9a"); } }
+	// three ranges of icy peaks, each sliding by its own amount as the miniature turns
+	for (const [k, base, amp, c0, c1, seed] of [[0.25, 250, 70, "#1a2448", "#2e3c68", 3], [0.5, 290, 60, "#141c3a", "#26325a", 7], [0.8, 330, 40, "#0e1430", "#1c2648", 11]]) for (let x = 0; x < W; x++) { const xx = x + pan * k, h = amp * (0.5 * noise1(xx * 0.012, seed) + 0.5 * noise1(xx * 0.035, seed + 1)), top = Math.floor(base - h); for (let y = top; y < H; y++) set(x, y, y < top + 3 && noise1(xx * 0.2, seed + 2) > 0.4 ? "#c8d4f0" : y < top + 10 ? c1 : c0); }
+	// far floating rocks with lit windows
+	for (const [x0, y0, w, sd] of [[60, 120, 40, 1], [520, 160, 30, 2], [300, 80, 18, 3]]) { const x = Math.floor(((x0 - pan * 0.35) % (W + 80) + W + 80) % (W + 80) - 40); for (let y = 0; y < w; y++) { const hw = y < 4 ? w : w * (1 - (y - 4) / w); for (let dx = -hw; dx <= hw; dx++) set(x + Math.round(dx), y0 + y, y < 2 ? "#c8d4f0" : y < 5 ? "#3a4470" : "#1a2040"); } set(x - 3, y0 - 3, "#ffc070"); set(x + 4, y0 - 4, "#ffc070"); for (let y = -8; y < 0; y++) { set(x - 5, y0 + y, "#2a3050"); set(x + 6, y0 + y, "#2a3050"); } }
+	BASEZ.fill(-1e9);
+}
+function scene() {
+	const B = BASE, Z = BASEZ, R = (u, v) => hash(Math.floor(u), Math.floor(v)), E = -WALK - 16, E2 = CORE + WALK + 16;
+	// the rock: a snowy top, earth and ice sides, rock hanging under it
+	quad(B, Z, [E, E, 0], [E2 - E, 0, 0], [0, E2 - E, 0], [0, 0, 1], (u, v) => { const X = u + E, Y = v + E; if (X > -WALK && X < CORE + WALK && Y > -WALK && Y < CORE + WALK) return null; return noise1(X * 0.08 + Y * 0.05, 4) > 0.6 ? SNOWC[3] : SNOWC[2]; });
+	const earth = (u, v) => (v > 14 ? SNOWC[2] : v > 11 ? SNOWC[0] : ((Math.floor(v / 3) + Math.floor(u / 19)) % 3 === 0) ? CSTONE[3] : v > 6 ? CSTONE[2] : CSTONE[1]);
+	for (const [O, U, n] of [[[E, E2, -18], [E2 - E, 0, 0], [0, 1, 0]], [[E2, E, -18], [0, E2 - E, 0], [1, 0, 0]], [[E, E, -18], [E2 - E, 0, 0], [0, -1, 0]], [[E, E, -18], [0, E2 - E, 0], [-1, 0, 0]]]) quad(B, Z, O, U, [0, 0, 18], n, earth);
+	{
+		const cs = [[E, E], [E2, E], [E2, E2], [E, E2]].map(([x, y]) => proj(x, y, -18)), xs = cs.map((p) => p[0]), x0 = Math.floor(Math.min(...xs)), x1 = Math.ceil(Math.max(...xs)), cx = (x0 + x1) / 2, hw = (x1 - x0) / 2;
+		for (let x = x0; x <= x1; x++) { let top = -1e9; for (let e = 0; e < 4; e++) { const a = cs[e], b = cs[(e + 1) % 4]; if ((x - a[0]) * (x - b[0]) <= 0 && a[0] !== b[0]) top = Math.max(top, lerp(a[1], b[1], (x - a[0]) / (b[0] - a[0]))); } if (top < -1e8) continue; const k = 1 - Math.abs(x - cx) / hw, L = Math.max(0, k) ** 1.2 * 120 + noise1(x * 0.07, 9) * 24 * k; for (let y = Math.floor(top); y < top + L; y++) { if (x < 0 || y < 0 || x >= W || y >= H) continue; const i = y * W + x; if (Z[i] > -1e8) continue; const d = (y - top) / Math.max(1, L), h = d > 0.9 ? CSTONE[0] : Math.floor((y + noise1(x * 0.05, 2) * 6) / 6) % 4 === 0 ? CSTONE[3] : d > 0.55 ? CSTONE[1] : CSTONE[2], c = hx(h); B[i * 3] = c[0]; B[i * 3 + 1] = c[1]; B[i * 3 + 2] = c[2]; Z[i] = -1e8; if (d > 0.7 && hash(x, 3) < 0.04) { const c2 = hx(FROST[3]); B[i * 3] = c2[0]; B[i * 3 + 1] = c2[1]; B[i * 3 + 2] = c2[2]; } } }
+	}
+	// the cloister walk: stone flags, snow drifted along the outer edge
+	quad(B, Z, [-WALK, -WALK, 0], [CORE + 2 * WALK, 0, 0], [0, CORE + 2 * WALK, 0], [0, 0, 1], (u, v) => { const X = u - WALK, Y = v - WALK; if (X > 0 && X < CORE && Y > 0 && Y < CORE) return null; const out = Math.min(X + WALK, Y + WALK, CORE + WALK - X, CORE + WALK - Y); if (out < 6 + 3 * noise1((X + Y) * 0.1, 5)) return SNOWC[out < 3 ? 3 : 2]; const fx = Math.floor((X + 400) / 13), fy = Math.floor((Y + 400) / 13); return ((X + 400) % 13 < 1 || (Y + 400) % 13 < 1) ? CSTONE[2] : R(fx, fy) < 0.3 ? CSTONE[4] : CSTONE[5]; });
+	// the chapel: four walls of pale blue stone, a lancet window of stained glass in the middle of each, buttresses
+	const wallTex = (L) => (u, v) => { const mid = L / 2, w = 26, top = 128, sill = 30; const inWin = Math.abs(u - mid) < w / 2 && v > sill && (v < top - w / 2 || Math.hypot(u - mid, v - (top - w / 2)) < w / 2); if (inWin) { const lead = Math.abs(u - mid) % 7 < 1 || (v - sill) % 11 < 1; if (lead) return CSTONE[0]; const k = noise1(u * 0.3 + v * 0.13, 6); return k > 0.72 ? GLASS[4] : k > 0.5 ? GLASS[3] : k > 0.3 ? GLASS[2] : GLASS[1]; } const rim = Math.abs(u - mid) < w / 2 + 3 && v > sill - 3 && (v < top - w / 2 + 3 || Math.hypot(u - mid, v - (top - w / 2)) < w / 2 + 3); if (rim) return CSTONE[6]; if (v > 150) return v > 154 ? SNOWC[3] : CSTONE[6]; const row = Math.floor(v / 9), off = row % 2 ? 9 : 0; if (v % 9 < 1 || (u + off) % 18 < 1) return CSTONE[3]; return R((u + off) / 18, row) < 0.2 ? CSTONE[4] : CSTONE[5]; };
+	quad(B, Z, [0, CORE, 0], [CORE, 0, 0], [0, 0, 158], [0, 1, 0], wallTex(CORE));
+	quad(B, Z, [CORE, CORE, 0], [0, -CORE, 0], [0, 0, 158], [1, 0, 0], wallTex(CORE));
+	quad(B, Z, [CORE, 0, 0], [-CORE, 0, 0], [0, 0, 158], [0, -1, 0], wallTex(CORE));
+	quad(B, Z, [0, 0, 0], [0, CORE, 0], [0, 0, 158], [-1, 0, 0], wallTex(CORE));
+	for (const [x, y] of [[-8, -8], [CORE - 4, -8], [CORE - 4, CORE - 4], [-8, CORE - 4]]) box(x, y, 0, x + 12, y + 12, 166, { top: SNOWC[3], side: (u, v) => (v % 22 < 1 ? CSTONE[3] : v > 160 ? SNOWC[2] : CSTONE[5]) });
+	// the roof: four slopes of slate with snow on them, a little bell spire
+	const roofTex = (u, v, px, py) => { const n = noise1(u * 0.03, 8) * 0.6 + noise1(v * 0.05 + u * 0.01, 9) * 0.4; if (v % 9 < 1 && n < 0.55) return CSTONE[2]; return n > 0.62 ? SNOWC[2] : n > 0.45 ? SNOWC[1] : (n + bayer(px, py) * 0.08 > 0.4 ? SNOWC[0] : CSTONE[4]); };
+	const RZ = 158, RH = 70, ov = 8;
+	quad(B, Z, [-ov, CORE + ov, RZ], [CORE + 2 * ov, 0, 0], [0, -(CORE / 2 + ov), RH], [0, 0.6, 0.8], roofTex);
+	quad(B, Z, [CORE + ov, CORE + ov, RZ], [0, -(CORE + 2 * ov), 0], [-(CORE / 2 + ov), 0, RH], [0.6, 0, 0.8], roofTex);
+	quad(B, Z, [CORE + ov, -ov, RZ], [-(CORE + 2 * ov), 0, 0], [0, CORE / 2 + ov, RH], [0, -0.6, 0.8], roofTex);
+	quad(B, Z, [-ov, -ov, RZ], [0, CORE + 2 * ov, 0], [CORE / 2 + ov, 0, RH], [-0.6, 0, 0.8], roofTex);
+	box(CORE / 2 - 12, CORE / 2 - 12, RZ + RH - 10, CORE / 2 + 12, CORE / 2 + 12, RZ + RH + 30, { top: SNOWC[3], side: (u, v) => (u > 8 && u < 16 && v > 12 && v < 30 ? "#0a0e1c" : CSTONE[5]) });
+	// the walk's columns (none on the side nearest the camera), with capitals and a beam along the top
+	for (let side = 0; side < 4; side++) {
+		const o = SIDE_OUT[side];
+		for (let k = 0; k <= 6; k++) {
+			const along = -WALK + k * ((CORE + 2 * WALK) / 6), pos = side === 0 ? [along, CORE + WALK] : side === 1 ? [CORE + WALK, CORE - along] : side === 2 ? [CORE - along, -WALK] : [-WALK, along];
+			if (side === FRONT || (k === 0 && (side + 3) % 4 === FRONT) || (k === 6 && (side + 1) % 4 === FRONT)) continue;
+			const [x, y] = [pos[0] - 4, pos[1] - 4];
+			box(x, y, 0, x + 8, y + 8, BEAMZ - 6, { side: (u, v) => (u < 1.5 ? CSTONE[6] : v < 4 ? CSTONE[3] : CSTONE[5]), top: CSTONE[6] });
+			box(x - 2, y - 2, BEAMZ - 6, x + 10, y + 10, BEAMZ, { side: CSTONE[6], top: SNOWC[3] });
+		}
+		if (side === FRONT) continue;
+		const s0 = side === 0 ? [-WALK, CORE + WALK - 3, CORE + WALK, CORE + WALK + 3] : side === 1 ? [CORE + WALK - 3, -WALK, CORE + WALK + 3, CORE + WALK] : side === 2 ? [-WALK, -WALK - 3, CORE + WALK, -WALK + 3] : [-WALK - 3, -WALK, -WALK + 3, CORE + WALK];
+		box(s0[0], s0[1], BEAMZ, s0[2], s0[3], BEAMZ + 8, { top: SNOWC[3], side: (u, v) => (v < 2 ? CSTONE[3] : CSTONE[5]) });
+	}
+	// the rafters over the walk: cross beams from the wall out, two purlins along (the chandelier hooks onto the inner one)
+	const beam = { top: SNOWC[3], side: (u, v) => (v < 1.5 ? WOODC[1] : u % 11 < 1 ? WOODC[2] : WOODC[3]) };
+	for (let side = 0; side < 4; side++) {
+		for (let k = 0; k <= 12; k++) { const a = -WALK + k * ((CORE + 2 * WALK) / 12); if (side === 0) box(a - 2, CORE, BEAMZ, a + 2, CORE + WALK, BEAMZ + 6, beam); if (side === 1) box(CORE, a - 2, BEAMZ, CORE + WALK, a + 2, BEAMZ + 6, beam); if (side === 2) box(a - 2, -WALK, BEAMZ, a + 2, 0, BEAMZ + 6, beam); if (side === 3) box(-WALK, a - 2, BEAMZ, 0, a + 2, BEAMZ + 6, beam); }
+		for (const off of [PURL, PURL + 20]) { if (side === 0) box(-WALK, CORE + off - 2, BEAMZ + 6, CORE + WALK, CORE + off + 2, BEAMZ + 10, beam); if (side === 1) box(CORE + off - 2, -WALK, BEAMZ + 6, CORE + off + 2, CORE + WALK, BEAMZ + 10, beam); if (side === 2) box(-WALK, -off - 2, BEAMZ + 6, CORE + WALK, -off + 2, BEAMZ + 10, beam); if (side === 3) box(-off - 2, -WALK, BEAMZ + 6, -off + 2, CORE + WALK, BEAMZ + 10, beam); }
+	}
+	// benches and a frozen font along the walk
+	for (const [x, y, w, d] of [[40, CORE + 6, 40, 8], [CORE + 6, 150, 8, 40], [180, -14, 40, 8]]) box(x, y, 0, x + w, y + d, 10, { top: (u, v) => (u % 8 < 1 ? WOODC[1] : SNOWC[1]), side: WOODC[2] });
+	box(CORE + 8, 40, 0, CORE + 22, 54, 16, { top: (u, v) => (Math.hypot(u - 7, v - 7) < 5 ? FROST[3] : CSTONE[6]), side: CSTONE[5] });
+}
+function renderStatic() { backdrop(); scene(); }
+
+// ---------------------------------------------------------------- the stage
+function makeChapelStage(cv, readout) {
+	const HANGZ = BEAMZ + 6, HUBZ = BEAMZ - 22, WALLD = -TOFF + 2, PURLD = -(TOFF - PURL); // depths: on the wall, under the purlin
+	const T = { CRAWL: 1.0, ARRIVE: 3.0, SNAP0: 3.2, BACK: 3.4, CORNER1: 4.45, TURN1: [4.5, 5.3], AB: 5.2, WALLDOWN: 5.9, GATHER: 6.3, BREATH: 6.9, BREATHEND: 7.8, CLIMB: 7.9, OVER: 8.7, LETGO: 9.2, CRASH: 9.45, WINCH: 11.6, UP: 12.4, CORNER2: 12.9, TURN2: [12.8, 13.6], AT: 13.6, SWING: 14.3, SNAP: 16.4, CRASH2: 16.75, WINCH2: 18.6, FADE: 19.3, LOOP: 19.8 };
+	const ICS = [210, 185, 160, 135, 110, 85, 60].map((s, i) => ({ s, grow: T.CRAWL + 0.28 * i, snap: T.SNAP0 + 0.12 * i }));
+	const SPIKE_V = 150, DROP1 = 380, PIV = 790, PL = 52, AMP = 0.8, HITS1 = [10.5, 10.85, 11.2], HITS2 = [17.7, 18.05, 18.4];
+	let S, parts, J;
+	const reset = () => { S = { t: 0, flags: {}, pops: [], last: null }; parts = []; J = makeJuice(); };
+	reset();
+	const once = (k) => (S.flags[k] ? false : (S.flags[k] = true));
+	const spring = (dt, amp, freq = 16, damp = 7) => (dt < 0 ? 0 : amp * Math.exp(-dt * damp) * Math.cos(dt * freq));
+	const pop = (w, s, h, t, c) => S.pops.push({ w, s, h, t0: t, c });
+	const swingA = (t) => (t < T.SWING ? AMP * smooth(T.AT, T.SWING, t) : AMP * Math.cos(TAU * (t - T.SWING)));
+	const crash2S = () => PIV + Math.sin(swingA(T.SNAP)) * PL + 40;
+	// ---------------------------------------------------------------- Saint Rime: along the track (s), its hub's height, how far in toward the wall
+	function rime(t) {
+		const o = { s: 230, h: HUBZ, d: PURLD, walking: false, flare: 0, legsFold: 0, crumple: 0, open: 0, rot: 0, sx: 1, sy: 1, chain: null };
+		const walkTo = (a, b, t0, t1) => { o.s = lerp(a, b, smooth(t0, t1, t)); o.walking = true; };
+		if (t < T.CRAWL) return o;
+		if (t < T.ARRIVE) { walkTo(230, 40, T.CRAWL, T.ARRIVE); return o; }
+		if (t < T.BACK) { o.s = 40; return o; }
+		if (t < T.AB) { walkTo(40, 400, T.BACK, T.AB); return o; }
+		if (t < T.WALLDOWN) { walkTo(400, 560, T.AB, T.WALLDOWN); return o; }
+		if (t < T.GATHER) { const k = smooth(T.WALLDOWN, T.GATHER, t); o.s = 560; o.h = lerp(HUBZ, 60, k); o.d = lerp(PURLD, WALLD, k); o.walking = true; return o; }
+		if (t < T.CLIMB) { o.s = 560; o.h = 60; o.d = WALLD; if (t < T.BREATH) { const k = smooth(T.GATHER, T.BREATH, t); o.flare = k; o.open = k * 0.6; o.sy = 1 - 0.12 * k; } else if (t < T.BREATHEND) { o.open = 1; o.flare = 1; o.s += Math.sin(t * 50) * 1.5; } else { o.open = 1 - (t - T.BREATHEND) / 0.1; } return o; }
+		if (t < T.OVER) { const k = smooth(T.CLIMB, T.CLIMB + 0.3, t); o.h = lerp(60, HUBZ, k); o.d = lerp(WALLD, PURLD, k); o.s = lerp(560, DROP1, smooth(T.CLIMB + 0.3, T.OVER, t)); o.walking = true; return o; }
+		if (t < T.LETGO) { o.s = DROP1; o.flare = smooth(T.OVER, T.LETGO, t); o.sy = 1 + 0.1 * o.flare; return o; }
+		if (t < T.CRASH) { const k = (t - T.LETGO) / (T.CRASH - T.LETGO); o.s = DROP1; o.h = lerp(HUBZ, 12, k * k); o.legsFold = smooth(0, 0.4, k); o.sy = 1.2; o.sx = 0.85; return o; }
+		if (t < T.WINCH) { const a = t - T.CRASH; o.s = DROP1; o.h = 12; o.crumple = 1; o.legsFold = 0.3; o.sy = a < 0.08 ? 0.6 : 0.85 + 0.1 * spring(a - 0.08, 1, 14, 5); o.sx = 2 - o.sy; o.chain = 1; o.flash = HITS1.some((h) => t >= h && t < h + 0.12) ? 1 : 0; return o; }
+		if (t < T.UP) { const k = smooth(T.WINCH, T.UP, t); o.s = DROP1; o.h = lerp(12, HUBZ, k); o.legsFold = 0.9 * (1 - k); o.chain = 1; return o; }
+		if (t < T.AT) { walkTo(DROP1, PIV, T.UP, T.AT); return o; }
+		if (t < T.SNAP) { const a = swingA(t), L = lerp(HANGZ - HUBZ, PL, smooth(T.AT, T.SWING, t)); o.s = PIV + Math.sin(a) * L; o.h = HANGZ - Math.cos(a) * L; o.rot = a; o.flare = 1; o.open = 0.7; o.chain = "swing"; return o; }
+		if (t < T.CRASH2) { const a0 = swingA(T.SNAP), u = (t - T.SNAP) / (T.CRASH2 - T.SNAP); o.s = PIV + Math.sin(a0) * PL + 40 * u; o.h = lerp(HANGZ - Math.cos(a0) * PL, 12, u * u); o.rot = a0 * (1 - u); o.legsFold = u; o.flare = 1; return o; }
+		if (t < T.WINCH2) { const a = t - T.CRASH2; o.s = crash2S(); o.h = 12; o.crumple = 1; o.legsFold = 0.3; o.sy = a < 0.08 ? 0.6 : 0.85 + 0.1 * spring(a - 0.08, 1, 14, 5); o.sx = 2 - o.sy; o.flash = HITS2.some((h) => t >= h && t < h + 0.12) ? 1 : 0; return o; }
+		const k = smooth(T.WINCH2, T.FADE, t); o.s = crash2S(); o.h = lerp(12, HUBZ, k); o.chain = 1; o.legsFold = 0.9 * (1 - k); return o;
+	}
+	const FACES = [[0, "serene"], [T.CRAWL - 0.3, "weeping"], [T.BACK - 0.2, "serene"], [T.GATHER - 0.35, "scream"], [T.OVER - 0.4, "sleep"], [T.LETGO - 0.12, "scream"], [T.CRASH + 0.3, "weeping"], [T.UP, "serene"], [T.AT - 0.2, "scream"], [T.CRASH2, "weeping"]];
+	function mask(t) { let f = "serene", t0 = -9; for (const [ft, name] of FACES) if (t >= ft) { f = name; t0 = ft; } return { face: f, turn: clamp((t - t0) / 0.22) }; }
+	// ---------------------------------------------------------------- Elfy: s along the track and her height
+	function elfy(t) {
+		const run = (a, b, t0, t1) => ({ a: "run", at: t, s: lerp(a, b, smooth(t0, t1, t)), h: 0, flip: b < a });
+		const idle = (s, flip, a = "idle", at = t) => ({ a, at, s, h: 0, flip });
+		const jump = (s, t0, d, hh, flip) => { const k = clamp((t - t0) / d); return { a: k < 0.3 ? "jump" : k < 0.6 ? "apex" : "fall", at: k, s, h: 4 * hh * k * (1 - k), flip }; };
+		const hitAt = (s, hits, flip) => { const h = hits.findLast((q) => t >= q - 0.06); return h !== undefined && t - h < 0.3 ? { a: "strike_side", at: t - h + 0.06, s, h: 0, flip } : idle(s, flip); };
+		if (t < 2.3) return idle(80, t > 1.2);
+		if (t < 2.75) return run(80, 268, 2.3, 2.75);
+		if (t < 4.6) return idle(268, t < 3.4);
+		if (t < 5.1) return run(268, 360, 4.6, 5.1);
+		if (t < 6.45) return idle(360);
+		if (t < 6.8) return run(360, 236, 6.45, 6.8); // round the corner, out of the breath's line
+		if (t < 8.0) return idle(236);
+		if (t < 8.4) return run(236, DROP1, 8.0, 8.4);
+		if (t < 8.85) return idle(DROP1);
+		if (t < 9.1) return run(DROP1, 446, 8.85, 9.1);
+		const tj = T.CRASH + (446 - DROP1 - 8) / SPIKE_V - 0.18;
+		if (t >= tj && t < tj + 0.38) return jump(446, tj, 0.38, 28, true);
+		if (t < 10.1) return idle(446, true);
+		if (t < 10.3) return run(446, 426, 10.1, 10.3);
+		if (t < T.WINCH) return hitAt(426, HITS1, true);
+		if (t < 12.6) return idle(426, false);
+		if (t < 13.6) return run(426, 770, 12.6, 13.6);
+		if (t < 14.1) return idle(770);
+		if (t < T.SNAP + 0.05) return { a: t < 14.2 ? "crouch_down" : "crouch", at: t - 14.1, s: 770, h: 0 };
+		const tj2 = T.CRASH2 + (crash2S() - 770 - 8) / SPIKE_V - 0.18;
+		if (t >= tj2 && t < tj2 + 0.38) return jump(770, tj2, 0.38, 28);
+		if (t < 17.3) return idle(770);
+		if (t < 17.5) return run(770, crash2S() - 44, 17.3, 17.5);
+		if (t < T.WINCH2) return hitAt(crash2S() - 44, HITS2, false);
+		return idle(crash2S() - 44);
+	}
+	// ---------------------------------------------------------------- the camera: one side face on; a quarter turn round each corner; a slow sway
+	function camAt(t) {
+		const k = smooth(T.TURN1[0], T.TURN1[1], t) + smooth(T.TURN2[0], T.TURN2[1], t);
+		const sw = k % 1 === 0 ? Math.round(0.03 * Math.sin((t / 11) * TAU) * 400) / 400 : 0.03 * Math.sin((t / 11) * TAU);
+		const focusS = t < T.TURN1[0] ? 170 : t < T.TURN1[1] ? lerp(170, 470, smooth(T.TURN1[0], T.TURN1[1], t)) : t < T.TURN2[0] ? (t > T.GATHER - 0.4 && t < 8.3 ? lerp(470, 352, smooth(T.GATHER - 0.4, T.GATHER, t) * (1 - smooth(7.9, 8.3, t))) : 470) : t < T.TURN2[1] ? lerp(470, 790, smooth(T.TURN2[0], T.TURN2[1], t)) : 790;
+		const f = trackOff(focusS, -30);
+		const q = (v) => (k % 1 === 0 ? Math.round(v * 2) / 2 : v);
+		return { th: TH0 + sw + k * Math.PI / 2, F: [q(f[0]), q(f[1]), 62], k };
 	}
 	// ---------------------------------------------------------------- the sim
 	function update(dt) {
 		if (juiceStep(J, dt)) return;
 		const t = (S.t += dt), R = Math.random;
 		if (t >= T.LOOP) { reset(); return; }
-		const burst = (x, z, n, c, sp = 90, up = 60, g = 260) => { for (let i = 0; i < n; i++) parts.push({ x, z, vx: (R() - 0.5) * sp, vz: up * (0.4 + R()), g, life: 0.5 + R() * 0.4, age: 0, c }); };
-		if (t >= 3.4 && once("q1")) say("OH! A VISITOR~", t);
-		if (t >= T.DROP && once("drop")) pop("ZWIP", 220, 150, t);
-		if (t >= T.LANDED && once("land")) { kick(J, 3, 0.2, 0.08); pop("THUMP", 220, 60, t); burst(220, 1, 12, LAV[5]); }
-		if (t >= T.LAP_W && once("q2")) say("SHALL WE DANCE, DEARIE?", t);
-		if (t >= T.LAP && once("lap")) pop("SKITTER SKITTER", 150, 40, t);
-		for (const [k, td, x] of [["d1", T.D1, 120], ["d2", T.D2, 190]]) if (t >= td + 0.15 && once(k)) { kick(J, 3.4, 0.24, 0.1); pop("DROP!", x, 70, t); burst(x, 1, 14, SILK[1]); }
-		if (t >= T.SPIT - 0.3 && once("q3")) say("KNIT ONE, PURL TWO!", t);
-		if (t >= T.SPIT && once("spit")) { kick(J, 1.6, 0.06); pop("PTOO PTOO PTOO", 160, 170, t); }
-		if (t >= T.SPLAT && once("splat")) { kick(J, 1.8, 0.08); for (const x of SPITS) burst(x, 1, 10, SILK[2], 120, 30); }
-		if (t >= T.SNAG && once("snag")) { kick(J, 2.2, 0.12, 0.05); pop("SNAG!", 160, 190, t); say("OH, BOTHER!", t + 0.1); }
-		for (const h of T.HITS) if (t >= h && once("h" + h)) { kick(J, 2.4, 0.16, 0.07); burst(152, 70, 14, h === T.HITS[2] ? SILK[3] : PLUM[4], 160, 60); if (h === T.HITS[2]) pop("POMF!", 160, 120, t); }
-		if (t >= T.UNRAVEL && once("unr")) { kick(J, 3, 0.3, 0.12); for (let i = 0; i < 40; i++) parts.push({ x: 160, z: 78, vx: (R() - 0.5) * 200, vz: (R() - 0.3) * 160, g: 40, life: 1.6, age: 0, c: SILK[R() < 0.5 ? 2 : 1], silk: 1 }); say("I'LL... JUST HAVE A LIE DOWN.", t + 0.2); }
-		if (t >= T.HATCH && once("hatch")) pop("THE WEB UNRAVELS", 162, 250, t, SILK[2]);
-		if (t >= T.CHECK && once("check")) { pop("CHECKPOINT", 162, CH.ceil + 160, t, CANDLE[3]); kick(J, 1.4, 0.08); }
-		for (const p of parts) { p.age += dt; p.vz -= p.g * dt; p.x += p.vx * dt; p.z += p.vz * dt; if (!p.silk && p.z < 0 && p.vz < 0 && p.x > CH.x0 && p.x < CH.x1) { p.z = 0; p.vz *= -0.3; p.vx *= 0.5; } }
+		const burst = (s, h, n, c, sp = 100, up = 60) => { const [X, Y] = trackAt(s); for (let i = 0; i < n; i++) parts.push({ X, Y, Z: h, vs: (R() - 0.5) * sp, vz: up * (0.4 + R()), g: 320, life: 0.6 + R() * 0.4, age: 0, c, s }); };
+		for (const [i, ic] of ICS.entries()) if (t >= ic.snap + 0.3 && once("ic" + i)) { kick(J, 1.2, 0.08, 0.02); burst(ic.s, 1, 8, FROST[4]); if (i === 0) pop("KRSSH", ic.s, 40, t, FROST[4]); }
+		for (const [k, tt] of [["m1", T.CRAWL - 0.3], ["m2", T.GATHER - 0.35], ["m3", T.OVER - 0.4], ["m4", T.AT - 0.2]]) if (t >= tt && once(k)) pop("TICK", rime(t).s, HANGZ + 18, t, PORCELAIN[3]);
+		if (t >= T.BREATH && once("br")) { kick(J, 3, 0.3, 0.1); pop("HAAAAH", 520, 90, t, FROST[4]); }
+		if (t > T.BREATH && t < T.BREATHEND && R() < dt * 14) kick(J, 1, 0.08);
+		if (t >= T.CRASH && once("c1")) { kick(J, 4.4, 0.45, 0.18); pop("CRASH!", DROP1, 70, t, FROST[4]); burst(DROP1, 6, 24, FROST[4], 200, 90); }
+		if (t >= T.SNAP && once("snap")) { kick(J, 1.6, 0.12, 0.05); pop("SNAP", PIV, HANGZ + 6, t, "#d8d8e8"); }
+		if (t >= T.CRASH2 && once("c2")) { kick(J, 4.6, 0.5, 0.2); pop("CRASH!", crash2S(), 70, t, FROST[4]); burst(crash2S(), 6, 24, FROST[4], 200, 90); }
+		for (const h of [...HITS1, ...HITS2]) if (t >= h && once("h" + h)) { kick(J, 2.2, 0.16, 0.07); const r = rime(t); burst(r.s + (t > T.CRASH2 ? -22 : 22), 18, 12, h === HITS1[2] || h === HITS2[2] ? "#ffffff" : COLDFIRE[1], 160, 60); }
+		if (t > T.SWING && t < T.SNAP && Math.abs(Math.sin(TAU * (t - T.SWING))) > 0.97 && R() < dt * 20) kick(J, 0.6, 0.06);
+		for (const p of parts) { p.age += dt; p.vz -= p.g * dt; p.s += p.vs * dt; p.Z += p.vz * dt; if (p.Z < 0) { p.Z = 0; p.vz *= -0.3; p.vs *= 0.5; } }
 		parts = parts.filter((p) => p.age < p.life);
 	}
-	// ---------------------------------------------------------------- drawing Nana: in a frame where her surface is below her, then turned onto it
-	function drawSpider(o, t, x, y) {
-		// eight legs: two-jointed, knees up, a walking wave running through them
-		const ph = t * (o.run ? 22 : 3);
-		for (let i = 0; i < 8; i++) {
-			const side = i < 4 ? -1 : 1, j = i % 4, root = [x + (j - 1.5) * 4, y - 13], spread = (j - 1.5) * 11 + side * 3, lift = Math.max(0, Math.sin(ph + i * 1.7 + (side > 0 ? Math.PI : 0))) * 5 * (o.run ? 1 : 0.3);
-			const foot = [x + spread * 1.7 + side * 2, y - lift], knee = [lerp(root[0], foot[0], 0.55), Math.min(root[1], foot[1]) - 12 - (j === 0 || j === 3 ? 2 : 0)];
-			line(root[0], root[1], knee[0], knee[1], i < 4 ? PLUM[1] : PLUM[2]); line(root[0] + 1, root[1], knee[0] + 1, knee[1], i < 4 ? PLUM[1] : PLUM[2]);
-			line(knee[0], knee[1], foot[0], foot[1], i < 4 ? PLUM[1] : PLUM[2]); put(knee[0], knee[1] - 1, PLUM[4]);
+	// ---------------------------------------------------------------- drawing Saint Rime (the page 3 chandelier, drawn about its hub on screen)
+	function xf(r) { const c = Math.cos(r.rot), s = Math.sin(r.rot); return (lx, ly) => [r.x + (lx * r.sx) * c - (ly * r.sy) * s, r.y + (lx * r.sx) * s + (ly * r.sy) * c]; }
+	function drawRime(r, m, t) {
+		const P = xf(r), px = (lx, ly, h, a = 1) => { const p = P(lx, ly); put(p[0], p[1], h, a); put(p[0] + 0.6, p[1], h, a); put(p[0], p[1] + 0.6, h, a); };
+		const thick = (a, b, h, w = 1.4) => { const n = Math.ceil(Math.hypot(b[0] - a[0], b[1] - a[1]) * 1.5); for (let j = 0; j <= n; j++) { const u = j / n; disc(lerp(a[0], b[0], u), lerp(a[1], b[1], u), w * r.sx * 1.25, h); } };
+		const HANG = 26, OFF = [-46, -30, -14, 14, 30, 46];
+		for (const [i, o] of OFF.entries()) {
+			const g = i % 2, dist = r.walking ? t * 3.2 : 0, fr = ((dist + g * 0.5) % 1 + 1) % 1, lift = r.walking && fr > 0.5 ? Math.sin(((fr - 0.5) / 0.5) * Math.PI) * 6 : 0, slide = r.walking ? (fr < 0.5 ? lerp(6, -6, fr / 0.5) : lerp(-6, 6, (fr - 0.5) / 0.5)) : 0;
+			const fold = r.legsFold, cr = r.crumple;
+			const foot = cr ? [o * 0.9, 8 + Math.abs(o) * 0.1 + Math.sin(t * 9 + i) * 1.2] : [lerp(o + slide, o * 0.35, fold), lerp(-HANG + lift, 18, fold)];
+			const hip = [o * 0.22, -4], knee = [lerp(hip[0], foot[0], 0.5) + Math.sign(o) * (10 - fold * 4), Math.min(hip[1], foot[1]) - 14 + fold * 16 + (cr ? 18 : 0)];
+			const a = P(...hip), b = P(...knee), c = P(...foot);
+			thick(a, b, IRON[2], 1.5); thick(b, c, IRON[2], 1.1);
+			line(a[0], a[1] - 1, b[0], b[1] - 1, FROST[2], 0.6); line(b[0], b[1] - 1, c[0], c[1] - 1, FROST[2], 0.5);
+			disc(b[0], b[1], 2, IRON[3]); put(b[0], b[1] - 1, FROST[4]);
+			const hk = P(foot[0] + Math.sign(o) * 3, foot[1] + (cr ? 0 : 3)); line(c[0], c[1], hk[0], hk[1], IRON[4]); put(hk[0], hk[1], FROST[4]);
 		}
-		// the abdomen behind (a lace doily pattern on it), the head in front
-		const ab = [x - o.face * 10, y - 20];
-		for (let yy = -11; yy <= 11; yy++) for (let dx = -13; dx <= 13; dx++) { const d = Math.hypot(dx / 13, yy / 11); if (d > 1) continue; const lace = Math.abs(((Math.atan2(yy, dx) * 6 / Math.PI) % 1)) < 0.18 && d > 0.35 && d < 0.8; put(ab[0] + dx, ab[1] + yy, d > 0.9 ? PLUM[0] : lace ? SILK[1] : dx * -o.face > 4 && yy < -3 ? PLUM[3] : PLUM[2]); }
-		const hd = [x + o.face * 7, y - 18];
-		for (let yy = -9; yy <= 8; yy++) for (let dx = -9; dx <= 9; dx++) { const d = Math.hypot(dx / 9, yy / 8.5); if (d > 1) continue; put(hd[0] + dx, hd[1] + yy, d > 0.88 ? PLUM[0] : yy < -4 ? PLUM[4] : PLUM[3]); }
-		// a little lace bonnet, round spectacles, two big eyes and four little ones, grey brows, fangs
-		for (let a = Math.PI; a <= TAU; a += 0.08) for (let r = 8; r < 11; r++) put(hd[0] + Math.cos(a) * r, hd[1] - 2 + Math.sin(a) * r * 0.7, Math.sin(a * 12) > 0 ? SILK[2] : SILK[1]);
-		const ey = hd[1] - 1;
-		for (const ex of [-3.5, 3.5]) {
-			const X = hd[0] + ex;
-			if (o.eyes === "happy") { put(X - 1, ey, PLUM[0]); put(X, ey - 1, PLUM[0]); put(X + 1, ey, PLUM[0]); }
-			else if (o.eyes === "dizzy") { const a = t * 12 + ex; for (let r = 0; r < 2.5; r += 0.4) put(X + Math.cos(a + r * 2.4) * r, ey + Math.sin(a + r * 2.4) * r, PLUM[0]); }
-			else { const r = o.eyes === "wide" ? 3 : 2.4; for (let yy = -3; yy <= 3; yy++) for (let dx = -3; dx <= 3; dx++) { const d = Math.hypot(dx, yy); if (d <= r) put(X + dx, ey + yy, d > r - 0.7 ? PLUM[0] : "#ffffff"); } const lk = o.face * 0.8; put(X + lk, ey + 0.5, "#000000"); put(X + lk, ey - 0.5, "#000000"); if (o.eyes === "sly") for (let dx = -3; dx <= 3; dx++) { put(X + dx, ey - 2, PLUM[3]); put(X + dx, ey - 1, PLUM[0]); } }
-			for (let a = 0; a < TAU; a += 0.3) put(X + Math.cos(a) * 3.6, ey + Math.sin(a) * 3.6, GOLDR[3]);
+		for (let a = 0; a < TAU; a += 0.05) { const p = P(Math.cos(a) * 14, Math.sin(a) * 4); put(p[0], p[1], Math.sin(a) < 0 ? IRON[4] : IRON[2]); const q = P(Math.cos(a) * 10, 8 + Math.sin(a) * 3); put(q[0], q[1], IRON[3]); }
+		for (let k = 0; k < 9; k++) { const lx = -12 + k * 3; thick(P(lx, 0), P(lx * 0.75, 8), IRON[1], 0.7); const sp = P(lx, -4 - (k % 2 ? 5 : 3)); line(P(lx, -2)[0], P(lx, -2)[1], sp[0], sp[1], IRON[4]); put(sp[0], sp[1], FROST[4]); }
+		for (const sd of [-1, 1]) for (let k = 0; k < 3; k++) {
+			const tip = [sd * (16 + k * 9), 6 + (k === 1 ? -4 : 3)], mid = [sd * (10 + k * 6), 12 + k * 2];
+			const a = P(sd * 10, 4), mm = P(...mid), b = P(...tip);
+			thick(a, mm, IRON[3], 0.8); thick(mm, b, IRON[3], 0.8);
+			const cb = P(tip[0], tip[1] - 1), ct = P(tip[0], tip[1] - 6);
+			line(cb[0], cb[1], ct[0], ct[1], WAX[1]); line(cb[0] + 1, cb[1], ct[0] + 1, ct[1], WAX[0]); put(ct[0], ct[1] + 2, WAX[2]);
+			tongue(ct[0], ct[1], 3 + 3 * r.flare + Math.sin(t * 9 + k + sd) * 1, 1.3, 0.8, k * 7 + sd * 3, t, COLDFIRE);
+			glow(ct[0], ct[1] - 3, 10 + 8 * r.flare, COLDFIRE[2], 0.3 + 0.3 * r.flare);
+			const sw = Math.sin(t * 3 + k * 2 + sd) * 2 - r.vx * 0.03, p1 = [mm[0] + sw, mm[1] + 7], p2 = [mm[0] + sw * 1.3, mm[1] + 11];
+			line(mm[0], mm[1], p1[0], p1[1], IRON[4], 0.7);
+			for (let j = 0; j < 5; j++) { const u = j / 5, w = 1.6 * Math.sin(u * Math.PI); for (let d = -w; d <= w; d++) put(lerp(p1[0], p2[0], u) + d, lerp(p1[1], p2[1], u), Math.abs(d) < 0.6 ? "#ffffff" : FROST[3]); }
+			if (Math.sin(t * 5 + k * 3 + sd) > 0.9) { put(p2[0], p2[1] - 2, "#ffffff"); light(p2[0], p2[1] - 2, COLDFIRE[1], 0.5); }
 		}
-		put(hd[0], ey, GOLDR[3]);
-		for (const [ex, ey2] of [[-6, -6], [-2, -7], [2, -7], [6, -6]]) put(hd[0] + ex, hd[1] + ey2, "#ffffff");
-		const BR = { kind: [0.3, -0.3], sly: [0.5, 0.1], fierce: [-0.5, 0.5], worry: [0.6, -0.6] }[o.brow] || [0, 0];
-		for (const [ex, ang] of [[-3.5, BR[0]], [3.5, BR[1]]]) for (let j = -2.5; j <= 2.5; j += 0.5) { put(hd[0] + ex + j * Math.cos(ang), ey - 5.5 + j * Math.sin(ang) * (ex < 0 ? 1 : 1), "#d8d6e8"); put(hd[0] + ex + j * Math.cos(ang), ey - 6.5 + j * Math.sin(ang), "#b8b6c8"); }
-		const my = hd[1] + 5;
-		if (o.mouth === "laugh" || o.mouth === "o") for (let dx = -2; dx <= 2; dx++) for (let q = 0; q <= (o.mouth === "laugh" ? 2 : 1.5); q++) put(hd[0] + dx, my + q, q === 0 ? PLUM[0] : "#3a0a20");
-		else for (let dx = -2; dx <= 2; dx++) put(hd[0] + dx, my + (o.mouth === "grin" ? -Math.abs(dx) * 0.3 + 0.6 : Math.abs(dx) * 0.3 - 0.4), PLUM[0]);
-		for (const fx of [-2, 2]) { put(hd[0] + fx, my + 3, SILK[2]); put(hd[0] + fx, my + 4, SILK[1]); }
-		// knitting: two needles and a ball of silk, while she has a moment
-		if (o.knit) { const k = Math.sin(t * 8); line(hd[0] + o.face * 6, hd[1] + 6, hd[0] + o.face * 14, hd[1] - 2 + k, GOLDR[3]); line(hd[0] + o.face * 6, hd[1] + 8, hd[0] + o.face * 15, hd[1] + 4 - k, GOLDR[3]); disc(hd[0] + o.face * 12, hd[1] + 10, 3, SILK[1]); put(hd[0] + o.face * 11, hd[1] + 9, SILK[3]); }
-		// wrapped up in her own silk
-		if (o.cocoon > 0) for (let yy = -30; yy <= 4; yy++) { const w = 15 * Math.sin(clamp((yy + 31) / 36) * Math.PI) * o.cocoon; for (let dx = -w; dx <= w; dx++) if ((Math.floor(yy + dx * 0.5 + t * 4) % 3) !== 0) put(x + dx, y + yy - 4, (yy + Math.floor(dx)) % 4 ? SILK[2] : SILK[1], 0.92); }
-		if (o.flash) for (let i = 0; i < 50; i++) put(x + (Math.random() - 0.5) * 40, y - Math.random() * 36, "#ffffff", 0.6);
+		for (let lx = -10; lx <= 10; lx += 1) { const len = 16 + 6 * hash(lx + 20, 4) + Math.sin(t * 2 + lx) * 1.5; for (let ly = 9; ly < 9 + len; ly += 1) { if (hash(lx + 30, Math.floor(ly)) < 0.22) continue; const sw = Math.sin(t * 2.4 + ly * 0.25 + lx) * (ly - 9) * 0.06 - r.vx * 0.004 * (ly - 9); px(lx * (1 + (ly - 9) * 0.02) + sw, ly, (ly + lx) % 4 === 0 ? FROST[4] : FROST[2], 0.55); } }
+		// the mask on its drum
+		const turnSq = m.turn < 1 ? Math.abs(Math.cos(m.turn * Math.PI)) : 1, w = 7 * Math.max(0.15, turnSq), cy = 17;
+		if (m.turn < 1) for (let ly = cy - 9; ly <= cy + 9; ly++) { px(-w - 1.5, ly, IRON[3]); px(w + 1.5, ly, IRON[2]); }
+		for (let ly = cy - 9; ly <= cy + 9; ly++) { const hw = w * Math.sqrt(Math.max(0, 1 - ((ly - cy) / 9.5) ** 2)); for (let lx = -hw; lx <= hw; lx += 0.7) px(lx, ly, PORCELAIN[clamp(Math.floor((0.7 - 0.35 * lx / 7 - 0.2 * (ly - cy) / 9) * 4), 0, 3)]); }
+		if (turnSq >= 0.6) {
+			const f = m.face, eye = (sd) => [sd * 2.8, cy - 2.5], cold = (lx, ly) => { const p = P(lx, ly); glow(p[0], p[1], 4, COLDFIRE[2], 0.5); };
+			if (f === "serene" || f === "sleep") for (const sd of [-1, 1]) { const [ex, ey] = eye(sd); for (let x = -1.5; x <= 1.5; x += 0.5) px(ex + x, ey + Math.abs(x) * (f === "sleep" ? -0.4 : 0.4), PORCELAIN[0]); }
+			if (f === "weeping" || f === "scream") for (const sd of [-1, 1]) { const [ex, ey] = eye(sd); for (let y = -1.6; y <= 1.6; y += 0.5) for (let x = -1.4; x <= 1.4; x += 0.5) if (x * x + y * y < 2.4) px(ex + x, ey + y * (f === "scream" ? 1.3 : 1), "#06060c"); px(ex, ey, COLDFIRE[1]); cold(ex, ey); }
+			if (f === "weeping") for (const sd of [-1, 1]) for (let j = 0; j < 9; j++) px(sd * 2.8 + Math.sin(j) * 0.3, cy + j * 0.8, "#06060c", 0.9);
+			if (f === "serene") for (let x = -1.5; x <= 1.5; x += 0.5) px(x, cy + 4, PORCELAIN[0]);
+			if (f === "sleep") for (let x = -1; x <= 1; x += 0.5) px(x, cy + 4.5, PORCELAIN[0]);
+			if (f === "weeping") for (let x = -2; x <= 2; x += 0.5) px(x, cy + 3.8 + Math.abs(x) * 0.4, "#06060c");
+			if (f === "scream") { const oh = 2 + 3.5 * r.open; for (let y = -oh; y <= oh; y += 0.5) for (let x = -2.2; x <= 2.2; x += 0.5) if ((x / 2.2) ** 2 + (y / oh) ** 2 <= 1) px(x, cy + 5 + y * 0.8, r.open > 0.4 ? (Math.abs(y) < oh * 0.5 ? "#ffffff" : COLDFIRE[2]) : "#06060c"); if (r.open > 0.4) { const mp = P(0, cy + 5); glow(mp[0], mp[1], 10, COLDFIRE[1], 0.7 * r.open); } }
+			for (let j = 0; j < 6; j++) px(-6 + j * 1.2, cy - 6 + j * 0.7 + (j % 2) * 0.5, PORCELAIN[0], 0.8);
+		}
+		glow(P(0, 14)[0], P(0, 14)[1], 34, COLDFIRE[3], 0.18 + 0.2 * r.flare);
+		if (r.flash) for (let i = 0; i < 60; i++) put(r.x + (Math.random() - 0.5) * 60, r.y + (Math.random() - 0.4) * 40, "#ffffff", 0.6);
 	}
-	// re-place what drawFn painted: rotated about (cx, cy), mirrored if sx < 0, depth-tested at the play plane
-	function stamp(drawFn, cx, cy, rot, sx) {
-		const sav = col.slice(); ZT = null; drawFn();
-		const src = new Map(); let x0 = W, y0 = H, x1 = -1, y1 = -1;
-		for (let p = 0, i = 0; p < N; p++, i += 3) { if (col[i] === sav[i] && col[i + 1] === sav[i + 1] && col[i + 2] === sav[i + 2]) continue; const x = p % W, y = (p - x) / W; src.set(p, [col[i], col[i + 1], col[i + 2]]); if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
-		col.set(sav); if (x1 < 0) return;
-		const c = Math.cos(rot), s = Math.sin(rot), r = Math.ceil(Math.hypot(Math.max(cx - x0, x1 - cx), Math.max(cy - y0, y1 - cy))) + 2;
-		for (let Y = Math.max(0, Math.floor(cy - r)); Y <= Math.min(H - 1, Math.ceil(cy + r)); Y++) for (let X = Math.max(0, Math.floor(cx - r)); X <= Math.min(W - 1, Math.ceil(cx + r)); X++) {
-			const ux = X + 0.5 - cx, uy = Y + 0.5 - cy, u = (ux * c + uy * s) / sx, v = -ux * s + uy * c, qx = Math.floor(cx + u), qy = Math.floor(cy + v);
-			if (qx < 0 || qy < 0 || qx >= W || qy >= H) continue; const got = src.get(qy * W + qx); if (!got) continue;
-			const j = Y * W + X; if (ZB[j] > PLANE_D + 1e-7) continue; col[j * 3] = got[0]; col[j * 3 + 1] = got[1]; col[j * 3 + 2] = got[2];
-		}
-	}
-	const PX = (x) => W / 2 + (x - SCAM.x), PY = (z) => H / 2 - (z - SCAM.z);
+	// ---------------------------------------------------------------- painting a frame
 	let camKey = "";
 	const showTrack = { on: true };
 	function paint() {
 		const t = S.t, cam = camAt(t);
-		SCAM.x = cam.x; SCAM.z = cam.z;
-		const key = cam.x.toFixed(2) + "," + cam.z.toFixed(2);
-		if (key !== camKey) { renderStaticS(); camKey = key; }
-		col.set(SBASE); ZB.set(SBZ); lit.fill(0);
+		CAM.th = cam.th; CAM.F = cam.F; FRONT = ((Math.round(cam.k) % 4) + 4) % 4;
+		const key = cam.th.toFixed(4) + "," + cam.F.map((v) => v.toFixed(2)).join(",") + FRONT;
+		if (key !== camKey) { renderStatic(); camKey = key; }
+		col.set(BASE); ZB.set(BASEZ); lit.fill(0);
 		juiceShake(J, t); const SX = OX, SY = OY; OX = 0; OY = 0;
-		const on = Math.sin(t * 30) > -0.2;
-		const pl = (fn) => { ZT = PLANE_D + 1e-7; fn(); ZT = null; }; // draw on the play plane, behind anything nearer
-		// glows: candles in the arches, the moon, the gate's lamp once the realm is cleared
-		for (const [X, Y] of [[-39, 31], [361, 41], [231, 201]]) { const d = Y + CD; glow(sxOf(X, d), syOf(-237, d), 22, CANDLE[2], 0.5); }
-		for (const [X, Z] of [[70, 176], [250, 182]]) { const sw = Math.sin(t * 1.2 + X) * 1.5, px = PX(X + sw), py = PY(Z); ZT = PLANE_D + 1e-7; line(PX(X), PY(CH.ceil), px, py - 5, LAVD[1]); for (let yy = -5; yy <= 5; yy++) for (let dx = -3; dx <= 3; dx++) if ((dx / 3.4) ** 2 + (yy / 5.5) ** 2 <= 1) put(px + dx, py + yy, Math.abs(yy) > 4 ? LAVD[1] : dx < 0 ? CANDLE[3] : CANDLE[2]); ZT = null; glow(px, py, 60, CANDLE[1], 0.35); glow(px, py, 14, CANDLE[3], 0.5); }
-		{ const fl = PY(0); glow(PX(160), fl, 120, CANDLE[1], 0.12); }
-		{ const d = 2100 + CD; for (const X of [-300, 200, 700]) glow(sxOf(X, d), syOf(560, d), 150, GOLDR[3], 0.28); }
-		const gl = t > T.CHECK ? smooth(T.CHECK, T.CHECK + 0.5, t) : 0.15, gx = sxOf(164, 17 + CD), gy = syOf(CH.ceil + 110, 17 + CD);
-		glow(gx, gy, 40, CANDLE[2], 0.7 * gl); disc(gx, gy, 3, CANDLE[3], 0.5 + gl * 0.5);
-		// webs in the chamber's top corners, dew glinting; and the web over the hatch until she is beaten
-		pl(() => {
-			for (const [cx, cz, sx] of [[CH.x0, CH.ceil, 1], [CH.x1, CH.ceil, -1]]) { for (let k = 0; k < 6; k++) { const a = (k / 5) * Math.PI / 2; line(PX(cx), PY(cz), PX(cx + sx * Math.cos(a) * 60), PY(cz - Math.sin(a) * 60), SILK[1], 0.5); } for (let r = 14; r < 60; r += 12) for (let k = 0; k < 5; k++) { const a0 = (k / 5) * Math.PI / 2, a1 = ((k + 1) / 5) * Math.PI / 2; line(PX(cx + sx * Math.cos(a0) * r), PY(cz - Math.sin(a0) * r), PX(cx + sx * Math.cos(a1) * r), PY(cz - Math.sin(a1) * r), SILK[1], 0.45); } if (Math.sin(t * 2 + cx) > 0.8) put(PX(cx + sx * 30), PY(cz - 20), "#ffffff"); }
-			const open = smooth(T.HATCH, T.OPEN, t), hx0 = CH.hatch[0], hx1 = CH.hatch[1];
-			if (open < 1) for (let k = 0; k <= 8; k++) { const xa = lerp(hx0, hx1, k / 8); line(PX(xa), PY(CH.ceil), PX(lerp(xa, (hx0 + hx1) / 2, open)), PY(CH.ceil + 16 * (1 - open)), SILK[2], 0.7 * (1 - open)); line(PX(hx0), PY(CH.ceil + 2 + k * 1.8), PX(hx1), PY(CH.ceil + 2 + k * 1.8), SILK[1], 0.6 * (1 - open)); }
-			if (open > 0) for (let y = PY(CH.ceil + 16); y < PY(0); y += 1) for (let x = PX(hx0 + 4); x < PX(hx1 - 4); x += 2) put(x + ((y >> 1) & 1), y, "#fff0c8", 0.06 * open * (1 - (y - PY(CH.ceil)) / 240));
-		});
-		// warnings, all on the plane: the drop's thread and ring, the lap's path, each spit's ring
-		const ringAt = (x, z, r, c, a) => { for (let an = 0; an < TAU; an += 0.25) put(PX(x + Math.cos(an) * r), PY(z) + Math.sin(an) * r * 0.25, c, a); };
-		const dashV = (x, z0, z1, c, a) => { for (let z = Math.min(z0, z1); z < Math.max(z0, z1); z += 3) put(PX(x), PY(z), c, a); };
-		pl(() => {
-			if (t > T.DROP_W && t < T.DROP) { dashV(220, 0, CH.ceil, t > T.DROP - 0.1 ? "#ffffff" : SILK[2], on ? 0.9 : 0.35); ringAt(220, 0, 12, SILK[2], on ? 0.9 : 0.4); }
-			if (t > T.LAP_W && t < T.LAP) { const c = t > T.LAP - 0.1 ? "#ffffff" : PLUM[4], a = on ? 0.85 : 0.3; for (let x = CH.x0 + 2; x < 220; x += 3) put(PX(x), PY(2), c, a); dashV(CH.x0 + 3, 0, CH.ceil, c, a); for (let x = CH.x0 + 2; x < CH.x1 - 2; x += 3) put(PX(x), PY(CH.ceil - 2), c, a); dashV(CH.x1 - 3, 0, CH.ceil, c, a); }
-			for (const [tw, td, x] of [[T.D1W, T.D1, 120], [T.D2W, T.D2, 190]]) if (t > tw && t < td) { dashV(x, 0, CH.ceil, t > td - 0.1 ? "#ffffff" : SILK[2], on ? 0.9 : 0.35); ringAt(x, 0, 12, SILK[2], on ? 0.9 : 0.4); }
-			if (t > T.SPIT - 0.4 && t < T.SPLAT) for (const x of SPITS) ringAt(x, 0, 12, t > T.SPLAT - 0.12 ? "#ffffff" : SILK[2], on ? 0.9 : 0.4);
-		});
-		// the spit, in flight, then stuck to the floor as sticky stars of web
-		pl(() => {
-			if (t > T.SPIT && t < T.SPLAT) { const k = (t - T.SPIT) / (T.SPLAT - T.SPIT); for (const x of SPITS) { const p = [lerp(160, x, k), lerp(CH.ceil - 20, 2, k) + 4 * 20 * k * (1 - k)]; disc(PX(p[0]), PY(p[1]), 3.2, SILK[3]); disc(PX(p[0]) - 1, PY(p[1]) - 1, 1.2, SILK[1]); } }
-			if (t >= T.SPLAT && t < T.UNRAVEL) for (const x of SPITS) for (let k = 0; k < 8; k++) { const a = (k / 8) * TAU; line(PX(x), PY(1), PX(x + Math.cos(a) * 12), PY(1) + Math.sin(a) * 3, SILK[2], 0.8); }
-			// her trailing silk on the second lap
-			if (t > T.LAP2 && t < T.DANGLE) { const pts = []; for (let tt = T.LAP2; tt < Math.min(t, T.SNAG); tt += 0.04) { const q = spider(tt); pts.push([q.x, q.z]); } for (let i = 1; i < pts.length; i++) line(PX(pts[i - 1][0]), PY(pts[i - 1][1]), PX(pts[i][0]), PY(pts[i][1]), SILK[2], 0.7); }
-		});
-		// Nana herself, turned onto whatever she is walking on, with her thread when she hangs
-		const o = spider(t);
-		if (o.surf !== "gone") {
-			if (o.thread) pl(() => line(PX(o.thread[0]), PY(o.thread[1]), PX(o.x), PY(o.z), SILK[2], 0.9));
-			const rot = { floor: 0, lwall: Math.PI / 2, ceil: Math.PI, rwall: -Math.PI / 2, thread: Math.PI }[o.surf], sx = o.surf === "ceil" || o.surf === "thread" || o.surf === "rwall" ? -o.face : o.face;
-			const cx = PX(o.x), cy = PY(o.z);
-			stamp(() => drawSpider({ ...o, face: 1 }, t, cx, cy), cx, cy, rot, sx);
+		const on = Math.sin(t * 30) > -0.2, P = proj;
+		const at = (s, dOff, Z) => { const [X, Y] = trackOff(s, dOff); return P(X, Y, Z); };
+		const dot = (s, dOff, Z, h, a = 1) => { const p = at(s, dOff, Z); ZT = p[2] + 2; put(p[0], p[1], h, a); ZT = null; return p; };
+		// light: the stained glass glowing out, warm lanterns on the beams, swaying
+		for (let side = 0; side < 4; side++) { const [X, Y] = trackOff(side * SEG + SEG / 2, -TOFF); glowW(X, Y, 80, 60, GLASS[3], 0.35); glowW(X, Y, 80, 22, GLASS[4], 0.3); }
+		for (let i = 0; i < 12; i++) { const s = i * 104 + 52, [X, Y] = trackOff(s, PURLD + 10), sw = Math.sin(t * 1.2 + i) * 1.5, top = P(X, Y, BEAMZ), c = P(X + sw * 0.3, Y, BEAMZ - 14); ZT = c[2] + 2; line(top[0], top[1], c[0], c[1] - 4, WOODC[0]); for (let yy = -4; yy <= 4; yy++) for (let dx = -3; dx <= 3; dx++) if ((dx / 3.4) ** 2 + (yy / 4.6) ** 2 <= 1) put(c[0] + dx, c[1] + yy, Math.abs(yy) > 3 ? WOODC[0] : dx < 0 ? LAMPC[4] : LAMPC[3]); ZT = null; glowW(X, Y, BEAMZ - 14, 40, LAMPC[2], 0.4); }
+		// icicles along the inner purlin, where it crawled; their shadows on the track sharpen before they snap
+		for (const ic of ICS) {
+			if (t < ic.grow || t > ic.snap + 1.4) continue;
+			const len = 16 * smooth(ic.grow, ic.grow + 0.6, t), tr = t > ic.snap - 0.5 && t < ic.snap ? Math.sin(t * 60) * 0.7 : 0;
+			const fall = t > ic.snap ? Math.min(BEAMZ, 0.5 * 700 * (t - ic.snap) ** 2) : 0, landed = fall >= BEAMZ - 4;
+			if (!landed) for (let j = 0; j < len; j++) { const p = at(ic.s, PURLD + 4, BEAMZ - j - fall); ZT = p[2] + 2; const w = 2.2 * (1 - j / len); for (let d = -w; d <= w; d++) put(p[0] + d + tr, p[1], d < -w + 1 ? "#ffffff" : FROST[3]); ZT = null; }
+			if (t < ic.snap + 0.1) { const k = smooth(ic.snap - 0.7, ic.snap, t), p = at(ic.s, 0, 0); ZT = p[2] + 3; for (let a = 0; a < TAU; a += 0.3) put(p[0] + Math.cos(a) * (2 + 4 * k), p[1] + Math.sin(a) * (1 + 2 * k), "#0a0c18", 0.6 * k); put(p[0], p[1], FROST[3], k); ZT = null; }
+			if (landed) { const k = 1 - clamp((t - ic.snap - 0.6) / 0.8); for (let j = 0; j < 7; j++) dot(ic.s + (j % 2), 0, j, FROST[3], k); }
 		}
-		// Elfy, lit by where she stands
-		const e = elfy(t), ex = Math.round(PX(e.x)), ey = Math.round(PY(e.z));
-		{ const sav = col.slice(); pl(() => drawElfy(e.a, e.at, ex, ey, 0, !!e.flip)); const inCh = e.z > -5 && e.z < CH.ceil, warm = inCh ? 0.16 : 0.06, cool = inCh ? 0.06 : 0.16; for (let i = 0; i < N * 3; i += 3) if (col[i] !== sav[i] || col[i + 1] !== sav[i + 1] || col[i + 2] !== sav[i + 2]) { lit[i] += warm + cool * 0.5; lit[i + 1] += warm * 0.64 + cool * 0.6; lit[i + 2] += warm * 0.3 + cool; } }
-		// particles: dust, silk, splinters of web
-		pl(() => { for (const p of parts) put(PX(p.x), PY(p.z), p.c, 1 - p.age / p.life * 0.5); });
-		// words
-		for (const w of S.pops) { const a = t - w.t0; soundWord(w.w, clamp(PX(w.x), 50, W - 50), clamp(PY(w.z), 8, H - 20), Math.min(1, a / 0.7) * (a < 1.1 && a >= 0 ? 1 : 0), w.c || SILK[2], "#0c0814", 2); }
-		for (const q of S.quips) { const a = t - q.t0; if (a < 0 || a > 1.4) continue; soundWord(q.w, clamp(PX(q.x), 80, W - 80), clamp(PY(q.z) + (q.z > 150 ? 34 : -50) - a * 6, 8, H - 20), Math.min(1, a / 0.6) * (a < 1.25 ? 1 : 0), "#ffffff", "#0c0814", 1); }
-		// the track view: the plane as the game sees it, in the corner
+		// warnings: the breath's corridor (straight along the side, past the corner and off the rock); the drop's ring and
+		// the spikes' reach along the track; the swing's arc; the second landing
+		const lineW = (s0, s1, dOff, Z, c, a) => { for (let s = Math.min(s0, s1); s <= Math.max(s0, s1); s += 3) dot(s, dOff, Z, c, a); };
+		const ringW = (s, dOff, Z, r, c, a) => { const [X, Y] = trackOff(s, dOff); for (let an = 0; an < TAU; an += 0.2) { const p = P(X + Math.cos(an) * r, Y + Math.sin(an) * r, Z); ZT = p[2] + 3; put(p[0], p[1], c, a); ZT = null; } };
+		const breathLine = (k) => { const m0 = trackOff(560, WALLD + 8), dir = [0, 1]; return [m0[0] + dir[0] * k, m0[1] + dir[1] * k]; };
+		if (t > T.GATHER && t < T.BREATH) for (let k = 0; k < 420; k += 3) for (const sd of [-1, 1]) { const [X, Y] = breathLine(k), p = P(X + sd * (6 + k * 0.03), Y, 30 + sd * (6 + k * 0.03)); ZT = p[2] + 3; put(p[0], p[1], t > T.BREATH - 0.1 ? "#ffffff" : FROST[3], on ? 0.85 : 0.3); ZT = null; }
+		if (t > T.OVER && t < T.CRASH) { ringW(DROP1, 0, 0.5, 14, FROST[3], on ? 0.9 : 0.4); lineW(200, 560, 0, 0.5, FROST[2], on ? 0.5 : 0.15); }
+		if (t > T.AT && t < T.SWING + 0.6) { const k = smooth(T.AT, T.AT + 0.15, t) * (1 - smooth(T.SWING + 0.3, T.SWING + 0.6, t)); for (let a = -AMP; a <= AMP; a += 0.03) dot(PIV + Math.sin(a) * (PL + 14), PURLD, HANGZ - Math.cos(a) * (PL + 14), FROST[4], (on ? 0.85 : 0.3) * k); }
+		if (t > T.SNAP - 0.25 && t < T.CRASH2) ringW(crash2S(), 0, 0.5, 18, t > T.CRASH2 - 0.1 ? "#ffffff" : FROST[4], on ? 0.9 : 0.4);
+		// the breath: a corridor of cold light and frost puffs, straight along this side and on past the corner
+		if (t > T.BREATH && t < T.BREATHEND) { const len = Math.min(420, (t - T.BREATH) * 420); for (let k = 4; k < len; k += 2) { const [X, Y] = breathLine(k), w = 5 + k * 0.05; for (let q = -w; q <= w; q += 1) { const p = P(X, Y, 30 + q + Math.sin(t * 40 + k) * 1); ZT = p[2] + 3; put(p[0], p[1], Math.abs(q) < 2 ? "#ffffff" : Math.abs(q) < w * 0.6 ? FROST[4] : FROST[3], 0.55); ZT = null; } if (k % 14 === 0) { const p = P(X, Y, 30); glow(p[0], p[1], 14, FROST[3], 0.25); } } }
+		// the spike waves: jagged ice racing both ways along the track from each crash (and round the corners)
+		for (const [tc, sc] of [[T.CRASH, DROP1], [T.CRASH2, crash2S()]]) { const a = t - tc; if (a < 0 || a > 1.6) continue; for (const d of [-1, 1]) for (let k = 1; k < 22; k++) { const s = sc + d * k * 9, tt = (k * 9) / SPIKE_V, b = a - tt; if (b < 0 || b > 0.5) continue; const hh = (12 - k * 0.3) * Math.min(1, b / 0.06) * (b > 0.4 ? 1 - (b - 0.4) / 0.1 : 1); for (let n = 0; n < 3; n++) for (let y = 0; y < hh * (0.6 + 0.4 * hash(n, k)); y++) { const p = at(s + n * 3 - 3, (n - 1) * 4, y); ZT = p[2] + 2; const w2 = 1.6 * (1 - y / hh); for (let dd = -w2; dd <= w2; dd++) put(p[0] + dd, p[1], dd < -w2 + 0.8 ? "#ffffff" : FROST[3]); ZT = null; } } }
+		// Saint Rime, with the chain it hangs on when it hangs
+		const r0 = rime(t), m = mask(t), hp = at(r0.s, r0.d, r0.h);
+		const prev = S.last || hp; const vx = (hp[0] - prev[0]) * 60; S.last = hp;
+		if (r0.chain) { const top = r0.chain === "swing" ? at(PIV, PURLD, HANGZ) : at(r0.s, PURLD, HANGZ); ZT = hp[2] + 4; for (let j = 0; j < 60; j++) { const u = j / 60; put(lerp(top[0], hp[0], u), lerp(top[1], hp[1] - 10, u), j % 3 ? "#8a8aa0" : "#d8d8e8", 0.9); } ZT = null; }
+		ZT = hp[2] + 6; drawRime({ ...r0, x: hp[0], y: hp[1], vx }, m, t); ZT = null;
+		// Elfy, lit warm by the lanterns and cool by the glass
+		const e = elfy(t), ep = at(e.s, 0, e.h);
+		{ const sav = col.slice(); ZT = ep[2] + 2; drawElfy(e.a, e.at, Math.round(ep[0]), Math.round(ep[1]), 0, !!e.flip); ZT = null; for (let i = 0; i < N * 3; i += 3) if (col[i] !== sav[i] || col[i + 1] !== sav[i + 1] || col[i + 2] !== sav[i + 2]) { lit[i] += 0.16; lit[i + 1] += 0.13; lit[i + 2] += 0.16; } }
+		for (const p of parts) { const [X, Y] = trackAt(p.s), q = P(X, Y, p.Z); ZT = q[2] + 2; put(q[0], q[1], p.c, 1 - p.age / p.life * 0.5); ZT = null; }
+		// snow falling over the whole miniature, drifting with the turn
+		for (let i = 0; i < 90; i++) { const x = ((hash(i, 1) * W + t * 12 - (CAM.th - TH0) * 300) % W + W) % W, y = (hash(i, 2) * H + t * (22 + hash(i, 3) * 20)) % H; put(x, y, "#e8eeff", 0.6); }
+		for (const w of S.pops) { const q = at(w.s, 0, w.h), a = t - w.t0; soundWord(w.w, clamp(q[0], 40, W - 40), clamp(q[1], 8, H - 20), Math.min(1, a / 0.7) * (a < 0.95 ? 1 : 0), w.c || FROST[4], "#06060c", 2); }
+		// the track view: the loop unrolled, the corners dashed
 		if (showTrack.on) {
-			const bx = 8, by = H - 92, bw = 120, bh = 84, sc = 0.25;
+			const bx = 8, by = H - 52, bw = 230, bh = 44, sc = bw / (4 * SEG) * 0.98;
 			for (let y = by; y < by + bh; y++) for (let x = bx; x < bx + bw; x++) put(x, y, "#05070d", 0.82);
 			for (let x = bx; x < bx + bw; x++) { put(x, by, "#7ae8ff", 0.5); put(x, by + bh - 1, "#7ae8ff", 0.5); } for (let y = by; y < by + bh; y++) { put(bx, y, "#7ae8ff", 0.5); put(bx + bw - 1, y, "#7ae8ff", 0.5); }
-			const TX = (x) => bx + 14 + (x + 40) * sc, TY = (z) => by + bh - 8 - (z + 260) * sc * 0.62;
-			const seg = (x0, x1, z) => { for (let x = x0; x < x1; x += 1) put(TX(x), TY(z), "#c8d0dc"); };
-			seg(CH.x0, CH.hole[0], 0); seg(CH.hole[1], CH.x1, 0); seg(CH.x0, CH.hatch[0], CH.ceil); seg(CH.hatch[1], CH.x1, CH.ceil); seg(L1.x0, L1.x1, L1.z); seg(L2.x0, L2.x1, L2.z); for (const s of STEPS) seg(Math.max(-40, s.x0), Math.min(340, s.x1), s.z);
-			for (let z = -10; z < CH.ceil; z += 1) { put(TX(CH.x0), TY(z), "#c8d0dc"); put(TX(CH.x1), TY(z), "#c8d0dc"); }
-			if (o.surf !== "gone") for (let y = -2; y <= 2; y++) for (let x = -2; x <= 2; x++) put(TX(o.x) + x, TY(o.z) + y, "#e0283a");
-			for (let y = 0; y < 4; y++) for (let x = -1; x <= 1; x++) put(TX(e.x) + x, TY(e.z) - y, "#4dff6a");
+			const TX = (s) => bx + 2 + s * sc, TY = (h) => by + bh - 6 - h * 0.26;
+			for (let s = 0; s < 4 * SEG; s += 1) { put(TX(s), TY(0), "#c8d0dc"); put(TX(s), TY(BEAMZ + 6), "#8a90a0"); }
+			for (let k = 1; k < 4; k++) for (let y = by + 3; y < by + bh - 3; y += 2) put(TX(k * SEG), y, "#7ae8ff", 0.6);
+			for (let y = -2; y <= 2; y++) for (let x = -2; x <= 2; x++) put(TX(r0.s) + x, TY(r0.h) + y, "#e0283a");
+			for (let y = 0; y < 4; y++) for (let x = -1; x <= 1; x++) put(TX(e.s) + x, TY(e.h) - y, "#4dff6a");
 			soundWord("TRACK", bx + 20, by + 4, 1, "#7ae8ff", "#05070d", 1);
 		}
-		if (t >= T.D1 + 0.15 && t < T.D1 + 0.2) impactFrame("#f8f4ff", "#05070d", 0.3);
+		if ((t >= T.CRASH && t < T.CRASH + 0.05) || (t >= T.CRASH2 && t < T.CRASH2 + 0.05)) impactFrame("#f2f8ff", "#0a0c18", 0.34);
 		const fade = Math.min(smooth(0, 0.5, t), 1 - smooth(T.FADE, T.LOOP, t));
 		if (fade < 1) for (let i = 0; i < N * 3; i++) { col[i] *= fade; lit[i] *= fade; }
 		OX = SX; OY = SY;
-		readout.textContent = t < 3.4 ? "the climb in: up from the terrace below, step to step, through the hole in the chamber floor; the camera rises with her, the bridge she came by runs off into the fog" : t < T.LAP_W ? "Nana Nightloom, knitting upside down on the ceiling (above Elfy, so its underside shows) · OH! A VISITOR~ · she drops on a thread, its line and ring dashed first" : t < 7.2 ? "the lap · her whole route round the room is dashed first: along the floor (jump her), up the wall, across the ceiling, down the other wall" : t < T.SPIT - 0.3 ? "the drops · she scuttles over Elfy on the ceiling, a thread to Elfy's spot is dashed, and she drops · dash" : t < T.LAP2 ? "phase two · KNIT ONE, PURL TWO! · three spits of web onto rings; they stick to the floor" : t < T.DANGLE ? "the second lap, too fast, trailing silk across the room · SNAG! · she runs into her own thread" : t < T.UNRAVEL ? "weak window · wound up in her own silk, dangling · jump and hit" : t < T.UP ? "she comes apart in a cloud of silk; the web over the hatch unravels and light comes down" : "up through the hatch to the terrace and the gate: the realm is cleared, the checkpoint lit, and the next realm hangs above, lit gold";
+		readout.textContent = t < T.CRAWL ? "Saint Rime hangs from the rafters of the cloister walk, candles burning cold; the serene mask" : t < T.BACK ? "tick · the weeping mask · it crawls the rafters and icicles grow in its wake; their shadows sharpen on the track, then they snap" : t < T.TURN1[1] ? "it turns back and crawls on round the corner; Elfy follows it round, and the whole chapel turns with her" : t < T.BREATH ? "the next side · it climbs down onto the chapel wall; the screaming mask; the breath's line is dashed along this whole side · get round the corner, out of the line" : t < T.CLIMB ? "frost breath, straight down this side and out past the corner into the air; Elfy is round the corner, out of it" : t < T.CRASH ? "back on the rafters, over Elfy; the sleeping mask; a ring, and the spikes' reach along the track · move" : t < T.WINCH ? "the crash; a wave of ice spikes runs both ways along the track (and round the corner) · jump · then it lies wrecked: hit it" : t < T.TURN2[1] ? "it winches itself up and crawls round the next corner; Elfy follows; the chapel turns again" : t < T.SNAP ? "phase two · the screaming mask · it swings on a chain from the rafters, the arc dashed out · stay crouched" : t < T.WINCH2 ? "the chain snaps; the landing ringed; spikes · jump · then hit it" : "it winches up into the rafters";
 	}
 	return { cv, update, paint, reset, showTrack };
 }
@@ -1087,7 +1342,7 @@ function present(cv) {
 	sctx.imageSmoothingEnabled = false; sctx.drawImage(pix, ox, oy, cw, ch);
 	sctx.imageSmoothingEnabled = true; sctx.globalCompositeOperation = "lighter"; sctx.drawImage(lig, ox, oy, cw, ch); sctx.globalCompositeOperation = "source-over";
 }
-const cvs = document.getElementById("stage-spire"), st = makeSpireStage(cvs, document.getElementById("readout-spire"));
+const cvs = document.getElementById("stage-chapel"), st = makeChapelStage(cvs, document.getElementById("readout-chapel"));
 function resize() { const w = Math.max(W, Math.round(cvs.clientWidth * Math.min(2, window.devicePixelRatio || 1) / W) * W); cvs.width = w; cvs.height = Math.round(w * 9 / 16); }
 window.addEventListener("resize", resize); resize();
 let paused = window.matchMedia("(prefers-reduced-motion: reduce)").matches, slow = false, last = 0;

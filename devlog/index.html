@@ -3,85 +3,36 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Square Off devlog atlas: every realm, fight and experiment, drawn entirely in code.">
-<meta property="og:title" content="Square Off devlog: the atlas">
-<meta property="og:description" content="Square Off devlog atlas: every realm, fight and experiment, drawn entirely in code.">
-<meta property="og:type" content="website">
-<title>Square Off devlog: the atlas</title>
-<meta name="claude:viewport-fit-sides" content="cover">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@500&display=swap">
-<style>
-/* Layout: a game-screen page. Global controls under the title, then one study per enemy: a wide stage at the game's
-   own pixel scale, its readout, then its key-pose sheet beside short notes. Deliberately single-theme (the dark
-   arena), every color set explicitly. */
-:root {
-	--bg: #0a0c13;
-	--panel: #11151f;
-	--line: #232a3c;
-	--ink: #e2e7f2;
-	--muted: #8d96ad;
-	--ember: #f0b832;
-	--ember-soft: #ffe07a;
-	--display: "Chakra Petch", "Trebuchet MS", sans-serif;
-	--body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
-	--mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
-	color-scheme: dark;
-}
-html { background: var(--bg); }
-body { background: var(--bg); color: var(--ink); font: 16px/1.55 var(--body); }
-.wrap { max-width: 1120px; margin: 0 auto; padding-block: 32px 56px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 28px; }
-header { display: grid; gap: 6px; }
-.eyebrow { font: 500 12px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ember-soft); }
-h1 { font: 700 clamp(30px, 5vw, 46px)/1.05 var(--display); letter-spacing: 0.01em; margin: 0; text-wrap: balance; }
-h2 { font: 700 20px/1.2 var(--display); margin: 0 0 8px; letter-spacing: 0.02em; }
-h2.name { font-size: clamp(24px, 3.6vw, 32px); margin: 0; text-wrap: balance; }
-.study { display: grid; gap: 14px; border-top: 1px solid var(--line); padding-top: 28px; }
-.wrap { gap: 40px; }
-.lede { color: var(--muted); max-width: 68ch; margin: 0; }
-.stage { position: relative; border: 1px solid var(--line); background: #000; }
-.stage canvas { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; max-width: 100%; }
-.controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
-button { font: 500 14px/1 var(--mono); color: var(--ink); background: var(--panel); border: 1px solid var(--line); padding: 10px 14px; cursor: pointer; }
-button:hover { border-color: var(--ember); }
-button:focus-visible { outline: 2px solid var(--ember); outline-offset: 2px; }
-button[aria-pressed="true"] { border-color: var(--ember); color: var(--ember-soft); }
-kbd { font: 500 11px/1 var(--mono); color: var(--muted); border: 1px solid var(--line); padding: 2px 5px; margin-left: 6px; }
-.readout { font: 500 13px/1.3 var(--mono); color: var(--muted); margin-left: auto; font-variant-numeric: tabular-nums; }
-.lower { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 28px; align-items: start; }
-.sheet { border: 1px solid var(--line); background: var(--panel); padding: 14px; display: grid; gap: 10px; }
-.sheet canvas { width: 100%; height: auto; max-width: 100%; image-rendering: pixelated; display: block; }
-.caption { font: 500 12px/1.4 var(--mono); color: var(--muted); }
-.notes { display: grid; gap: 22px; min-width: 0; }
-.notes p, .notes li { color: #c4cbdb; margin: 0; }
-.notes ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
-.notes strong { color: var(--ink); }
-footer { font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 16px; }
-footer a { color: var(--ember-soft); }
-@media (max-width: 760px) { .lower { grid-template-columns: minmax(0, 1fr); } .readout { margin-left: 0; width: 100%; } }
-</style>
-
-<style>
-.atlas header { gap: 10px; }
-.stats { font: 500 13px/1.3 var(--mono); color: var(--muted); }
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 18px; }
-.card { display: grid; align-content: start; gap: 10px; border: 1px solid var(--line); background: var(--panel); padding: 18px; border-top: 3px solid var(--ember); }
-.card h3 { font: 700 22px/1.15 var(--display); margin: 0; } .card h3 a { color: var(--ink); text-decoration: none; } .card h3 a:hover { color: var(--ember-soft); }
-.chips { display: flex; flex-wrap: wrap; gap: 6px; } .chip { font: 500 12px/1 var(--mono); color: #c4cbdb; border: 1px solid var(--line); padding: 6px 8px; text-decoration: none; } .chip:hover { border-color: var(--ember); color: var(--ember-soft); }
-.atlas h2 { font: 700 13px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ember-soft); margin: 0 0 14px; }
-</style>
+<title>Devlog · Technomancy Tavern</title>
+<meta name="description" content="How Technomancy Tavern makes games with code, pixels and AI: devlogs, live demos and recorded clips.">
+<meta name="theme-color" content="#05071a">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/devlog/assets/devlog.css">
 </head>
 <body>
-<div class="wrap atlas">
-<header>
-<div class="eyebrow">Square Off &middot; the devlog atlas</div>
-<h1>Rectangles All the Way Down</h1>
-<p class="lede">Every creature, backdrop and explosion in this atlas was drawn by a for-loop and scaled up with sharp pixels. The artist is a function; the sprite sheet is a rumour. Pick a realm: the bosses are waiting, politely, in a loop.</p>
-<div class="stats">10 realms &middot; 69 fights &middot; 3 studies &middot; 0 image files drawn by hand</div>
-</header>
-<section><h2>Realms</h2><div class="grid"><article class="card" style="--ember:#ff7a2a;--ember-soft:#ffb36b"><div class="eyebrow">Realm 1 &middot; 9 fights</div><h3><a href="realms/blizzard-arena.html">The Blizzard Arena</a></h3><p class="lede">Nine enemies, each with its own fire, in a blizzard that has opinions.</p><div class="chips"><a class="chip" href="realms/blizzard-arena.html#h-knight">Brazier Knight</a><a class="chip" href="realms/blizzard-arena.html#h-cantor">Kiln Cantor</a><a class="chip" href="realms/blizzard-arena.html#h-cart">Ash Cartographer</a><a class="chip" href="realms/blizzard-arena.html#h-courier">Hollow Courier</a><a class="chip" href="realms/blizzard-arena.html#h-maw">Vesper Maw</a><a class="chip" href="realms/blizzard-arena.html#h-magus">Sclera Magus</a><a class="chip" href="realms/blizzard-arena.html#h-cloud">Grinning Pyrocumulus</a><a class="chip" href="realms/blizzard-arena.html#h-imp">Ion Gremlin</a><a class="chip" href="realms/blizzard-arena.html#h-duo">Madame Vesper &amp; Little Tubbs</a></div></article><article class="card" style="--ember:#4fa6dc;--ember-soft:#8fd2f2"><div class="eyebrow">Realm 2 &middot; 9 fights</div><h3><a href="realms/desert-jungle.html">The Desert Jungle</a></h3><p class="lede">A jungle grown through a desert, a lava river on the horizon, and nine bosses who take water personally.</p><div class="chips"><a class="chip" href="realms/desert-jungle.html#h-contessa">Tide Contessa</a><a class="chip" href="realms/desert-jungle.html#h-bather">Drowned Bather</a><a class="chip" href="realms/desert-jungle.html#h-bishop">Bishop Bubblegulp</a><a class="chip" href="realms/desert-jungle.html#h-twins">Siphon &amp; Sever</a><a class="chip" href="realms/desert-jungle.html#h-jelly">The Thunderbell</a><a class="chip" href="realms/desert-jungle.html#h-palm">The Weeping Palm</a><a class="chip" href="realms/desert-jungle.html#h-organ">Abbot Barnacle, the Brine Organ</a><a class="chip" href="realms/desert-jungle.html#h-sump">Captain Sump</a><a class="chip" href="realms/desert-jungle.html#h-drain">Little Mother Drain</a></div></article><article class="card" style="--ember:#b070ff;--ember-soft:#d8b0ff"><div class="eyebrow">Realm 3 &middot; 7 fights</div><h3><a href="realms/hell-cavern.html">The Hell Cavern</a></h3><p class="lede">Ice in hell: lava falls, violet soulfire, and a chandelier that eats ceilings.</p><div class="chips"><a class="chip" href="realms/hell-cavern.html#h-icebox">The Icebox Family</a><a class="chip" href="realms/hell-cavern.html#h-rime">Saint Rime, the Frost Chandelier</a><a class="chip" href="realms/hell-cavern.html#h-clerk">The Clerk of Rime</a><a class="chip" href="realms/hell-cavern.html#h-oracle">The Snowglobe Oracle</a><a class="chip" href="realms/hell-cavern.html#h-ohm">Maestro Ohm and the Sparkflies</a><a class="chip" href="realms/hell-cavern.html#h-ladder">The Ladder</a><a class="chip" href="realms/hell-cavern.html#h-nimbus">Lady Nimbus</a></div></article><article class="card" style="--ember:#e0702a;--ember-soft:#f6c050"><div class="eyebrow">Realm 4 &middot; 6 fights</div><h3><a href="realms/rust-orchard.html">The Rust Orchard</a></h3><p class="lede">Blades in autumn: a wood grown through the wreck of something enormous that fell out of the sky.</p><div class="chips"><a class="chip" href="realms/rust-orchard.html#h-harvester">The Harvester</a><a class="chip" href="realms/rust-orchard.html#h-thornwire">Thornwire</a><a class="chip" href="realms/rust-orchard.html#h-quake">The Quakewright</a><a class="chip" href="realms/rust-orchard.html#h-kites">The Cutter Kites</a><a class="chip" href="realms/rust-orchard.html#h-abbot">The Spore Abbot</a><a class="chip" href="realms/rust-orchard.html#h-warden">The Gale Warden</a></div></article><article class="card" style="--ember:#d8a83a;--ember-soft:#e8a0e8"><div class="eyebrow">Realm 5 &middot; 6 fights</div><h3><a href="realms/sanctum.html">The Sanctum Above the Clouds</a></h3><p class="lede">A white-marble cathedral afloat on a sea of cloud, with poison and dark magic where the prayers should be.</p><div class="chips"><a class="chip" href="realms/sanctum.html#h-aurelian">Ser Aurelian, the Half-Gilt Duelist</a><a class="chip" href="realms/sanctum.html#h-cherubs">The Plague Cherubs</a><a class="chip" href="realms/sanctum.html#h-hollow">The Tolling Hollow</a><a class="chip" href="realms/sanctum.html#h-nil">Acolyte Nil and the Stitched Seraph</a><a class="chip" href="realms/sanctum.html#h-saint">The Molting Saint</a><a class="chip" href="realms/sanctum.html#h-heart">The Eclipse Heart</a></div></article><article class="card" style="--ember:#ff7a3a;--ember-soft:#ff80d8"><div class="eyebrow">Realm 6 &middot; 6 fights</div><h3><a href="realms/orrery.html">The Orrery at the End of the Sun</a></h3><p class="lede">An observatory orbiting a dying sun, where gravity is optional and so is the clock.</p><div class="chips"><a class="chip" href="realms/orrery.html#h-lamplighter">The Lamplighter</a><a class="chip" href="realms/orrery.html#h-ouroboros">The Ouroboros Engine</a><a class="chip" href="realms/orrery.html#h-perigee">Madame Perigee, the Astrolabe Witch</a><a class="chip" href="realms/orrery.html#h-quib">Pilot Quib and the Bulwark</a><a class="chip" href="realms/orrery.html#h-phases">The Four Phases</a><a class="chip" href="realms/orrery.html#h-unborn">The Unborn Sun</a></div></article><article class="card" style="--ember:#e870b0;--ember-soft:#f0a8ff"><div class="eyebrow">Realm 7 &middot; 6 fights</div><h3><a href="realms/ossuary.html">Noon at the Ossuary Chapel</a></h3><p class="lede">Gothic, undead, poisoned, and dressed for a wedding at high noon.</p><div class="chips"><a class="chip" href="realms/ossuary.html#h-pallbearers">The Pallbearers</a><a class="chip" href="realms/ossuary.html#h-gloss">Lady Gloss</a><a class="chip" href="realms/ossuary.html#h-sommelier">The Sommelier</a><a class="chip" href="realms/ossuary.html#h-taper">Taper, the Waxwork Saint</a><a class="chip" href="realms/ossuary.html#h-scrivener">The Scrivener</a><a class="chip" href="realms/ossuary.html#h-widow">The Widow Cake</a></div></article><article class="card" style="--ember:#78dcc4;--ember-soft:#dcff5a"><div class="eyebrow">Realm 8 &middot; 6 fights</div><h3><a href="realms/bathhouse.html">The Last Bathhouse</a></h3><p class="lede">A bathhouse kept by its ghosts: mint spirits, lime acid, and a very polite kappa.</p><div class="chips"><a class="chip" href="realms/bathhouse.html#h-attendant">The Attendant</a><a class="chip" href="realms/bathhouse.html#h-soak">The Soak</a><a class="chip" href="realms/bathhouse.html#h-kappa">Ozeki Kappa</a><a class="chip" href="realms/bathhouse.html#h-lantern">Chōchin</a><a class="chip" href="realms/bathhouse.html#h-wyrm">The Drain Wyrm</a><a class="chip" href="realms/bathhouse.html#h-proprietress">The Proprietress</a></div></article><article class="card" style="--ember:#f0b832;--ember-soft:#ffe07a"><div class="eyebrow">Realm 9 &middot; 6 fights</div><h3><a href="realms/bazaar.html">The Midas Night Bazaar</a></h3><p class="lede">Molten gold, rubber-hose cartoons, a scale that tips, and bosses who act with their eyebrows.</p><div class="chips"><a class="chip" href="realms/bazaar.html#h-bull">Lucky Bull</a><a class="chip" href="realms/bazaar.html#h-anubis">Anubis, Live!</a><a class="chip" href="realms/bazaar.html#h-sphinx">The Sphinxrechaun</a><a class="chip" href="realms/bazaar.html#h-brunhilde">Ninefold Brunhilde</a><a class="chip" href="realms/bazaar.html#h-dorado">El Dorado</a><a class="chip" href="realms/bazaar.html#h-jinn">The Midas Jinn</a></div></article><article class="card" style="--ember:#b878ff;--ember-soft:#ecd4ff"><div class="eyebrow">Realm 10 &middot; 8 fights</div><h3><a href="realms/rooftop.html">The Psi-Tower Rooftop</a></h3><p class="lede">Sunset, floating slabs, and eight psychic kids who monologue mid-fight.</p><div class="chips"><a class="chip" href="realms/rooftop.html#h-zip">Zip Zephyr</a><a class="chip" href="realms/rooftop.html#h-gail">Gigawatt Gail</a><a class="chip" href="realms/rooftop.html#h-ronin">Ronin Rewind</a><a class="chip" href="realms/rooftop.html#h-marcel">Copycat Marcel</a><a class="chip" href="realms/rooftop.html#h-pyra">Pom-Pom Pyra</a><a class="chip" href="realms/rooftop.html#h-frost">Frostbyte</a><a class="chip" href="realms/rooftop.html#h-annie">Anchor Annie</a><a class="chip" href="realms/rooftop.html#h-cerebrax">The Magnificent Cerebrax</a></div></article></div></section>
-<section><h2>Studies (the experiments, including the one we threw out)</h2><div class="grid"><article class="card" style="--ember:#78dcc4;--ember-soft:#c0fbec"><div class="eyebrow">Study &middot; one fight, one experiment</div><h3><a href="studies/kappa-diorama.html">Ozeki Kappa, in the Round</a></h3><p class="lede">Can a fight live inside an isometric miniature? Yes, with a track and a depth buffer.</p><div class="chips"></div></article><article class="card" style="--ember:#b8aee0;--ember-soft:#eeecfa"><div class="eyebrow">Study &middot; one fight, one experiment</div><h3><a href="studies/silk-spire.html">The Silk Spire</a></h3><p class="lede">A perspective-camera level with a spider on the ceiling: the one we threw out, kept for the lessons.</p><div class="chips"></div></article><article class="card" style="--ember:#a8dcff;--ember-soft:#e4f6ff"><div class="eyebrow">Study &middot; one fight, one experiment</div><h3><a href="studies/rime-chapel.html">The Rime Chapel</a></h3><p class="lede">Saint Rime, circled: a chapel you walk round, the whole miniature turning a quarter at each corner.</p><div class="chips"></div></article></div></section>
-<footer>CC0 1.0: code, drawings and words. Copy it, ship it, put it in your own game. Elfy is the game's own sprite. Source and build: <code>docs/devlog</code> in the Square Off repository.</footer>
+<div class="wrap">
+  <p class="crumbs"><a href="/">Technomancy Tavern</a> / devlog</p>
+  <header>
+    <p class="kicker">◆ THE DEVLOG ◆</p>
+    <h1>How the drinks get made</h1>
+    <p class="lede">Behind the bar: how Technomancy Tavern builds its games and its barkeep with code, pixels and AI. Live demos you can poke, recorded clips from the games, and the code behind them.</p>
+  </header>
+  <section aria-labelledby="projects">
+    <h2 id="projects">PROJECTS</h2>
+    <div class="cards">
+      <a class="card" href="/devlog/esper-elfy/">
+        <h3>Esper Elfy</h3>
+        <p>The franchise: a psychic fighter, her friend Sparky, and a world drawn entirely in code. Two games so far.</p>
+        <span class="tag">2 GAMES</span>
+      </a>
+      <div class="card">
+        <h3>Mancy</h3>
+        <p>How the tavern's technomancer barkeep gets drawn, animated and brought to life.</p>
+        <span class="tag soon">SERIES SOON</span>
+      </div>
+    </div>
+  </section>
+  <p class="foot">© 2026 Technomancy Tavern · contact@tmtvrn.com</p>
 </div>
 </body>
 </html>

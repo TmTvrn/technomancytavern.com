@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Can a fight live inside an isometric miniature? Yes, with a track and a depth buffer.">
-<meta property="og:title" content="Ozeki Kappa, in the Round · Square Off devlog (study)">
-<meta property="og:description" content="Can a fight live inside an isometric miniature? Yes, with a track and a depth buffer.">
+<meta name="description" content="A perspective-camera level with a spider on the ceiling: the one we threw out, kept for the lessons.">
+<meta property="og:title" content="The Silk Spire · Save Sparky devlog (study)">
+<meta property="og:description" content="A perspective-camera level with a spider on the ceiling: the one we threw out, kept for the lessons.">
 <meta property="og:type" content="website">
-<title>Ozeki Kappa, in the Round · Square Off devlog (study)</title>
+<title>The Silk Spire · Save Sparky devlog (study)</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@500&display=swap">
@@ -21,8 +21,8 @@
 	--line: #232a3c;
 	--ink: #e2e7f2;
 	--muted: #8d96ad;
-	--ember: #78dcc4;
-	--ember-soft: #c0fbec;
+	--ember: #b8aee0;
+	--ember-soft: #eeecfa;
 	--display: "Chakra Petch", "Trebuchet MS", sans-serif;
 	--body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
 	--mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
@@ -65,9 +65,9 @@ footer a { color: var(--ember-soft); }
 <body>
 <div class="wrap">
 	<header>
-		<div class="eyebrow">Square Off devlog · study · diorama test · the last bathhouse, floating</div>
-		<h1>Ozeki Kappa, in the Round</h1>
-		<p class="lede">Can the fights live inside an isometric pixel-art diorama? Here the bathhouse from realm 8 is a cutaway floating in the rain at night: cedar posts and indigo tiles, the mural, the shoji glowing, the acid pool steaming, lanterns swaying, a ghost attendant drifting past with a towel. Everything is drawn by code at 640 × 360 and scaled up with sharp pixels. The fight inside it is the same 2D fight as before. Elfy only moves forward and back along a track (the cyan line), plus up. The inset in the corner shows that game, the real one, as plain 2D.</p>
+		<div class="eyebrow">Save Sparky devlog · study · level study · a realm of the climb</div>
+		<h1>The Silk Spire</h1>
+		<p class="lede">A level, not a diorama: one realm of the climb, with its one boss. Elfy arrives from below, up the steps from the bridge she came by. She meets Nana Nightloom, a knitting granny spider who walks the floor, the walls and the ceiling. She wins, the web over the hatch unravels, and she climbs out to the terrace, where the realm's gate is its checkpoint and the next realm hangs above her, lit gold. The game is still a flat 2D plane (the inset). The world around it is built in depth all the way out: a colonnade you see straight through, floating stairs and islands, towers, a city of spires in the fog, a sea of cloud far below. Everything is drawn by code.</p>
 		<div class="controls">
 			<button id="pause" type="button" aria-pressed="false">Pause<kbd>Space</kbd></button>
 			<button id="slow" type="button" aria-pressed="false">Slow motion<kbd>S</kbd></button>
@@ -75,24 +75,22 @@ footer a { color: var(--ember-soft); }
 			<button id="track" type="button" aria-pressed="true">Track view<kbd>T</kbd></button>
 		</div>
 	</header>
-	<section class="study" aria-labelledby="h-dio">
-		<h2 class="name" id="h-dio">The bathhouse diorama</h2>
-		<div class="stage"><canvas id="stage-dio" width="1280" height="720" aria-label="A cutaway bathhouse floats on a rock in the rainy night, drawn in isometric pixel art; inside, along the front of the room, Elfy fights Ozeki Kappa: it stomps and crests of floorboards run along the track, it throws salt onto rings, leaps the pool, fires palms of force; Elfy bows, it bows back and spills its dish, and she hits it; then it walks off the track back into the room to refill its dish at the pool and leaps home, steps aside and bows her through, and she runs out of the end door; the track turns the corner of the house and the whole diorama swings a quarter turn so she keeps running down and to the right, along the veranda into the back garden, where a ghost waves from the round window"></canvas></div>
-		<div class="controls"><span class="readout" id="readout-dio">idle</span></div>
+	<section class="study" aria-labelledby="h-spire">
+		<h2 class="name" id="h-spire">Nana Nightloom's chamber</h2>
+		<div class="stage"><canvas id="stage-spire" width="1280" height="720" aria-label="Elfy climbs up a series of floating steps inside an open stone spire at night, a long bridge behind her running off into the fog, and comes up through a hole into a chamber framed by pillars, with a colonnade of tall arches behind it opening onto towers, floating stairs and islands and a city of spires; a granny spider in a lace bonnet and spectacles knits upside down on the chamber's ceiling, drops on a thread, runs a lap of the whole room along the floor, up the wall, across the ceiling and down the other wall, drops twice onto Elfy's spot, spits web onto the floor, then runs another lap trailing silk, snags in her own thread and dangles in a cocoon while Elfy jumps and hits her; she comes apart in silk, the web over the ceiling hatch unravels, light pours down, and Elfy jumps up to the terrace where a gate lights up as the checkpoint, a golden island floating high above"></canvas></div>
+		<div class="controls"><span class="readout" id="readout-spire">idle</span></div>
 		<div class="notes">
 			<ul>
-				<li><strong>The game is 2D.</strong> Elfy and the kappa have a distance along the track and a height, nothing else; jumps, crests, salt rings, palms and hit windows are the bathhouse fight from realm 8, unchanged. The inset draws exactly that: a line of floor, the pool, the bridge's hump, the loft, the corner (dashed), Elfy as a green square, the kappa as a red one.</li>
-				<li><strong>The world is a path.</strong> The track is a line through the 3D bathhouse: along the front of the room, over the bridge, out of the end door, round the corner onto the veranda. Each frame, every (distance, height) is put on that line and projected 2:1 isometric.</li>
-				<li><strong>Depth per pixel.</strong> The room is drawn once into a color buffer and a depth buffer; characters, steam, splashes and the curtain check that depth as they draw, so the bridge rail, the loft's post and the doorway pass in front of Elfy, and the back wall stays behind her, with no hand sorting.</li>
-				<li><strong>Telegraphs survive the trip.</strong> Rings on the track become isometric ellipses, lanes become lines along the track at the right height, arcs are drawn in the world. The grammar is the same: outline first, then the real thing.</li>
-				<li><strong>Enemies can leave the track.</strong> The kappa walks back into the room to refill its dish at the pool, and steps aside to bow Elfy through. Off the track it cannot touch her (in the inset it turns to a dotted square); it is only dangerous on the line.</li>
-				<li><strong>The camera.</strong> It looks at the room from a little in front rather than square on its corner, so the track runs nearly level across the screen and the room reads like a stage; depth goes down to the left. The camera never quite stops: its angle sways a few degrees over about fourteen seconds, and it drifts toward the middle of the fight (averaged over the last second, so the kappa's leaps don't jerk it). Because the whole room is redrawn from code every frame (about 12 ms), any angle is free, and every pixel reads its own spot on the textures, so the boards don't shimmer as it moves.</li>
-				<li><strong>The corner.</strong> Where the track turns, the camera swings a quarter turn around the house, so forward is still to the right. The scene is redrawn from code at every angle of the turn: no second set of art. Halfway round, the cut moves with it, the way a dollhouse would be built: the end wall is cut away and the front wall goes back up, so you still look into the warm room from the new side.</li>
-				<li><strong>Light on the characters.</strong> Elfy and the kappa pick up the lanterns (warm) and the moon (cool) by where they stand, so they read in the room's dark corners and change color as they cross it.</li>
+				<li><strong>The camera trick.</strong> Instead of lowering the camera to see the ceiling, the camera's eye rides at Elfy's height with a gentle perspective. Anything above her eye shows its underside, so the ceiling Nana walks on is always in view while Elfy is below it. Anything below shows its top, so the floor she stands on, and the steps she came up, read as surfaces. Nothing tilts, and her controls never change.</li>
+				<li><strong>The plane is 1:1.</strong> The camera's distance equals its focal length, so the play plane renders at exactly one world unit per pixel. Elfy, Nana, the platforms' front edges and every warning are crisp, unscaled pixel art. Only things in front of or behind the plane grow or shrink.</li>
+				<li><strong>Walls and ceilings in 2D.</strong> In the inset, the chamber is a box of lines: floor, two walls, a ceiling with the hatch, two ledges. Nana is a red square that walks all of them; her lap is one path round the box. On screen she is drawn in her own frame (her surface below her), then turned onto the floor, a wall or the ceiling.</li>
+				<li><strong>No void.</strong> The spire is open: a colonnade behind the chamber, and below it a bare framework of pillars, beams and hanging lanterns, so the world shows through. Around it, at every depth: two towers and a bridge, flights of floating stairs, small islands with lit houses, a city of spires, an aqueduct, a cloud sea. Fog thickens with distance, so it fades instead of ending, and everything slides past at its own rate as the camera rises.</li>
+				<li><strong>Where you came from, where you are going.</strong> At the start the camera is low: the terrace, the long bridge off into the fog, the bathhouse far down it (the last realm), and the chamber's underside above. At the end it rises past the terrace to the gate, the checkpoint, and the next realm's golden island overhead.</li>
+				<li><strong>One enemy, once.</strong> A realm has its boss; when she is beaten, its top opens (here, the web over the hatch unravels), and the gate at the top is the save point. An enemy you left unbeaten could follow you up through that hatch into the next realm, so two fights overlap.</li>
 			</ul>
 		</div>
 	</section>
-	<footer>A study for Square Off. All drawing and code here are new. Elfy is the game's own sprite.</footer>
+	<footer>A study for Esper Elfy: Save Sparky. All drawing and code here are new. Elfy is the game's own sprite.</footer>
 </div>
 <script>
 "use strict";
@@ -702,661 +700,373 @@ function soundWord(word, x, y, k, fill = GOLDM[4], edge = INK9, s = 2) {
 	}
 }
 
-// ================================================================ page 8: the Last Bathhouse
-const BONEB = ["#3a2e26", "#6e5e4e", "#ac9c84", "#ddd0b8", "#fff8e6"];
-// A public bathhouse long closed, at midnight. Dark cedar pillars and beams, indigo-and-cream tiles, a great faded
-// mural of a mountain over waves on the back wall, red paper lanterns, steam always rolling. The soaking pool sunk in
-// the middle of the floor is full of glowing lime acid; an arched footbridge crosses it; wooden lofts on either side.
-// Mint is spectral (the ghosts that still keep the place), lime is acid; both kept clear of Elfy's own saturated green.
-const CEDAR = ["#140a08", "#2e1a12", "#4e2e1c", "#78482a", "#a46c3e", "#d09a5c"];
-const TILES = ["#0a0e22", "#141c3c", "#222e5c", "#3a4c8a", "#7a8cc4", "#c8d4ee"];
-const MINTG = ["#0c302c", "#1a5a50", "#34988a", "#78dcc4", "#c0fbec", "#efffff"];
-const ACIDL = ["#1e2a02", "#3e5a06", "#6aa00c", "#a4e01a", "#dcff5a", "#f8ffc8"];
-const LANTR = ["#4a0808", "#901812", "#d43c26", "#ff8448", "#ffd08a"];
-const BH_L = { x0: 18, x1: 92, y: FEET - 64 }, BH_R = { x0: 292, x1: 366, y: FEET - 64 }, BH_B = { x0: 140, x1: 244, y: FEET - 26 };
-const POOL = [132, 252];
-const BH_PLATS = [BH_L, BH_R, BH_B];
+// ================================================================ the Silk Spire: a realm of the climb
+// A level study. The game stays a 2D plane (X along, Z up), but the world around that plane is built in depth and
+// seen through a gentle perspective camera whose eye rides at Elfy's height: anything above her shows its underside
+// (where a spider walks), anything below shows its top (where she came from), and everything at other depths slides
+// past at its own rate. The play plane sits at exactly 1:1, so the sprites stay crisp; walls facing the camera stay
+// rectangles. Fog thickens with distance, so the world goes on instead of ending in a void.
 
-const bathBase = new Float32Array(N * 3);
-function buildBath() {
-	const set = (x, y, h) => { if (x < 0 || y < 0 || x >= W || y >= H) return; const c = hx(h), i = (y * W + x) * 3; bathBase[i] = c[0]; bathBase[i + 1] = c[1]; bathBase[i + 2] = c[2]; };
-	// the back wall: the mural, a mountain over waves in faded indigo and cream, cracked, in shadow
-	for (let y = 0; y < FEET; y++) for (let x = 0; x < W; x++) {
-		const v = y / FEET, mtn = 60 + Math.abs(x - 200) * 0.55, wave = 110 + Math.sin(x * 0.07) * 6 + Math.sin(x * 0.19) * 3;
-		let c = v < 0.1 ? TILES[0] : y > mtn ? (y > mtn + 10 ? TILES[2] : TILES[3]) : TILES[1];
-		if (y < mtn + 10 && y > mtn - 2 && y < 78) c = TILES[4]; // the snowcap
-		if (y > wave) c = ((Math.floor((x + Math.sin(y * 0.3) * 4) / 9) + Math.floor(y / 6)) % 2) ? TILES[2] : TILES[3];
-		if (y > wave && y < wave + 2) c = TILES[4];
-		if (noise1(x * 0.05 + y * 0.03, 3) > 0.7 && bayer(x, y) < 0.4) c = TILES[1]; // the mural's paint flaking
-		set(x, y, c);
-	}
-	// tiled wainscot along the bottom of the wall: cream and indigo squares, grout lines
-	for (let y = FEET - 36; y < FEET; y++) for (let x = 0; x < W; x++) { const tx = x % 8, ty = (y - (FEET - 36)) % 8, chk = (Math.floor(x / 8) + Math.floor(y / 8)) % 2; set(x, y, tx === 0 || ty === 0 ? TILES[1] : chk ? TILES[2] : TILES[3]); }
-	// ceiling: dark cedar beams
-	for (let y = 0; y < 14; y++) for (let x = 0; x < W; x++) set(x, y, y === 13 ? CEDAR[0] : y > 10 ? CEDAR[2] : (x % 32 < 2 ? CEDAR[0] : CEDAR[1]));
-	// pillars
-	for (const px of [6, 122, 262, 378]) for (let y = 14; y < FEET; y++) for (let k = -3; k <= 3; k++) set(px + k, y, k === -3 ? CEDAR[0] : k < 0 ? CEDAR[3] : k === 3 ? CEDAR[1] : CEDAR[2]);
-	// noren curtains on two doorways, faded indigo with a white mark
-	for (const nx of [40, 330]) for (let y = 14; y < 44; y++) for (let x = -16; x <= 16; x++) { const split = Math.abs(x) < 1 || Math.abs(x - 8) < 0.6 || Math.abs(x + 8) < 0.6; if (split) continue; set(nx + x, y, Math.hypot(x, y - 28) < 6 && Math.hypot(x, y - 28) > 3.5 ? TILES[5] : TILES[2]); }
-	// the floor: cedar boards, the pool sunk in the middle with a stone rim
-	for (let x = 0; x < W; x++) for (let y = FEET; y < H; y++) {
-		const d = y - FEET, inPool = x > POOL[0] && x < POOL[1];
-		let c = d === 0 ? CEDAR[4] : (x + Math.floor(d / 6) * 17) % 36 === 0 ? CEDAR[1] : d % 6 === 0 ? CEDAR[2] : CEDAR[3];
-		if (inPool) c = d < 2 ? ACIDL[3] : d < 6 ? ACIDL[2] : d < 16 ? (((x + d) % 7 === 0) ? ACIDL[2] : ACIDL[1]) : ACIDL[0];
-		if (Math.abs(x - POOL[0]) < 3 || Math.abs(x - POOL[1]) < 3) c = d === 0 ? "#c8c4b8" : "#8a8678";
-		set(x, y, c);
+// ---------------------------------------------------------------- the camera and the buffers
+const ZB = new Float32Array(N), SBASE = new Float32Array(N * 3), SBZ = new Float32Array(N);
+let ZT = null;
+const CD = 760; // the camera's distance from the play plane (and its focal length, so the plane is 1:1)
+const SCAM = { x: 160, z: -160 };
+const FOG = hx("#3a3466"), PLANE_D = 1 / CD;
+const sxOf = (X, d) => W / 2 + (X - SCAM.x) * CD / d, syOf = (Z, d) => H / 2 - (Z - SCAM.z) * CD / d;
+const LAV = ["#1c1a30", "#2a2644", "#3c3660", "#544c80", "#6e64a0", "#9086c0", "#b8aee0"];
+const PLUM = ["#1e0c20", "#3a1838", "#5a2a56", "#7e4078", "#a8609c"];
+const SILK = ["#8a88a8", "#c8c6e0", "#eeecfa", "#ffffff"];
+const CANDLE = ["#7a3010", "#e07a30", "#ffc070", "#fff0c8"];
+const GOLDR = ["#3a2408", "#7a5014", "#c08a28", "#f0c050", "#ffe8a0"];
+// a pixel of the static scene: fogged by its distance d, written if nearer than what is there
+function wpix(px, py, d, h) {
+	const i = py * W + px, z = 1 / d;
+	if (z <= SBZ[i]) return;
+	const c = hx(h), f = clamp((d - CD - 140) / 2600) ** 0.75 * 0.88;
+	SBZ[i] = z; SBASE[i * 3] = lerp(c[0], FOG[0], f); SBASE[i * 3 + 1] = lerp(c[1], FOG[1], f); SBASE[i * 3 + 2] = lerp(c[2], FOG[2], f);
+}
+// a wall facing the camera, at depth Y: spans x0..x1, z0..z1; fn(u, v, d) is the color at (X - x0, Z - z0), or null
+function frontQ(Y, x0, x1, z0, z1, fn) {
+	const d = Y + CD; if (d < 20) return;
+	const a = Math.max(0, Math.floor(sxOf(x0, d))), b = Math.min(W - 1, Math.ceil(sxOf(x1, d))), c = Math.max(0, Math.floor(syOf(z1, d))), e = Math.min(H - 1, Math.ceil(syOf(z0, d)));
+	const s = CD / d;
+	for (let py = c; py <= e; py++) { const Z = SCAM.z - (py + 0.5 - H / 2) / s; if (Z < z0 || Z >= z1) continue; for (let px = a; px <= b; px++) { const X = SCAM.x + (px + 0.5 - W / 2) / s; if (X < x0 || X >= x1) continue; const h = fn(X - x0, Z - z0, d); if (h) wpix(px, py, d, h); } }
+}
+// a horizontal face at height Z (its top if the eye is above it, its underside if below)
+function horizQ(Z, x0, x1, y0, y1, fn) {
+	const dz = Z - SCAM.z; if (Math.abs(dz) < 0.01) return;
+	const r0 = syOf(Z, y0 + CD), r1 = syOf(Z, y1 + CD), c = Math.max(0, Math.floor(Math.min(r0, r1))), e = Math.min(H - 1, Math.ceil(Math.max(r0, r1)));
+	for (let py = c; py <= e; py++) {
+		const t = py + 0.5 - H / 2; if (Math.abs(t) < 0.01) continue;
+		const d = -dz * CD / t; if (d <= 20) continue; const Y = d - CD; if (Y < y0 || Y > y1) continue;
+		const a = Math.max(0, Math.floor(sxOf(x0, d))), b = Math.min(W - 1, Math.ceil(sxOf(x1, d)));
+		for (let px = a; px <= b; px++) { const X = SCAM.x + (px + 0.5 - W / 2) * d / CD; if (X < x0 || X >= x1) continue; const h = fn(X - x0, Y - y0, d, dz < 0); if (h) wpix(px, py, d, h); }
 	}
 }
-function drawBathLife(t, layer) {
-	if (layer === "back") {
-		// the acid pool's surface: glowing, bubbling, lighting the steam above it
-		for (let x = POOL[0] + 3; x < POOL[1] - 2; x++) { const s = Math.sin(x * 0.3 + t * 3) * 0.8 + Math.sin(x * 0.11 - t * 2); put(x, FEET - 1 + Math.round(s * 0.5), (x + Math.floor(t * 8)) % 9 === 0 ? ACIDL[5] : ACIDL[4]); put(x, FEET, ACIDL[3]); if (x % 6 === 0) light(x, FEET - 2, ACIDL[3], 0.18); }
-		for (let i = 0; i < 6; i++) { const ph = (t * 0.9 + i * 0.37) % 1, x = POOL[0] + 10 + ((i * 41) % (POOL[1] - POOL[0] - 20)); disc(x, FEET - 1 - ph * 3, 1 + ph * 1.2, ACIDL[4], 1 - ph); }
-		glow((POOL[0] + POOL[1]) / 2, FEET - 4, 70, ACIDL[3], 0.18);
-		// lanterns swaying
-		for (const [lx, ly] of [[80, 30], [192, 24], [306, 30]]) { const sw = Math.sin(t * 1.3 + lx) * 2; line(lx, 14, lx + sw, ly - 7, CEDAR[0]); for (let y = -7; y <= 7; y++) { const w = 5.5 * Math.sqrt(1 - (y / 7.5) ** 2); for (let x = -w; x <= w; x++) put(lx + sw + x, ly + y, y % 3 === 0 ? LANTR[1] : x < -w + 1 ? LANTR[1] : LANTR[2]); } put(lx + sw, ly - 8, "#000"); put(lx + sw, ly + 8, "#000"); glow(lx + sw, ly, 18, LANTR[3], 0.35 + 0.05 * Math.sin(t * 7 + lx)); }
-	} else {
-		// steam rolling up off the pool and drifting
-		for (let i = 0; i < 14; i++) { const ph = (t * 0.06 + i * 0.071) % 1, x = POOL[0] + (i * 37) % (POOL[1] - POOL[0]) + Math.sin(t * 0.5 + i) * 14 + ph * 20, y = FEET - ph * 130, r = 6 + ph * 14; disc(x, y, r, "#dfe8ef", 0.06 * Math.sin(ph * Math.PI)); }
+// a side face at X (seen from whichever side the eye is on)
+function sideQ(X, y0, y1, z0, z1, fn) {
+	const dx = X - SCAM.x; if (Math.abs(dx) < 0.01) return;
+	const q0 = sxOf(X, y0 + CD), q1 = sxOf(X, y1 + CD), a = Math.max(0, Math.floor(Math.min(q0, q1))), b = Math.min(W - 1, Math.ceil(Math.max(q0, q1)));
+	for (let px = a; px <= b; px++) {
+		const t = px + 0.5 - W / 2; if (Math.abs(t) < 0.01) continue;
+		const d = dx * CD / t; if (d <= 20) continue; const Y = d - CD; if (Y < y0 || Y > y1) continue;
+		const c = Math.max(0, Math.floor(syOf(z1, d))), e = Math.min(H - 1, Math.ceil(syOf(z0, d)));
+		for (let py = c; py <= e; py++) { const Z = SCAM.z - (py + 0.5 - H / 2) * d / CD; if (Z < z0 || Z >= z1) continue; const h = fn(Y - y0, Z - z0, d); if (h) wpix(px, py, d, h); }
 	}
 }
-// a cedar loft or the footbridge
-function drawLoft(p, t) {
-	const bridge = p === BH_B;
-	for (let x = p.x0; x <= p.x1; x++) {
-		const arch = bridge ? -Math.round(5 * Math.sin(((x - p.x0) / (p.x1 - p.x0)) * Math.PI)) : 0;
-		for (let y = 0; y < 6; y++) put(x, p.y + y + arch, y === 0 ? CEDAR[5] : y === 5 ? CEDAR[0] : CEDAR[3 - (y > 2 ? 1 : 0)]);
-		if ((x - p.x0) % 12 === 0) { for (let y = -10; y < 0; y++) put(x, p.y + y + arch, CEDAR[2]); }
-		put(x, p.y - 10 + arch, bridge ? LANTR[1] : CEDAR[3]);
-	}
-	if (bridge) for (const px of [p.x0 + 4, p.x1 - 4]) for (let y = p.y + 4; y < FEET + 6; y++) { put(px, y, CEDAR[1]); put(px + 1, y, CEDAR[2]); }
-	else for (let x = p.x0 + 6; x < p.x1 - 4; x += 16) for (let j = 0; j < 12; j++) { put(x + j * 0.5, p.y + 6 + j, CEDAR[1]); put(x + 16 - j * 0.5, p.y + 6 + j, CEDAR[1]); }
-}
-const bridgeY = (x) => (x >= BH_B.x0 && x <= BH_B.x1 ? BH_B.y - Math.round(5 * Math.sin(((x - BH_B.x0) / (BH_B.x1 - BH_B.x0)) * Math.PI)) : FEET);
-// a mint ghost-glow and slight transparency: re-draw whatever drawFn draws, washed toward mint, at alpha a
-function ghostly(drawFn, a = 0.75, wash = 0.35) {
-	const sav = col.slice(); drawFn();
-	for (let i = 0; i < col.length; i += 3) { if (col[i] === sav[i] && col[i + 1] === sav[i + 1] && col[i + 2] === sav[i + 2]) continue; const r = lerp(col[i], 0.6, wash), g = lerp(col[i + 1], 1, wash), b = lerp(col[i + 2], 0.9, wash); col[i] = lerp(sav[i], r, a); col[i + 1] = lerp(sav[i + 1], g, a); col[i + 2] = lerp(sav[i + 2], b, a); }
+// a box: front, top/bottom and the one side the eye can see; m = { front, top, bot, side } color fns (or a hex)
+function sbox(x0, x1, y0, y1, z0, z1, m) {
+	const F = (f) => (typeof f === "string" ? () => f : f);
+	if (m.front) frontQ(y0, x0, x1, z0, z1, F(m.front));
+	if (SCAM.z > z1 && m.top) horizQ(z1, x0, x1, y0, y1, F(m.top));
+	if (SCAM.z < z0 && m.bot) horizQ(z0, x0, x1, y0, y1, F(m.bot));
+	if (m.side) { if (SCAM.x < x0) sideQ(x0, y0, y1, z0, z1, F(m.side)); else if (SCAM.x > x1) sideQ(x1, y0, y1, z0, z1, F(m.side)); }
 }
 
-// ================================================================ Ozeki Kappa
-// A river imp who is also a champion wrestler: river-stone blue skin, a tortoise shell on its back, a yellow beak,
-// a red mawashi with a fringe, and on top of its head the dish every kappa has, full to the brim with lime acid from
-// the pool. It stomps, it throws salt, it charges; in phase two it comes at you with open-palm thrusts. And like
-// every kappa, it is terribly polite: bow to it, and it will bow back, and spill its dish.
-const KSKIN = ["#121c26", "#283c4c", "#466272", "#6e90a0", "#a8c4ce"];
-const SHELL = ["#24160a", "#4e3216", "#7c5426", "#ac8040"];
+// ---------------------------------------------------------------- materials
+const R2 = (a, b) => hash(Math.floor(a), Math.floor(b));
+const brick = (pal, bw = 14, bh = 7) => (u, v, d) => { const row = Math.floor(v / bh), off = row % 2 ? bw / 2 : 0, seam = v % bh < 1 || (u + off) % bw < 1; if (d > 1800) return pal[2]; return seam ? pal[1] : R2((u + off) / bw, row) < 0.25 ? pal[2] : pal[3]; };
+const stone = brick(LAV);
+const trim = (u, v) => (v < 1.5 ? LAV[6] : LAV[5]);
+// a wall with round-topped arches cut through it (null = see through to what is behind)
+function arches(pal, w, gap, top, sill, glowFn) { return (u, v, d) => { const k = ((u % gap) + gap) % gap, cx = gap / 2, inside = Math.abs(k - cx) < w / 2 && v > sill && (v < top - w / 2 || Math.hypot(k - cx, v - (top - w / 2)) < w / 2); if (inside) return glowFn ? glowFn(k - cx, v, d) : null; const rim = Math.abs(k - cx) < w / 2 + 2 && v > sill - 2 && (v < top - w / 2 + 2 || Math.hypot(k - cx, v - (top - w / 2)) < w / 2 + 2); return rim ? pal[5] : brick(pal)(u, v, d); }; }
 
-function makeKappaStage(cv, readout) {
-	const HOME = 302, LEFT = 74;
-	const T = { LIFT1: 1.0, STOMP1: 1.4, LIFT2: 1.8, STOMP2: 2.2, SALTW: 3.5, SALT: 3.9, SLAND: 4.5, CROUCH: 5.0, CHARGE: 5.4, LAND: 5.95, SKID: 6.2, ANGRY: 6.4, PALMS: [7.0, 7.4, 7.8, 8.2], BOW: 8.85, SPILL: 9.15, SLUMP: 9.5, REFILL: 11.0, HOP: 11.6, HOME: 12.2, LOOP: 13.0 };
-	const WV = 200, PV = 300, SALTX = [36, 66, 96, 126], HITS = [9.95, 10.3, 10.65];
-	let S, parts, rings, J;
-	const reset = () => { S = { t: 0, flags: {} }; parts = []; rings = []; J = makeJuice(); };
+// ---------------------------------------------------------------- the level: the plane's own geometry (gameplay) and the world around it
+const CH = { x0: 20, x1: 300, floor: 0, ceil: 220, hole: [138, 186], hatch: [134, 190] };
+const L1 = { x0: 20, x1: 82, z: 80 }, L2 = { x0: 238, x1: 300, z: 132 };
+const STEPS = [{ x0: -60, x1: 420, z: -250 }, { x0: 40, x1: 104, z: -190 }, { x0: 170, x1: 236, z: -130 }, { x0: 96, x1: 150, z: -70 }];
+const SKYC = new Float32Array(N * 3);
+function skyFor() {
+	// the sky slides a little with the camera's height, so climbing reads even against it
+	const sh = SCAM.z * 0.06;
+	for (let y = 0; y < H; y++) { const v = clamp((y + sh + 120) / (H + 240)) * 5, i = Math.min(4, Math.floor(v)), f = v - i, A = ["#070820", "#0e1030", "#1a1a44", "#2a2656", "#3e3468", "#5a4880"]; for (let x = 0; x < W; x++) { const h = f > bayer(x, y) ? A[i + 1] : A[i], c = hx(h), k = (y * W + x) * 3; SBASE[k] = c[0]; SBASE[k + 1] = c[1]; SBASE[k + 2] = c[2]; } }
+	for (let i = 0; i < 120; i++) { const x = Math.floor(hash(i, 1) * W), y = Math.floor(hash(i, 2) * H * 1.4 - sh * 0.5) % H; if (y < 0) continue; const k = (y * W + x) * 3, c = hx(hash(i, 3) < 0.3 ? "#d8d8ff" : "#6a6aa0"); SBASE[k] = c[0]; SBASE[k + 1] = c[1]; SBASE[k + 2] = c[2]; }
+	const my = 60 - sh * 0.3; for (let y = -16; y <= 16; y++) for (let x = -16; x <= 16; x++) { const dd = Math.hypot(x, y); if (dd > 15) continue; const X = 540 + x, Y = Math.round(my + y); if (Y < 0 || Y >= H) continue; const k = (Y * W + X) * 3, c = hx(dd > 13.5 ? "#a8acd8" : R2((x + 20) / 4, (y + 20) / 4) < 0.22 ? "#c8cae8" : "#eceefc"); SBASE[k] = c[0]; SBASE[k + 1] = c[1]; SBASE[k + 2] = c[2]; }
+	SBZ.fill(-1);
+}
+const LAVD = ["#100e20", "#181630", "#221e40", "#2e2852", "#3c3466", "#4e447c", "#645a96"];
+function world() {
+	const dstone = brick(LAVD), arch = (pal, w, gap, top, sill, g) => arches(pal, w, gap, top, sill, g);
+	// far away: a sea of cloud far below, a city of spires in the fog all round, an aqueduct
+	horizQ(-760, -6000, 6000, 300, 6000, (u, v, d) => { const n = noise1(u * 0.004 + v * 0.002, 3) + noise1(u * 0.013 - v * 0.006, 4) * 0.5; return n > 0.95 ? "#5a5288" : n > 0.7 ? "#3e3a68" : "#2c2a52"; });
+	for (let i = 0; i < 18; i++) { const x = -3000 + i * 380 + hash(i, 5) * 200, y = 1800 + hash(i, 6) * 1800, w = 120 + hash(i, 7) * 200, h = 700 + hash(i, 8) * 1700; sbox(x, x + w, y, y + w, -760, -760 + h, { front: arch(LAVD, 40, 110, h - 60, h - 260, () => (hash(i, 9) < 0.6 ? CANDLE[2] : null)), top: LAVD[5], side: LAVD[2] }); sbox(x + w * 0.3, x + w * 0.7, y + w * 0.3, y + w * 0.7, -760 + h, -760 + h + 160, { front: LAVD[4], side: LAVD[2] }); }
+	sbox(-1600, 2000, 1100, 1160, -760, -320, { front: arch(LAVD, 80, 170, 380, 0, null), top: LAVD[4] });
+	// the next realm, high above and far out: a floating island lit gold from beneath, its buildings on top
+	{ const ix0 = -700, ix1 = 1100, iy = 1800, iz = 1000; for (let k = 0; k < 9; k++) { const s2 = k / 9, w = (ix1 - ix0) * (1 - s2 * 0.85) / 2, cx = (ix0 + ix1) / 2 + Math.sin(k * 2.1) * 80; sbox(cx - w, cx + w, iy + k * 40, iy + 700 - k * 40, iz - 56 - k * 56, iz - k * 56, { front: (u, v) => (v > 44 ? GOLDR[4] : R2(u / 50, k) < 0.4 ? GOLDR[2] : GOLDR[3]), bot: (u, v) => (noise1(u * 0.01 + v * 0.006, k) > 0.6 ? GOLDR[4] : GOLDR[3]), side: GOLDR[2] }); } for (let i = 0; i < 8; i++) { const x = ix0 + 160 + i * 190, h = 260 + hash(i, 12) * 380; sbox(x, x + 110, iy + 160, iy + 300, iz, iz + h * 0.6, { front: arch(["#3a2408", "#5a3a10", "#8a6020", "#b08030", "#d0a040", "#f0c860"], 40, 80, h - 40, 60, () => "#fff0b0"), top: GOLDR[3], side: GOLDR[1] }); } }
+	// the near world, through the arches and past the pillars: two towers, a bridge, floating stairs and islands
+	const towerF = arch(LAVD, 26, 80, 1500, 40, (k, v) => (v % 300 < 120 && Math.abs(k) < 6 ? CANDLE[2] : null));
+	sbox(-640, -440, 380, 580, -900, 900, { front: towerF, top: LAVD[5], side: LAVD[2] });
+	sbox(-660, -420, 370, 590, 900, 940, { front: (u, v) => (v < 2 ? LAVD[6] : LAVD[5]), top: LAVD[6], bot: LAVD[1], side: LAVD[3] });
+	sbox(-600, -480, 420, 540, 940, 1100, { front: LAVD[4], side: LAVD[2] });
+	sbox(660, 860, 460, 660, -900, 780, { front: towerF, top: LAVD[5], side: LAVD[2] });
+	sbox(640, 880, 450, 670, 780, 820, { front: (u, v) => (v < 2 ? LAVD[6] : LAVD[5]), top: LAVD[6], bot: LAVD[1], side: LAVD[3] });
+	sbox(334, 660, 330, 370, 132, 146, { front: (u, v) => (v < 2 ? LAVD[6] : LAVD[4]), top: LAVD[5], bot: LAVD[2], side: LAVD[3] });
+	for (let i = 0; i < 4; i++) sbox(380 + i * 70, 398 + i * 70, 334, 366, -600, 132, { front: dstone, side: LAVD[2], top: LAVD[4] });
+	const stair = (x, y, z, n, dx, dz, w = 28) => { for (let i = 0; i < n; i++) sbox(x + i * dx, x + i * dx + w, y, y + 36, z + i * dz, z + i * dz + 8, { front: (u, v) => (v > 6 ? LAVD[6] : LAVD[4]), top: LAVD[5], bot: LAVD[1], side: LAVD[3] }); };
+	stair(-380, 180, -220, 10, 26, 24); stair(420, 220, 360, 8, 24, -22); stair(-320, 420, 420, 7, 30, 30);
+	// floating islands at mid depth, each with a little house and a lit window
+	for (const [x, y, z, w] of [[-520, 260, -40, 120], [500, 300, -260, 150], [-220, 600, 620, 160], [420, 520, 520, 110]]) { for (let k = 0; k < 4; k++) sbox(x + k * w * 0.1, x + w - k * w * 0.1, y + k * 6, y + 60 - k * 6, z - 14 - k * 22, z - k * 22, { front: (u, v) => (v > 10 && k === 0 ? "#26404a" : LAVD[2 + (k % 2)]), bot: LAVD[1], side: LAVD[1] }); sbox(x + w * 0.3, x + w * 0.6, y + 14, y + 40, z, z + 34, { front: (u, v) => (u > 8 && u < 14 && v > 10 && v < 22 ? CANDLE[2] : LAVD[4]), top: LAVD[5], side: LAVD[2] }); sbox(x + w * 0.27, x + w * 0.63, y + 10, y + 44, z + 34, z + 42, { front: "#1a2240", top: "#28305a", side: "#141a30" }); }
+	// where she came from: a long bridge off to the left, and down it in the fog, the bathhouse
+	sbox(-1100, -60, 0, 36, -262, -250, { front: (u, v) => (v > 9 ? LAV[6] : u % 40 < 2 ? LAV[2] : LAV[4]), top: (u, v) => (u % 9 < 1 ? LAV[3] : LAV[5]), bot: LAV[1], side: LAV[3] });
+	for (let x = -1100; x < -60; x += 160) sbox(x, x + 14, 6, 30, -760, -262, { front: dstone, side: LAVD[2] });
+	{ const bx = -1700, by = 1400, bz = -420; sbox(bx, bx + 260, by, by + 120, bz - 40, bz, { front: "#2a1c14", top: "#3a2a1c", side: "#1e140e" }); sbox(bx + 20, bx + 240, by + 20, by + 100, bz, bz + 90, { front: (u, v) => (v > 40 && v < 70 && u % 40 > 12 && u % 40 < 30 ? CANDLE[2] : u % 6 < 1 ? "#24160e" : "#3a2414"), side: "#24160e" }); sbox(bx + 4, bx + 256, by + 10, by + 110, bz + 90, bz + 104, { front: "#1a2034", top: "#283052", side: "#141a2c" }); }
+	// the spire: a colonnade of tall arches behind the chamber (you see straight through), open framework below
+	sbox(-14, 334, 70, 96, -10, 236, { front: arch(LAVD, 46, 64, 196, 18, null), top: LAVD[5], bot: LAVD[2] });
+	for (let x = -14; x <= 334; x += 64) sbox(x - 4, x + 4, 66, 70, -10, 236, { front: (u, v) => (v % 24 < 1 ? LAVD[3] : LAVD[5]), side: LAVD[3] });
+	for (const z of [-80, -170]) sbox(-14, 334, 60, 72, z - 6, z, { front: (u, v) => (v > 4 ? LAVD[5] : LAVD[3]), top: LAVD[4], bot: LAVD[1] });
+	for (const [x0, x1] of [[-14, 20], [300, 334]]) sbox(x0, x1, -36, 70, -760, 236, { front: (u, v) => (u < 2 || u > 31 ? LAV[5] : brick(LAV)(u, v)), side: (u, v) => (v % 7 < 1 ? LAV[2] : u < 2 ? LAV[4] : LAV[3]) });
+	const plank = (u, v) => (u % 9 < 1 ? LAV[3] : R2(u / 9, v / 30) < 0.2 ? LAV[5] : LAV[6]);
+	const slab = { front: (u, v, d) => (v > 7 ? SILK[1] : v < 1 ? LAV[1] : LAV[5]), top: plank, bot: (u, v) => (u % 14 < 1 || v % 14 < 1 ? LAV[1] : LAV[3]), side: LAV[4] };
+	sbox(CH.x0, CH.hole[0], -36, 70, -10, 0, slab); sbox(CH.hole[1], CH.x1, -36, 70, -10, 0, slab);
+	sbox(-14, CH.hatch[0], -36, 70, CH.ceil, CH.ceil + 16, slab); sbox(CH.hatch[1], 334, -36, 70, CH.ceil, CH.ceil + 16, slab);
+	sbox(L1.x0, L1.x1, -20, 50, L1.z - 8, L1.z, slab); sbox(L2.x0, L2.x1, -20, 50, L2.z - 8, L2.z, slab);
+	for (const s2 of STEPS) sbox(s2.x0, s2.x1, -24, s2 === STEPS[0] ? 160 : 50, s2.z - (s2 === STEPS[0] ? 20 : 8), s2.z, slab);
+	// hanging chains with lanterns in the open drop below
+	for (const [x, y] of [[-40, 30], [360, 40], [230, 200]]) { for (let z = -230; z < 236; z += 6) sbox(x, x + 2, y, y + 2, z, z + 4, { front: LAVD[4], side: LAVD[2] }); sbox(x - 5, x + 7, y - 5, y + 7, -244, -230, { front: (u, v) => (v > 3 && v < 11 ? CANDLE[2] : LAVD[2]), side: LAVD[2], top: LAVD[4], bot: LAVD[1] }); }
+	// the terrace on top: a railing, and the gate that is this realm's checkpoint
+	for (let x = -10; x < 334; x += 18) sbox(x, x + 4, -32, -28, CH.ceil + 16, CH.ceil + 34, { front: LAV[5], side: LAV[3], top: LAV[6] });
+	sbox(-14, 334, -34, -26, CH.ceil + 32, CH.ceil + 36, { front: LAV[6], top: LAV[6], bot: LAV[2], side: LAV[4] });
+	for (const x of [124, 192]) sbox(x, x + 12, 10, 24, CH.ceil + 16, CH.ceil + 120, { front: (u, v) => (v % 20 < 1 ? LAV[3] : LAV[5]), side: LAV[3] });
+	sbox(112, 216, 6, 28, CH.ceil + 120, CH.ceil + 134, { front: (u, v) => (v > 11 ? LAV[6] : LAV[5]), top: LAV[6], bot: LAV[2], side: LAV[4] });
+	sbox(104, 224, 4, 30, CH.ceil + 134, CH.ceil + 140, { front: LAV[6], top: SILK[2], bot: LAV[3], side: LAV[4] });
+}
+function renderStaticS() { skyFor(); world(); }
+
+// ---------------------------------------------------------------- the stage
+function makeSpireStage(cv, readout) {
+	const T = { DROP_W: 3.8, DROP: 4.2, LANDED: 4.4, LAP_W: 4.7, LAP: 5.1, D1W: 7.9, D1: 8.25, D2W: 9.1, D2: 9.45, SPIT: 10.3, SPLAT: 10.9, LAP2: 11.2, SNAG: 12.2, DANGLE: 12.6, HITS: [13.0, 13.4, 13.8], UNRAVEL: 14.0, HATCH: 14.4, OPEN: 15.2, UP: 15.6, ON_TOP: 16.2, CHECK: 16.7, FADE: 18.6, LOOP: 19.0 };
+	const SPITS = [60, 160, 252];
+	let S, parts, J;
+	const reset = () => { S = { t: 0, flags: {}, pops: [], quips: [] }; parts = []; J = makeJuice(); };
 	reset();
 	const once = (k) => (S.flags[k] ? false : (S.flags[k] = true));
-	const spring = (dt, amp, freq = 16, damp = 7) => (dt < 0 ? 0 : amp * Math.exp(-dt * damp) * Math.cos(dt * freq));
-	const arc = (a, b, h, k) => [lerp(a[0], b[0], k), lerp(a[1], b[1], k) - 4 * h * k * (1 - k)];
-	const outE = (k) => 1 - (1 - clamp(k)) ** 3;
-	// ---------------------------------------------------------------- its pose
-	function kap(t) {
-		const o = { x: HOME, y: FEET, face: -1, legL: 0, legR: 0, lean: 0, arm: [0, 0], crouch: 0, bow: 0, dish: 1, kneel: 0, angry: 0, belly: Math.max(0, Math.sin(t * 5)) * (t < T.LIFT1 ? 1 : 0), sx: 1, sy: 1 };
-		for (const [lt, st, leg] of [[T.LIFT1, T.STOMP1, "legR"], [T.LIFT2, T.STOMP2, "legL"]]) { if (t > lt && t < st) { const k = smooth(lt, st - 0.05, t); o[leg] = k; o.lean = (leg === "legR" ? -0.18 : 0.18) * k; } if (t >= st && t < st + 0.3) { const a = t - st; o.sy = 1 - 0.15 * Math.exp(-a * 9); o.sx = 2 - o.sy; o.crouch = 0.4 * Math.exp(-a * 6); } }
-		if (t > T.SALTW && t < T.SALT + 0.3) { const k = t < T.SALT ? smooth(T.SALTW, T.SALT, t) : 1 - outE((t - T.SALT) / 0.15); o.arm = [-1 * k, 0]; o.lean = 0.15 * k; if (t > T.SALT) { o.arm = [1, 0]; o.lean = -0.2; } }
-		if (t > T.CROUCH && t < T.CHARGE) { const k = smooth(T.CROUCH, T.CHARGE - 0.05, t); o.crouch = k; o.lean = -0.3 * k; o.arm = [0.5 * k, 0.5 * k]; }
-		if (t >= T.CHARGE && t < T.LAND) { const u = (t - T.CHARGE) / (T.LAND - T.CHARGE); o.x = lerp(HOME, LEFT + 30, u); o.y = FEET - 4 * 46 * u * (1 - u); o.lean = -0.5; o.arm = [1, 1]; o.sx = 1.1; o.sy = 0.92; }
-		if (t >= T.LAND && t < T.SKID) { const k = smooth(T.LAND, T.SKID, t); o.x = lerp(LEFT + 30, LEFT, k); o.crouch = 0.6 * (1 - k); o.lean = -0.4 * (1 - k); }
-		if (t >= T.SKID) { o.x = LEFT; o.face = 1; }
-		if (t >= T.ANGRY && t < T.BOW) { o.angry = 1; o.belly = 0; }
-		for (const pt of T.PALMS) { const a = t - pt; if (a > -0.15 && a < 0.25) { const k = a < 0 ? 1 + a / 0.15 * -1 : 0; o.arm = a < 0 ? [-0.4, 0] : [1.2, 0]; o.lean = a < 0 ? 0.15 : -0.2; } }
-		if (t >= T.BOW && t < T.SLUMP) { const k = smooth(T.BOW, T.SPILL, t); o.bow = k; o.angry = 0; }
-		if (t >= T.SPILL) o.dish = t < T.REFILL + 0.4 ? 0 : 1;
-		if (t >= T.SLUMP && t < T.REFILL) { const k = smooth(T.SLUMP, T.SLUMP + 0.3, t); o.bow = 1 - 0.6 * k; o.kneel = k; }
-		if (t >= T.REFILL && t < T.HOP) { const k = smooth(T.REFILL, T.REFILL + 0.3, t); o.x = lerp(LEFT, 120, k); o.kneel = 1 - k; o.bow = t > T.REFILL + 0.3 ? 0.8 * Math.sin(clamp((t - T.REFILL - 0.3) / 0.3) * Math.PI) : 0.4 * (1 - k); }
-		if (t >= T.HOP && t < T.HOME) { const u = (t - T.HOP) / (T.HOME - T.HOP); o.x = lerp(120, HOME, u); o.y = FEET - 4 * 60 * u * (1 - u); o.face = -1; o.sx = 0.92; o.sy = 1.1; }
-		if (t >= T.HOME) { o.x = HOME; o.face = -1; const a = t - T.HOME; o.sy = 1 - 0.18 * Math.exp(-a * 8) * Math.cos(a * 16); o.sx = 2 - o.sy; }
-		return o;
-	}
-	// ---------------------------------------------------------------- Elfy
+	const pop = (w, x, z, t, c) => S.pops.push({ w, x, z, t0: t, c });
+	const say = (w, t) => { const p = spider(t); S.quips.push({ w, t0: t, x: p.x, z: p.z }); };
+	const arcP = (a, b, h, k) => [lerp(a[0], b[0], k), lerp(a[1], b[1], k) + 4 * h * k * (1 - k)];
+	// ---------------------------------------------------------------- Elfy, on the plane: x along, z up
 	function elfy(t) {
-		const by = bridgeY(164);
-		const jumps = [T.STOMP1 + (HOME - 30 - 80) / WV - 0.2, T.STOMP2 + (HOME - 30 - 80) / WV - 0.2];
-		for (const j of jumps) if (t >= j && t < j + 0.42) { const k = (t - j) / 0.42; return { a: k < 0.4 ? "jump" : k < 0.6 ? "apex" : "fall", at: t - j, x: 80, y: FEET - 4 * 28 * k * (1 - k) }; }
-		if (t < 3.6) return { a: "idle", at: t, x: 80, y: FEET };
-		if (t < 4.0) { const k = (t - 3.6) / 0.4, p = arc([80, FEET], [164, by], 26, k); return { a: k < 0.5 ? "jump" : "fall", at: k, x: p[0], y: p[1] }; }
-		if (t < 5.45) return { a: t < 4.15 ? "land" : t > T.CROUCH ? "crouch" : "idle", at: t - 4.0, x: 164, y: by, flip: t > 4.3 && t < 5.0 };
-		if (t < 6.1) { const k = (t - 5.45) / 0.65; return { a: k < 0.25 ? "jump" : k < 0.45 ? "air_jump" : k < 0.6 ? "apex" : "fall", at: k >= 0.25 && k < 0.45 ? (k - 0.25) * 0.65 : t - 5.45, x: 164, y: by - 4 * 84 * k * (1 - k) }; }
-		for (const [i, pt] of T.PALMS.entries()) { const arrive = pt + (164 - LEFT - 30) / PV, low = i % 2 === 0; if (low && t >= arrive - 0.2 && t < arrive + 0.22) { const k = (t - arrive + 0.2) / 0.42; return { a: k < 0.4 ? "jump" : k < 0.6 ? "apex" : "fall", at: k, x: 164, y: by - 4 * 30 * k * (1 - k), flip: true }; } if (!low && t >= arrive - 0.18 && t < arrive + 0.2) return { a: t < arrive - 0.08 ? "crouch_down" : "crouch", at: t - arrive + 0.18, x: 164, y: by, flip: true }; }
-		if (t < T.BOW) return { a: t < 6.25 ? "land" : "idle", at: t - 6.1, x: 164, y: by, flip: t > 6.3 };
-		if (t < T.SPILL + 0.2) return { a: "crouch_down", at: Math.min(0.08, t - T.BOW), x: 164, y: by, flip: true }; // she bows
-		if (t < 9.75) { const k = (t - T.SPILL - 0.2) / (9.75 - T.SPILL - 0.2), p = arc([164, by], [124, FEET], 14, k); return { a: k < 0.4 ? "jump" : "fall", at: k, x: p[0], y: p[1], flip: true }; }
-		if (t < 10.8) return hitState(t, HITS, 124, FEET, true);
-		if (t < 11.1) return { a: "run", at: t - 10.8, x: lerp(124, 80, (t - 10.8) / 0.3), y: FEET, flip: true };
-		return { a: "idle", at: t, x: 80, y: FEET };
+		const J2 = (t0, d, a, b, h, flip) => { const k = clamp((t - t0) / d), p = arcP(a, b, h, k); return { a: k < 0.25 ? "jump" : k < 0.45 ? "air_jump" : k < 0.6 ? "apex" : "fall", at: k < 0.25 || k >= 0.45 ? k : (k - 0.25) * d, x: p[0], z: p[1], flip }; };
+		const idle = (x, z, flip, a = "idle", at = t) => ({ a, at, x, z, flip });
+		// the climb in: terrace, three steps, up through the hole in the chamber floor
+		if (t < 0.4) return idle(60, -250);
+		if (t < 0.9) return J2(0.4, 0.5, [60, -250], [72, -190], 34);
+		if (t < 1.05) return idle(72, -190, false, "land", t - 0.9);
+		if (t < 1.6) return J2(1.05, 0.55, [72, -190], [204, -130], 36);
+		if (t < 1.75) return idle(204, -130, true, "land", t - 1.6);
+		if (t < 2.25) return J2(1.75, 0.5, [204, -130], [124, -70], 36, true);
+		if (t < 2.4) return idle(124, -70, false, "land", t - 2.25);
+		if (t < 2.95) return J2(2.4, 0.55, [124, -70], [162, 0], 44);
+		if (t < 3.2) return idle(162, 0, false, "land", t - 2.95);
+		if (t < 3.4) return { a: "run", at: t, x: lerp(162, 120, smooth(3.2, 3.4, t)), z: 0, flip: true };
+		// the fight
+		const jump = (t0, x, h = 30, flip = false) => { const k = clamp((t - t0) / 0.36); return { a: k < 0.3 ? "jump" : k < 0.6 ? "apex" : "fall", at: k, x, z: 4 * h * k * (1 - k), flip }; };
+		const lapPass = T.LAP + (220 - 120) / 440;
+		if (t >= lapPass - 0.17 && t < lapPass + 0.19) return jump(lapPass - 0.17, 120, 30);
+		if (t < 8.05) return idle(120, 0, !(t > 7.0 && t < 8.0));
+		if (t < 8.3) return { a: "dash", at: t - 8.05, x: lerp(120, 190, smooth(8.05, 8.3, t)), z: 0 };
+		if (t < 9.25) return idle(190, 0, true);
+		if (t < 9.5) return { a: "dash", at: t - 9.25, x: lerp(190, 110, smooth(9.25, 9.5, t)), z: 0, flip: true };
+		if (t < 12.7) return idle(110, 0, t < 11.2);
+		if (t < 12.85) return { a: "run", at: t, x: lerp(110, 138, smooth(12.7, 12.85, t)), z: 0 };
+		for (const h of T.HITS) if (t >= h - 0.2 && t < h + 0.2) { const k = (t - h + 0.2) / 0.4; return { a: k < 0.35 ? "jump" : k < 0.65 ? "strike_side" : "fall", at: k < 0.35 ? k : k < 0.65 ? (k - 0.35) * 0.4 + 0.04 : k, x: 138, z: 4 * 34 * k * (1 - k) }; }
+		if (t < T.UP) return idle(138, 0, false, t > T.OPEN ? "idle" : "idle");
+		if (t < T.ON_TOP) { const k = (t - T.UP) / (T.ON_TOP - T.UP); return J2(T.UP, T.ON_TOP - T.UP, [138, 0], [162, CH.ceil + 16], 60); }
+		if (t < T.ON_TOP + 0.15) return idle(162, CH.ceil + 16, false, "land", t - T.ON_TOP);
+		if (t < 17.2) return { a: "run", at: t, x: lerp(162, 150, smooth(T.ON_TOP + 0.15, 17.2, t)), z: CH.ceil + 16, flip: true };
+		return idle(150, CH.ceil + 16);
+	}
+	// ---------------------------------------------------------------- Nana Nightloom: where she is and which way is down for her
+	// surface: "floor" (down is -z), "lwall" (down is -x), "ceil" (down is +z), "rwall" (down is +x), "thread" (hanging)
+	function lap(t, t0, slow = 1) {
+		const runs = [[0.45, (k) => ({ x: lerp(220, CH.x0 + 2, k), z: 0, surf: "floor", face: -1 })], [0.4, (k) => ({ x: CH.x0 + 2, z: lerp(0, CH.ceil, k), surf: "lwall", face: -1 })], [0.65, (k) => ({ x: lerp(CH.x0 + 2, CH.x1 - 2, k), z: CH.ceil, surf: "ceil", face: 1 })], [0.4, (k) => ({ x: CH.x1 - 2, z: lerp(CH.ceil, 0, k), surf: "rwall", face: 1 })]];
+		let a = (t - t0) / slow;
+		for (const [d, f] of runs) { if (a < d) return { ...f(a / d), run: 1 }; a -= d; }
+		return null;
+	}
+	function spider(t) {
+		const base = { x: 230, z: CH.ceil, surf: "ceil", face: -1, run: 0, knit: 1, eyes: "open", brow: "kind", mouth: "smile", thread: null, cocoon: 0 };
+		if (t < T.DROP_W) return { ...base, eyes: t > 3.0 && t < 3.6 ? "wide" : "open" };
+		if (t < T.DROP) return { ...base, eyes: "sly", brow: "sly", mouth: "grin", knit: 0 };
+		if (t < T.LANDED) { const k = (t - T.DROP) / (T.LANDED - T.DROP); return { ...base, x: 220, z: lerp(CH.ceil, 30, k * k), surf: "thread", thread: [220, CH.ceil], knit: 0 }; }
+		if (t < T.LAP) return { ...base, x: 220, z: 0, surf: "floor", knit: 0, brow: "fierce", mouth: "grin", eyes: t > T.LAP_W ? "sly" : "open" };
+		const L = lap(t, T.LAP); if (L && t < 7.0) return { ...base, ...L, knit: 0, brow: "fierce", mouth: "grin" };
+		if (t < 7.2) return { ...base, x: CH.x1 - 2, z: 0, surf: "floor", face: -1, knit: 0, mouth: "laugh", eyes: "happy" };
+		if (t < 7.6) return { ...base, x: CH.x1 - 2, z: lerp(0, CH.ceil, (t - 7.2) / 0.4), surf: "rwall", face: 1, run: 1, knit: 0 };
+		// the drops: scuttle over Elfy on the ceiling, a dashed thread to her spot, down fast, and reel back up
+		const drop = (tw, td, x, from) => {
+			if (t < tw) { const k = smooth(tw - 0.3, tw, t); return { ...base, x: lerp(from, x, k), z: CH.ceil, surf: "ceil", run: 1, knit: 0, face: x < from ? -1 : 1 }; }
+			if (t < td) return { ...base, x, z: CH.ceil, surf: "ceil", knit: 0, eyes: "sly", brow: "sly", mouth: "grin" };
+			if (t < td + 0.15) { const k = (t - td) / 0.15; return { ...base, x, z: lerp(CH.ceil, 30, k * k), surf: "thread", thread: [x, CH.ceil], knit: 0, mouth: "laugh" }; }
+			if (t < td + 0.35) return { ...base, x, z: 30, surf: "thread", thread: [x, CH.ceil], knit: 0, eyes: "wide", mouth: "o" };
+			const k = smooth(td + 0.35, td + 0.65, t); return { ...base, x, z: lerp(30, CH.ceil, k), surf: k < 1 ? "thread" : "ceil", thread: [x, CH.ceil], knit: 0 };
+		};
+		if (t < T.D1 + 0.65) return drop(T.D1W, T.D1, 120, 298);
+		if (t < T.D2 + 0.65) return drop(T.D2W, T.D2, 190, 120);
+		if (t < T.LAP2) { const k = smooth(T.D2 + 0.65, T.SPIT - 0.1, t); return { ...base, x: lerp(190, 160, k), z: CH.ceil, surf: "ceil", knit: 0, run: k < 1 ? 1 : 0, mouth: t > T.SPIT - 0.2 && t < T.SPIT + 0.3 ? "o" : "grin", brow: "fierce", eyes: "sly" }; }
+		// the second lap, too fast, trailing silk, and she runs into her own thread
+		if (t < T.SNAG) { const L2 = lap(t, T.LAP2 - 0.55, 0.55); if (L2 && (L2.surf !== "ceil" || L2.x < 160)) return { ...base, ...L2, knit: 0, brow: "fierce", mouth: "laugh" }; return { ...base, x: 160, z: CH.ceil, surf: "ceil", knit: 0, eyes: "wide", mouth: "o", brow: "worry" }; }
+		if (t < T.DANGLE) { const k = (t - T.SNAG) / (T.DANGLE - T.SNAG); return { ...base, x: 160, z: lerp(CH.ceil, 78, k * k), surf: "thread", thread: [160, CH.ceil], cocoon: k, knit: 0, eyes: "wide", mouth: "o", brow: "worry" }; }
+		if (t < T.UNRAVEL) { const hit = T.HITS.some((h) => t >= h && t < h + 0.12); return { ...base, x: 160 + Math.sin(t * 3) * 3, z: 78, surf: "thread", thread: [160, CH.ceil], cocoon: 1, knit: 0, eyes: t > T.HITS[0] ? "dizzy" : "wide", mouth: "o", brow: "worry", flash: hit ? 1 : 0 }; }
+		return { ...base, x: 160, z: 78, surf: "gone" };
+	}
+	// ---------------------------------------------------------------- the camera: rides with Elfy, holds the chamber for the fight, rises at the end
+	function camAt(t) {
+		const e = elfy(t);
+		let z = t < 3.4 ? Math.min(110, e.z + 96) : t < T.OPEN ? 110 : lerp(110, 400, smooth(T.OPEN, 17.6, t));
+		return { x: 160 + Math.sin(t * 0.25) * 10, z };
 	}
 	// ---------------------------------------------------------------- the sim
 	function update(dt) {
 		if (juiceStep(J, dt)) return;
-		const t = (S.t += dt), R = Math.random, o = kap(t);
+		const t = (S.t += dt), R = Math.random;
 		if (t >= T.LOOP) { reset(); return; }
-		for (const st of [T.STOMP1, T.STOMP2]) if (t >= st && once("st" + st)) { kick(J, 4, 0.36, 0.14); rings.push({ x: HOME, y: FEET, r0: 8, r1: 50, flat: 0.16, age: 0, life: 0.4, pal: [CEDAR[5], CEDAR[3]], thick: true }); for (let n = 0; n < 20; n++) parts.push({ k: "bit", x: HOME + (R() - 0.5) * 50, y: FEET - 2, vx: (R() - 0.5) * 120, vy: -40 - R() * 60, g: 320, floor: true, life: 0.6, age: 0, c: CEDAR[4] }); }
-		for (const st of [T.STOMP1, T.STOMP2]) { const x = HOME - 30 - (t - st) * WV; if (t > st && x > POOL[0] && x < POOL[1] && R() < dt * 40) parts.push({ k: "bit", x, y: FEET - 2, vx: (R() - 0.5) * 40, vy: -40 - R() * 60, g: 300, floor: true, life: 0.5, age: 0, c: ACIDL[4] }); }
-		if (t >= T.SALT && once("salt")) kick(J, 1.6, 0.1, 0.04);
-		SALTX.forEach((x, i) => { if (t >= T.SLAND + i * 0.05 && once("sl" + i)) { rings.push({ x, y: FEET, r0: 2, r1: 12, flat: 0.25, age: 0, life: 0.25, pal: ["#ffffff", "#c8d0dc"] }); for (let n = 0; n < 8; n++) parts.push({ k: "glint", x: x + (R() - 0.5) * 16, y: FEET - 2, vx: (R() - 0.5) * 40, vy: -20 - R() * 40, g: 200, floor: true, life: 0.8, age: 0, ph: R() * 9, c: "#ffffff" }); } });
-		if (t >= T.CHARGE && once("charge")) { kick(J, 2.4, 0.16, 0.06); }
-		if (t >= T.LAND && once("land")) { kick(J, 4.4, 0.45, 0.18); rings.push({ x: LEFT + 30, y: FEET, r0: 8, r1: 56, flat: 0.16, age: 0, life: 0.4, pal: [CEDAR[5], CEDAR[3]], thick: true }); for (let n = 0; n < 12; n++) parts.push({ k: "bit", x: LEFT + 30, y: FEET - 80, vx: (R() - 0.5) * 120, vy: -40 - R() * 60, g: 300, floor: true, life: 0.7, age: 0, c: ACIDL[4] }); }
-		if (t > T.ANGRY && t < T.PALMS[0] && R() < dt * 16) parts.push({ k: "smoke", x: o.x + (R() - 0.5) * 10, y: FEET - 86, vx: (R() - 0.5) * 20, vy: -30, r: 2, grow: 5, life: 0.6, age: 0, c: "#ffffff", a0: 0.5 });
-		T.PALMS.forEach((pt, i) => { if (t >= pt && once("p" + i)) kick(J, 1.8, 0.1, 0.04); });
-		if (t > T.SPILL && t < T.SLUMP + 0.2) for (let n = 0; n < 2; n++) if (R() < dt * 60) parts.push({ k: "bit", x: o.x + 26 + R() * 6, y: FEET - 54 + R() * 6, vx: 40 + R() * 40, vy: R() * 30, g: 340, floor: true, life: 0.8, age: 0, c: R() < 0.5 ? ACIDL[4] : ACIDL[5] });
-		if (t >= T.SLUMP && once("slump")) kick(J, 2.4, 0.2, 0.06);
-		if (t >= T.HOME && once("home")) { kick(J, 3, 0.26, 0.08); rings.push({ x: HOME, y: FEET, r0: 6, r1: 40, flat: 0.18, age: 0, life: 0.35, pal: [CEDAR[5], CEDAR[3]] }); }
-		for (const h of HITS) if (t >= h && once("hit" + h)) hitBurst(J, parts, rings, 108, FEET - 34, ["#ffffff", KSKIN[4], KSKIN[2]], -1);
-		parts = stepParts(parts, dt);
-		rings = stepRings(rings, dt);
+		const burst = (x, z, n, c, sp = 90, up = 60, g = 260) => { for (let i = 0; i < n; i++) parts.push({ x, z, vx: (R() - 0.5) * sp, vz: up * (0.4 + R()), g, life: 0.5 + R() * 0.4, age: 0, c }); };
+		if (t >= 3.4 && once("q1")) say("OH! A VISITOR~", t);
+		if (t >= T.DROP && once("drop")) pop("ZWIP", 220, 150, t);
+		if (t >= T.LANDED && once("land")) { kick(J, 3, 0.2, 0.08); pop("THUMP", 220, 60, t); burst(220, 1, 12, LAV[5]); }
+		if (t >= T.LAP_W && once("q2")) say("SHALL WE DANCE, DEARIE?", t);
+		if (t >= T.LAP && once("lap")) pop("SKITTER SKITTER", 150, 40, t);
+		for (const [k, td, x] of [["d1", T.D1, 120], ["d2", T.D2, 190]]) if (t >= td + 0.15 && once(k)) { kick(J, 3.4, 0.24, 0.1); pop("DROP!", x, 70, t); burst(x, 1, 14, SILK[1]); }
+		if (t >= T.SPIT - 0.3 && once("q3")) say("KNIT ONE, PURL TWO!", t);
+		if (t >= T.SPIT && once("spit")) { kick(J, 1.6, 0.06); pop("PTOO PTOO PTOO", 160, 170, t); }
+		if (t >= T.SPLAT && once("splat")) { kick(J, 1.8, 0.08); for (const x of SPITS) burst(x, 1, 10, SILK[2], 120, 30); }
+		if (t >= T.SNAG && once("snag")) { kick(J, 2.2, 0.12, 0.05); pop("SNAG!", 160, 190, t); say("OH, BOTHER!", t + 0.1); }
+		for (const h of T.HITS) if (t >= h && once("h" + h)) { kick(J, 2.4, 0.16, 0.07); burst(152, 70, 14, h === T.HITS[2] ? SILK[3] : PLUM[4], 160, 60); if (h === T.HITS[2]) pop("POMF!", 160, 120, t); }
+		if (t >= T.UNRAVEL && once("unr")) { kick(J, 3, 0.3, 0.12); for (let i = 0; i < 40; i++) parts.push({ x: 160, z: 78, vx: (R() - 0.5) * 200, vz: (R() - 0.3) * 160, g: 40, life: 1.6, age: 0, c: SILK[R() < 0.5 ? 2 : 1], silk: 1 }); say("I'LL... JUST HAVE A LIE DOWN.", t + 0.2); }
+		if (t >= T.HATCH && once("hatch")) pop("THE WEB UNRAVELS", 162, 250, t, SILK[2]);
+		if (t >= T.CHECK && once("check")) { pop("CHECKPOINT", 162, CH.ceil + 160, t, CANDLE[3]); kick(J, 1.4, 0.08); }
+		for (const p of parts) { p.age += dt; p.vz -= p.g * dt; p.x += p.vx * dt; p.z += p.vz * dt; if (!p.silk && p.z < 0 && p.vz < 0 && p.x > CH.x0 && p.x < CH.x1) { p.z = 0; p.vz *= -0.3; p.vx *= 0.5; } }
+		parts = parts.filter((p) => p.age < p.life);
 	}
-	// ---------------------------------------------------------------- drawing it, facing left, feet at (0, 0) relative
-	function drawKappa(o, t) {
-		const x = o.x, y = o.y, kn = o.crouch * 10 + o.kneel * 14, bodyY = y - 30 + kn, bel = o.belly;
-		// legs: short, thick, bowed; one lifted high for the stomp
-		for (const [sd, lift] of [[-1, o.legL], [1, o.legR]]) {
-			const fx = x + sd * 16, fy = y - lift * 34, hip = [x + sd * 9, bodyY + 8];
-			for (let j = 0; j <= 10; j++) { const u = j / 10; disc(lerp(hip[0], fx, u) + sd * 4 * Math.sin(u * Math.PI), lerp(hip[1], fy - 2, u), 5.5 - u * 1.5, sd < 0 ? KSKIN[2] : KSKIN[3]); }
-			for (let dx = -6; dx <= 6; dx++) { put(fx + dx, fy - 1, KSKIN[1]); put(fx + dx, fy, KSKIN[0]); }
-			for (const c of [-4, 0, 4]) put(fx + c - 6 * 0, fy - 2, KSKIN[4]); // webbed toes
+	// ---------------------------------------------------------------- drawing Nana: in a frame where her surface is below her, then turned onto it
+	function drawSpider(o, t, x, y) {
+		// eight legs: two-jointed, knees up, a walking wave running through them
+		const ph = t * (o.run ? 22 : 3);
+		for (let i = 0; i < 8; i++) {
+			const side = i < 4 ? -1 : 1, j = i % 4, root = [x + (j - 1.5) * 4, y - 13], spread = (j - 1.5) * 11 + side * 3, lift = Math.max(0, Math.sin(ph + i * 1.7 + (side > 0 ? Math.PI : 0))) * 5 * (o.run ? 1 : 0.3);
+			const foot = [x + spread * 1.7 + side * 2, y - lift], knee = [lerp(root[0], foot[0], 0.55), Math.min(root[1], foot[1]) - 12 - (j === 0 || j === 3 ? 2 : 0)];
+			line(root[0], root[1], knee[0], knee[1], i < 4 ? PLUM[1] : PLUM[2]); line(root[0] + 1, root[1], knee[0] + 1, knee[1], i < 4 ? PLUM[1] : PLUM[2]);
+			line(knee[0], knee[1], foot[0], foot[1], i < 4 ? PLUM[1] : PLUM[2]); put(knee[0], knee[1] - 1, PLUM[4]);
 		}
-		// the shell on its back, behind the body
-		for (let yy = -34; yy <= 10; yy++) for (let dx = -10; dx <= 36; dx++) { const r = Math.hypot((dx - 13) / 23, yy / 34); if (r > 1) continue; const hex = ((Math.floor((dx + 30) / 8) + Math.floor((yy + 40) / 9)) % 2); put(x + 10 + dx, bodyY - 14 + yy, r > 0.9 ? SHELL[0] : r > 0.82 ? SHELL[3] : hex ? SHELL[2] : SHELL[1]); }
-		// the body: a great round belly, a pale plate on it, slapped when it's showing off
-		for (let yy = -30; yy <= 14; yy++) { const w = 22 + 6 * Math.sin(clamp((yy + 30) / 44) * Math.PI) + bel * 2 * (yy > -6 ? 1 : 0); for (let dx = -w; dx <= w; dx++) { const plate = Math.hypot(dx / (w * 0.6), (yy - 2) / 13) < 1; put(x + dx, bodyY + yy - 12, plate ? (Math.round(yy) % 5 === 0 ? "#c8c0a0" : "#e8e0c0") : dx < -w + 2 ? KSKIN[4] : dx > w - 3 ? KSKIN[1] : KSKIN[3]); } }
-		// the mawashi: a red belt with a knot behind and a fringe of cords in front
-		for (let yy = 0; yy < 8; yy++) for (let dx = -27; dx <= 27; dx++) put(x + dx, bodyY + 2 + yy - 12 + 12, yy === 0 ? LANTR[3] : yy === 7 ? LANTR[0] : LANTR[1 + (yy > 3 ? 0 : 1)]);
-		for (let k = -3; k <= 3; k++) for (let j = 0; j < 10; j++) put(x + k * 4 - 2, bodyY + 10 + j, LANTR[1 + (j % 2)]);
-		// arms: thick; out for the charge and the thrust, back for the throw
-		for (const [sd, a] of [[-1, o.arm[0]], [1, o.arm[1]]]) {
-			const sh = [x + sd * 22, bodyY - 30], hand = a > 0 ? [x - 30 - 16 * a, bodyY - 26 - (sd > 0 ? 10 : 0)] : a < 0 ? [x + 24, bodyY - 48] : [x + sd * 26, bodyY - 8];
-			for (let j = 0; j <= 10; j++) { const u = j / 10; disc(lerp(sh[0], hand[0], u), lerp(sh[1], hand[1], u), 5 - u * 1.5, sd < 0 ? KSKIN[3] : KSKIN[2]); }
-			for (let dx = -4; dx <= 4; dx++) for (let dy = -4; dy <= 4; dy++) if (Math.hypot(dx, dy) < 4.4) put(hand[0] + dx, hand[1] + dy, KSKIN[4]);
-			if (a < 0 && t > T.SALTW && t < T.SALT) for (let k = 0; k < 4; k++) put(hand[0] + (k % 2) * 2 - 1, hand[1] - 2 - k, "#ffffff");
+		// the abdomen behind (a lace doily pattern on it), the head in front
+		const ab = [x - o.face * 10, y - 20];
+		for (let yy = -11; yy <= 11; yy++) for (let dx = -13; dx <= 13; dx++) { const d = Math.hypot(dx / 13, yy / 11); if (d > 1) continue; const lace = Math.abs(((Math.atan2(yy, dx) * 6 / Math.PI) % 1)) < 0.18 && d > 0.35 && d < 0.8; put(ab[0] + dx, ab[1] + yy, d > 0.9 ? PLUM[0] : lace ? SILK[1] : dx * -o.face > 4 && yy < -3 ? PLUM[3] : PLUM[2]); }
+		const hd = [x + o.face * 7, y - 18];
+		for (let yy = -9; yy <= 8; yy++) for (let dx = -9; dx <= 9; dx++) { const d = Math.hypot(dx / 9, yy / 8.5); if (d > 1) continue; put(hd[0] + dx, hd[1] + yy, d > 0.88 ? PLUM[0] : yy < -4 ? PLUM[4] : PLUM[3]); }
+		// a little lace bonnet, round spectacles, two big eyes and four little ones, grey brows, fangs
+		for (let a = Math.PI; a <= TAU; a += 0.08) for (let r = 8; r < 11; r++) put(hd[0] + Math.cos(a) * r, hd[1] - 2 + Math.sin(a) * r * 0.7, Math.sin(a * 12) > 0 ? SILK[2] : SILK[1]);
+		const ey = hd[1] - 1;
+		for (const ex of [-3.5, 3.5]) {
+			const X = hd[0] + ex;
+			if (o.eyes === "happy") { put(X - 1, ey, PLUM[0]); put(X, ey - 1, PLUM[0]); put(X + 1, ey, PLUM[0]); }
+			else if (o.eyes === "dizzy") { const a = t * 12 + ex; for (let r = 0; r < 2.5; r += 0.4) put(X + Math.cos(a + r * 2.4) * r, ey + Math.sin(a + r * 2.4) * r, PLUM[0]); }
+			else { const r = o.eyes === "wide" ? 3 : 2.4; for (let yy = -3; yy <= 3; yy++) for (let dx = -3; dx <= 3; dx++) { const d = Math.hypot(dx, yy); if (d <= r) put(X + dx, ey + yy, d > r - 0.7 ? PLUM[0] : "#ffffff"); } const lk = o.face * 0.8; put(X + lk, ey + 0.5, "#000000"); put(X + lk, ey - 0.5, "#000000"); if (o.eyes === "sly") for (let dx = -3; dx <= 3; dx++) { put(X + dx, ey - 2, PLUM[3]); put(X + dx, ey - 1, PLUM[0]); } }
+			for (let a = 0; a < TAU; a += 0.3) put(X + Math.cos(a) * 3.6, ey + Math.sin(a) * 3.6, GOLDR[3]);
 		}
-		// the head: round, a yellow beak, fierce eyes, a fringe of dark hair round the dish on top
-		const hx0 = x - 4, hy0 = bodyY - 48;
-		for (let yy = -11; yy <= 11; yy++) for (let dx = -12; dx <= 12; dx++) if (Math.hypot(dx / 12, yy / 11) < 1) put(hx0 + dx, hy0 + yy, dx < -8 ? KSKIN[4] : dx > 8 ? KSKIN[2] : KSKIN[3]);
-		for (let yy = -1; yy <= 4; yy++) for (let dx = -17; dx <= -8; dx++) if (Math.abs(yy - 1.5) < 2.6 - (dx + 17) * -0.05 * 0 && dx > -17 + Math.abs(yy - 1.5) * 1.4) put(hx0 + dx, hy0 + yy, yy === 2 ? "#a07810" : "#f0c838"); // beak
-		for (const ex of [-6, 2]) { for (let dx = -2; dx <= 2; dx++) for (let dy = -2; dy <= 2; dy++) if (Math.hypot(dx, dy) < 2.6) put(hx0 + ex + dx, hy0 - 3 + dy, o.kneel > 0.5 ? "#ffffff" : "#fffbe8"); put(hx0 + ex - 1, hy0 - 3, "#000000"); if (o.angry) line(hx0 + ex - 3, hy0 - 7 + (ex < 0 ? 0 : 1), hx0 + ex + 3, hy0 - 6 + (ex < 0 ? 1 : 0), "#000000"); }
-		if (o.kneel > 0.5) for (const ex of [-6, 2]) { const a = t * 10; put(hx0 + ex + Math.cos(a) * 1.5, hy0 - 3 + Math.sin(a) * 1.5, "#000000"); }
-		for (let a = Math.PI; a <= TAU; a += 0.08) for (let r = 9; r < 13; r++) if (Math.sin(a * 9) > -0.3) put(hx0 + Math.cos(a) * r, hy0 - 4 + Math.sin(a) * r * 0.55 - 4, "#0e1218");
-		// the dish: a cream rim, full of glowing lime acid (empty and dry after the bow)
-		for (let dx = -9; dx <= 9; dx++) { put(hx0 + dx, hy0 - 12, "#e8e0c8"); put(hx0 + dx, hy0 - 11, "#b8b098"); }
-		if (o.dish > 0.5) { for (let dx = -8; dx <= 8; dx++) put(hx0 + dx, hy0 - 13, (dx + Math.floor(t * 8)) % 6 === 0 ? ACIDL[5] : ACIDL[4]); light(hx0, hy0 - 13, ACIDL[3], 0.6); glow(hx0, hy0 - 14, 14, ACIDL[3], 0.35); }
-		else for (let dx = -8; dx <= 8; dx += 3) put(hx0 + dx, hy0 - 13, "#8a8a70");
+		put(hd[0], ey, GOLDR[3]);
+		for (const [ex, ey2] of [[-6, -6], [-2, -7], [2, -7], [6, -6]]) put(hd[0] + ex, hd[1] + ey2, "#ffffff");
+		const BR = { kind: [0.3, -0.3], sly: [0.5, 0.1], fierce: [-0.5, 0.5], worry: [0.6, -0.6] }[o.brow] || [0, 0];
+		for (const [ex, ang] of [[-3.5, BR[0]], [3.5, BR[1]]]) for (let j = -2.5; j <= 2.5; j += 0.5) { put(hd[0] + ex + j * Math.cos(ang), ey - 5.5 + j * Math.sin(ang) * (ex < 0 ? 1 : 1), "#d8d6e8"); put(hd[0] + ex + j * Math.cos(ang), ey - 6.5 + j * Math.sin(ang), "#b8b6c8"); }
+		const my = hd[1] + 5;
+		if (o.mouth === "laugh" || o.mouth === "o") for (let dx = -2; dx <= 2; dx++) for (let q = 0; q <= (o.mouth === "laugh" ? 2 : 1.5); q++) put(hd[0] + dx, my + q, q === 0 ? PLUM[0] : "#3a0a20");
+		else for (let dx = -2; dx <= 2; dx++) put(hd[0] + dx, my + (o.mouth === "grin" ? -Math.abs(dx) * 0.3 + 0.6 : Math.abs(dx) * 0.3 - 0.4), PLUM[0]);
+		for (const fx of [-2, 2]) { put(hd[0] + fx, my + 3, SILK[2]); put(hd[0] + fx, my + 4, SILK[1]); }
+		// knitting: two needles and a ball of silk, while she has a moment
+		if (o.knit) { const k = Math.sin(t * 8); line(hd[0] + o.face * 6, hd[1] + 6, hd[0] + o.face * 14, hd[1] - 2 + k, GOLDR[3]); line(hd[0] + o.face * 6, hd[1] + 8, hd[0] + o.face * 15, hd[1] + 4 - k, GOLDR[3]); disc(hd[0] + o.face * 12, hd[1] + 10, 3, SILK[1]); put(hd[0] + o.face * 11, hd[1] + 9, SILK[3]); }
+		// wrapped up in her own silk
+		if (o.cocoon > 0) for (let yy = -30; yy <= 4; yy++) { const w = 15 * Math.sin(clamp((yy + 31) / 36) * Math.PI) * o.cocoon; for (let dx = -w; dx <= w; dx++) if ((Math.floor(yy + dx * 0.5 + t * 4) % 3) !== 0) put(x + dx, y + yy - 4, (yy + Math.floor(dx)) % 4 ? SILK[2] : SILK[1], 0.92); }
+		if (o.flash) for (let i = 0; i < 50; i++) put(x + (Math.random() - 0.5) * 40, y - Math.random() * 36, "#ffffff", 0.6);
 	}
-	function paint() {
-		const t = S.t;
-		col.set(bathBase); lit.fill(0);
-		juiceShake(J, t);
-		drawBathLife(t, "back");
-		for (const p of BH_PLATS) drawLoft(p, t);
-		const on = Math.sin(t * 30) > -0.2, o = kap(t);
-		// warnings: the floor flickering before each stomp; the salt's rings; the charge's arc; each palm's line
-		for (const [lt, st] of [[T.LIFT1, T.STOMP1], [T.LIFT2, T.STOMP2]]) if (t > lt && t < st) for (let x = 6; x < HOME - 24; x += 3) put(x, FEET - 2, t > st - 0.1 ? "#ffffff" : CEDAR[5], on ? 0.85 : 0.3);
-		if (t > T.SALTW && t < T.SLAND) SALTX.forEach((x) => { for (let a = 0; a < TAU; a += 0.3) put(x + Math.cos(a) * 9, FEET + Math.sin(a) * 2, t > T.SLAND - 0.1 ? "#ffffff" : "#c8d0dc", on ? 0.9 : 0.4); });
-		if (t > T.CROUCH && t < T.CHARGE + 0.1) { for (let j = 0; j < 60; j += 2) { const p = arc([HOME, FEET - 36], [LEFT + 30, FEET - 36], 46, j / 60); put(p[0], p[1], t > T.CHARGE - 0.1 ? "#ffffff" : LANTR[3], on ? 0.85 : 0.3); } landMark(LEFT + 30, 30, LANTR[3], 0.9, t); }
-		for (const [i, pt] of T.PALMS.entries()) if (t > pt - 0.35 && t < pt) { const yy = i % 2 === 0 ? bridgeY(164) - 8 : bridgeY(164) - 40; for (let x = LEFT + 30; x < 240; x += 3) put(x, yy, t > pt - 0.1 ? "#ffffff" : KSKIN[4], on ? 0.85 : 0.3); }
-		// the stomp waves: a crest in the boards running the length of the floor (and a splash through the pool)
-		for (const st of [T.STOMP1, T.STOMP2]) { const x0 = HOME - 30 - (t - st) * WV; if (t < st || x0 < -10) continue; for (let dx = -8; dx <= 8; dx++) { const h = 6 * (1 - Math.abs(dx) / 8); for (let y = 0; y < h; y++) put(x0 + dx, FEET - 1 - y, x0 > POOL[0] && x0 < POOL[1] ? ACIDL[4] : y > h - 1.5 ? CEDAR[5] : CEDAR[4]); } }
-		// the salt: a fistful flung in a glittering arc
-		if (t > T.SALT && t < T.SLAND) SALTX.forEach((x, i) => { const k = (t - T.SALT) / (T.SLAND - T.SALT); for (let n = 0; n < 6; n++) { const p = arc([o.x + 20, FEET - 80], [x + (n - 3) * 2, FEET - 2], 60 + n * 3, Math.max(0, k - n * 0.02)); put(p[0], p[1], "#ffffff"); light(p[0], p[1], "#ffffff", 0.15); } });
-		xform(() => drawKappa({ ...o, x: o.x, y: FEET }, t), { cx: o.x, cy: FEET, sx: o.sx * (o.face > 0 ? -1 : 1), sy: o.sy, rot: (o.lean - o.bow * 0.9) * (o.face > 0 ? -1 : 1), dy: o.y - FEET });
-		// the palm thrusts: white handprints of force flying along the bridge, low then high
-		for (const [i, pt] of T.PALMS.entries()) { const a = t - pt; if (a < 0 || a > 0.9) continue; const x = LEFT + 30 + a * PV, yy = i % 2 === 0 ? bridgeY(164) - 8 : bridgeY(164) - 40; for (let dy = -7; dy <= 7; dy++) for (let dx = -4; dx <= 4; dx++) if (Math.hypot(dx / 4, dy / 7) < 1) put(x + dx, yy + dy, Math.abs(dy) > 5 || Math.abs(dx) > 3 ? KSKIN[4] : "#ffffff", 0.85); for (let f = -2; f <= 2; f++) line(x + 4, yy + f * 3, x + 8, yy + f * 3.5, "#ffffff", 0.8); for (let k = 1; k < 4; k++) for (let dy = -6; dy <= 6; dy += 3) put(x - k * 6, yy + dy, KSKIN[4], 0.5 - k * 0.12); glow(x, yy, 14, KSKIN[4], 0.4); }
-		// the bow: Elfy bows, it bows back, and its dish pours out
-		if (t > T.SPILL && t < T.SLUMP + 0.2) { for (let j = 0; j < 20; j++) { const ph = (t * 3 + j / 20) % 1; put(o.x + 30 + ph * 14, FEET - 52 + ph * ph * 50, ACIDL[4 + (j % 2)]); } }
-		if (o.kneel > 0.5) for (let i = 0; i < 3; i++) { const a = t * 5 + i * TAU / 3, x = o.x + Math.cos(a) * 14, y = FEET - 94 + Math.sin(a) * 3; put(x, y, "#ffffff"); put(x - 1, y, KSKIN[4]); put(x + 1, y, KSKIN[4]); put(x, y - 1, KSKIN[4]); put(x, y + 1, KSKIN[4]); }
-		const e = elfy(t);
-		drawElfy(e.a, e.at, Math.round(e.x), Math.round(e.y ?? FEET), e.flash || 0, !!e.flip);
-		drawRings(rings);
-		drawParts(parts, t);
-		drawBathLife(t, "front");
-		if (t >= T.LAND && t < T.LAND + 0.05) impactFrame("#eef6ff", "#06101a", 0.34);
-		if (t >= T.STOMP1 && t < T.STOMP1 + 0.035) impactFrame("#eef6ff", "#06101a", 0.38);
-		OX = 0; OY = 0;
-		readout.textContent = t < T.LIFT1 ? "a river imp and a champion wrestler: shell, beak, mawashi, and on its head a dish full of acid" : t < T.SALTW ? "shiko · it lifts a leg high, the floor flickers, it stomps: a crest runs the boards, twice · jump each" : t < T.SLAND ? "the salt · a fistful flung in a glittering arc onto four rings · get on the bridge" : t < T.CHARGE ? "warning · it settles into its stance; the charge's arc and landing marked" : t < T.ANGRY ? "the tachiai · it charges and leaps the pool, right over the bridge · double jump" : t < T.PALMS[0] ? "phase two · it's angry: steam from its ears" : t < T.BOW ? "the tsuppari · open-palm thrusts flying along the bridge, low then high · jump, crouch, jump, crouch" : t < T.SLUMP ? "Elfy bows. It bows back, deeply, and its dish pours out" : t < T.REFILL ? "weak window · a kappa with an empty dish has no strength; it slumps, dizzy · hit it" : t < T.HOP ? "it scoops its dish full from the pool" : "it leaps home over the pool";
-	}
-	return { cv, update, paint, reset };
-}
-
-// ================================================================ the diorama test: Ozeki Kappa in the floating bathhouse
-// The fight is pure 2D: every position is (distance along a track, height). The track is a path through a 3D world,
-// and the world is drawn as isometric pixel art: a cutaway bathhouse on a floating island, in the rain. A depth value
-// per pixel handles occlusion. At the end the track turns a corner of the house and the camera swings a quarter turn
-// with it, so "forward" stays down-right on screen.
-
-// ---------------------------------------------------------------- depth, and the static scene's buffers
-const ZB = new Float32Array(N), BASE = new Float32Array(N * 3), BASEZ = new Float32Array(N);
-let ZT = null; // when set, putRGB only draws where the scene is not nearer than this depth
-const TH0 = -0.42;
-const CAM = { th: TH0, F: [125, 42, 31.5], sx: 320, sy: 184 };
-const NIGHTD = ["#05060d", "#090c18", "#0e1326", "#141b34", "#1c2644", "#283456"];
-const MOSS = ["#0c1618", "#132224", "#1b3032", "#26403e"];
-const ROCK = ["#08070c", "#100e18", "#1a1724", "#262132", "#352d42"];
-const KAWARA = ["#0c1020", "#161c30", "#222c48", "#34426a"];
-const PLAS = ["#2e2018", "#4a3628", "#6a5038", "#8c6c4c", "#b08a60"];
-const SHOJI = ["#7a5a34", "#d0a060", "#ffd9a0"];
-function proj(X, Y, Z) {
-	const c = Math.cos(CAM.th), s = Math.sin(CAM.th), dx = X - CAM.F[0], dy = Y - CAM.F[1];
-	const xr = dx * c - dy * s, yr = dx * s + dy * c;
-	return [CAM.sx + xr - yr, CAM.sy + (xr + yr) / 2 - (Z - CAM.F[2]), xr + yr + Z];
-}
-// a flat face, sampled densely and splatted with a depth test; fn(u, v, px, py) gives a color or null
-let QST = 0.5; // sample spacing: finer when the camera is still, coarser while it turns
-function quad(dst, dstZ, O, U, V, n, fn, st = QST) {
-	const c = Math.cos(CAM.th), s = Math.sin(CAM.th);
-	if (n && (n[0] * c - n[1] * s) + (n[0] * s + n[1] * c) + n[2] <= 0.001) return;
-	const lu = Math.hypot(U[0], U[1], U[2]), lv = Math.hypot(V[0], V[1], V[2]);
-	const p0 = proj(O[0], O[1], O[2]), pu = proj(O[0] + U[0], O[1] + U[1], O[2] + U[2]), pv = proj(O[0] + V[0], O[1] + V[1], O[2] + V[2]);
-	const ux = (pu[0] - p0[0]) / lu, uy = (pu[1] - p0[1]) / lu, uz = (pu[2] - p0[2]) / lu, vx = (pv[0] - p0[0]) / lv, vy = (pv[1] - p0[1]) / lv, vz = (pv[2] - p0[2]) / lv;
-	const det = ux * vy - uy * vx;
-	// big faces: every pixel inside reads the texture at its own center (stable while the camera moves)
-	if (lu * lv >= 40 && Math.abs(det) > 0.02) {
-		const xs = [p0[0], pu[0], pv[0], pu[0] + pv[0] - p0[0]], ys = [p0[1], pu[1], pv[1], pu[1] + pv[1] - p0[1]];
-		const x0 = Math.max(0, Math.floor(Math.min(...xs))), x1 = Math.min(W - 1, Math.ceil(Math.max(...xs))), y0 = Math.max(0, Math.floor(Math.min(...ys))), y1 = Math.min(H - 1, Math.ceil(Math.max(...ys)));
-		const ia = vy / det, ib = -vx / det, ic = -uy / det, id = ux / det;
-		for (let py = y0; py <= y1; py++) for (let px = x0; px <= x1; px++) {
-			const dx = px + 0.5 - p0[0], dy = py + 0.5 - p0[1], u = ia * dx + ib * dy, v = ic * dx + id * dy;
-			if (u < 0 || v < 0 || u >= lu || v >= lv) continue;
-			const i = py * W + px, z = p0[2] + uz * u + vz * v;
-			if (z < dstZ[i]) continue;
-			const h = fn(u, v, px, py); if (!h) continue;
-			const cc = hx(h); dstZ[i] = z; dst[i * 3] = cc[0]; dst[i * 3 + 1] = cc[1]; dst[i * 3 + 2] = cc[2];
-		}
-		return;
-	}
-	// small or edge-on pieces (rails, rungs, thin strips): splat dense samples so nothing drops out
-	for (let u = 0; u < lu; u += st) {
-		const rx = p0[0] + ux * u, ry = p0[1] + uy * u, rz = p0[2] + uz * u;
-		for (let v = 0; v < lv; v += st) {
-			const px = Math.floor(rx + vx * v), py = Math.floor(ry + vy * v);
-			if (px < 0 || py < 0 || px >= W || py >= H) continue;
-			const i = py * W + px, z = rz + vz * v;
-			if (z < dstZ[i]) continue;
-			const h = fn(u, v, px, py); if (!h) continue;
-			const cc = hx(h); dstZ[i] = z; dst[i * 3] = cc[0]; dst[i * 3 + 1] = cc[1]; dst[i * 3 + 2] = cc[2];
-		}
-	}
-}
-// a box: faces given as fns keyed top, xp, xn, yp, yn (a missing key = that face is not drawn)
-function box(dst, dstZ, x0, y0, z0, x1, y1, z1, f) {
-	const dx = x1 - x0, dy = y1 - y0, dz = z1 - z0;
-	if (f.top) quad(dst, dstZ, [x0, y0, z1], [dx, 0, 0], [0, dy, 0], [0, 0, 1], f.top);
-	if (f.yp) quad(dst, dstZ, [x0, y1, z0], [dx, 0, 0], [0, 0, dz], [0, 1, 0], f.yp);
-	if (f.yn) quad(dst, dstZ, [x0, y0, z0], [dx, 0, 0], [0, 0, dz], [0, -1, 0], f.yn);
-	if (f.xp) quad(dst, dstZ, [x1, y0, z0], [0, dy, 0], [0, 0, dz], [1, 0, 0], f.xp);
-	if (f.xn) quad(dst, dstZ, [x0, y0, z0], [0, dy, 0], [0, 0, dz], [-1, 0, 0], f.xn);
-}
-const flat = (h) => () => h;
-const dith = (a, b, k) => (px, py) => (k > bayer(px, py) ? b : a);
-const allFaces = (top, side, front) => ({ top: flat(top), xp: flat(side), yp: flat(front), yn: flat(side), xn: flat(front) });
-
-// ---------------------------------------------------------------- the world: sizes
-const HOUSE = { x1: 250, y1: 84, z1: 138, ridge: 176 }, ZK = 138 / 118, POOLR = { x0: 95, x1: 170, y0: 14, y1: 76 }, TRACKY = 62;
-const LOFT = { x0: 0, x1: 58, z: 72 }, ISLE = { x0: -24, x1: 292, y0: -80, y1: 106, z0: -14 };
-const bridgeH = (X) => (X >= POOLR.x0 && X <= POOLR.x1 ? 2 + 9 * Math.sin(((X - POOLR.x0) / (POOLR.x1 - POOLR.x0)) * Math.PI) : 0);
-// the track: along the front of the room, out of the end door, round the corner onto the veranda
-const TRK = [[-10, TRACKY], [262, TRACKY], [262, -60]], TL1 = 272;
-function trackAt(s) { return s <= TL1 ? [TRK[0][0] + s, TRACKY] : [262, TRACKY - (s - TL1)]; }
-
-// ---------------------------------------------------------------- drawing the static scene for the current camera
-const SKYBUF = new Float32Array(N * 3); let skyDone = false;
-function sky() {
-	if (skyDone) { BASE.set(SKYBUF); BASEZ.fill(-1e9); return; }
-	for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
-		const v = clamp(y / H) * 4.2 + noise1(x * 0.01, 3) * 0.3, i = Math.min(4, Math.floor(v)), f = v - i, h = f > bayer(x, y) ? NIGHTD[i + 1] : NIGHTD[i], c = hx(h), k = (y * W + x) * 3;
-		BASE[k] = c[0]; BASE[k + 1] = c[1]; BASE[k + 2] = c[2];
-	}
-	const set = (x, y, h) => { if (x < 0 || y < 0 || x >= W || y >= H) return; const c = hx(h), k = (y * W + x) * 3; BASE[k] = c[0]; BASE[k + 1] = c[1]; BASE[k + 2] = c[2]; };
-	for (let i = 0; i < 90; i++) set(Math.floor(hash(i, 1) * W), Math.floor(hash(i, 2) * 150), hash(i, 3) < 0.3 ? "#c8d0ff" : "#5a6490");
-	// the moon, and a low ridge of far hills, and two far floating rocks
-	for (let y = -18; y <= 18; y++) for (let x = -18; x <= 18; x++) { const d = Math.hypot(x, y); if (d > 16) continue; set(566 + x, 52 + y, d > 14.5 ? "#9aa4d8" : hash(Math.floor((x + 20) / 4), Math.floor((y + 20) / 4)) < 0.25 ? "#c8cceb" : "#e6e8fa"); }
-	for (let x = 0; x < W; x++) { const h = 26 + 20 * noise1(x * 0.018, 7) + 10 * noise1(x * 0.06, 8); for (let y = H - h; y < H; y++) set(x, y, y < H - h + 2 ? NIGHTD[3] : NIGHTD[1]); }
-	for (const [cx, cy, w] of [[70, 96, 34], [600, 232, 26], [470, 120, 14]]) for (let y = 0; y < w * 1.4; y++) { const hw = y < 4 ? w : w * (1 - (y - 4) / (w * 1.4)); for (let x = -hw; x <= hw; x++) set(Math.round(cx + x), cy + y, y < 3 ? NIGHTD[4] : NIGHTD[2]); }
-	SKYBUF.set(BASE); skyDone = true;
-	BASEZ.fill(-1e9);
-}
-function scene() {
-	const B = BASE, Z = BASEZ, R = (u, v) => hash(Math.floor(u), Math.floor(v));
-	// the island: paving and dark moss on top, earth on the sides
-	quad(B, Z, [ISLE.x0, ISLE.y0, 0], [ISLE.x1 - ISLE.x0, 0, 0], [0, ISLE.y1 - ISLE.y0, 0], [0, 0, 1], (u, v, px, py) => { const X = u + ISLE.x0, Y = v + ISLE.y0; if (X > 0 && X < HOUSE.x1 && Y > 0 && Y < HOUSE.y1) return null; const edge = u < 3 || v < 3 || ISLE.x1 - ISLE.x0 - u < 3 || ISLE.y1 - ISLE.y0 - v < 3; if (edge) return MOSS[3]; const path = X > 240 && X < 286 && Y > -70 && Y < 120; if (path) { const sx = Math.floor(X / 9 + Math.floor(Y / 6) * 0.5), sy = Math.floor(Y / 6); return (X % 9 < 1 || Y % 6 < 1) ? MOSS[0] : R(sx, sy) < 0.5 ? ROCK[3] : ROCK[4]; } return noise1(X * 0.1 + Y * 0.07, 5) > 0.55 ? MOSS[2] : R(X / 2, Y / 2) < 0.15 ? MOSS[3] : MOSS[1]; });
-	const earth = (u, v, px, py) => { const z = v; return z > 14 ? MOSS[3] : ((Math.floor(z / 3) + Math.floor(u / 17)) % 3 === 0) ? ROCK[3] : z > 8 ? ROCK[2] : ROCK[1]; };
-	quad(B, Z, [ISLE.x0, ISLE.y1, ISLE.z0], [ISLE.x1 - ISLE.x0, 0, 0], [0, 0, -ISLE.z0], [0, 1, 0], earth);
-	quad(B, Z, [ISLE.x1, ISLE.y0, ISLE.z0], [0, ISLE.y1 - ISLE.y0, 0], [0, 0, -ISLE.z0], [1, 0, 0], earth);
-	quad(B, Z, [ISLE.x0, ISLE.y0, ISLE.z0], [ISLE.x1 - ISLE.x0, 0, 0], [0, 0, -ISLE.z0], [0, -1, 0], earth);
-	// the rock that hangs under it: built in screen space under the island's projected outline
-	{
-		const cs = [[ISLE.x0, ISLE.y0], [ISLE.x1, ISLE.y0], [ISLE.x1, ISLE.y1], [ISLE.x0, ISLE.y1]].map(([x, y]) => proj(x, y, ISLE.z0));
-		const xs = cs.map((p) => p[0]), x0 = Math.floor(Math.min(...xs)), x1 = Math.ceil(Math.max(...xs)), cx = (x0 + x1) / 2, hw = (x1 - x0) / 2;
-		for (let x = x0; x <= x1; x++) {
-			let top = -1e9; for (let e = 0; e < 4; e++) { const a = cs[e], b = cs[(e + 1) % 4]; if ((x - a[0]) * (x - b[0]) <= 0 && a[0] !== b[0]) top = Math.max(top, lerp(a[1], b[1], (x - a[0]) / (b[0] - a[0]))); }
-			if (top < -1e8) continue;
-			const k = 1 - Math.abs(x - cx) / hw, L = Math.max(0, k) ** 1.3 * 92 + noise1(x * 0.08, 11) * 22 * k + (hash(Math.floor(x / 3), 5) < 0.15 ? 14 * k : 0);
-			for (let y = Math.floor(top); y < top + L; y++) { if (x < 0 || y < 0 || x >= W || y >= H) continue; const i = y * W + x; if (Z[i] > -1e8) continue; const d = (y - top) / Math.max(1, L), band = Math.floor((y + noise1(x * 0.05, 2) * 6) / 5) % 4, h = d > 0.92 ? ROCK[0] : band === 0 ? ROCK[3] : d > 0.6 ? ROCK[1] : ROCK[2]; const c = hx(h); B[i * 3] = c[0]; B[i * 3 + 1] = c[1]; B[i * 3 + 2] = c[2]; Z[i] = -1e8; }
-		}
-	}
-	// the floor: cedar boards, the pool sunk into it
-	quad(B, Z, [0, 0, 0], [HOUSE.x1, 0, 0], [0, HOUSE.y1, 0], [0, 0, 1], (X, Y, px, py) => { if (X > POOLR.x0 && X < POOLR.x1 && Y > POOLR.y0 && Y < POOLR.y1) return null; const b = Math.floor(Y / 7), joint = (X + b * 13) % 44 < 1; if (Y % 7 < 1 || joint) return CEDAR[1]; return R(X / 4, b) < 0.2 ? CEDAR[2] : b % 2 ? CEDAR[3] : CEDAR[4]; });
-	quad(B, Z, [0, HOUSE.y1, -6], [HOUSE.x1, 0, 0], [0, 0, 6], [0, 1, 0], (u, v) => (v > 4 ? CEDAR[3] : CEDAR[1]));
-	quad(B, Z, [HOUSE.x1, 0, -6], [0, HOUSE.y1, 0], [0, 0, 6], [1, 0, 0], (u, v) => (v > 4 ? CEDAR[3] : CEDAR[1]));
-	for (let x = 4; x < HOUSE.x1; x += 40) box(B, Z, x, HOUSE.y1 - 4, -14, x + 4, HOUSE.y1, -6, allFaces(ROCK[3], ROCK[2], ROCK[3]));
-	// the pool: a tiled basin, a cream rim
-	const tile = (u, v) => (u % 6 < 1 || v % 6 < 1 ? TILES[1] : (Math.floor(u / 6) + Math.floor(v / 6)) % 2 ? TILES[3] : TILES[4]);
-	quad(B, Z, [POOLR.x0, POOLR.y0, -14], [POOLR.x1 - POOLR.x0, 0, 0], [0, 0, 14], [0, 1, 0], tile);
-	quad(B, Z, [POOLR.x0, POOLR.y0, -14], [0, POOLR.y1 - POOLR.y0, 0], [0, 0, 14], [1, 0, 0], tile);
-	quad(B, Z, [POOLR.x1, POOLR.y0, -14], [0, POOLR.y1 - POOLR.y0, 0], [0, 0, 14], [-1, 0, 0], tile);
-	quad(B, Z, [POOLR.x0, POOLR.y1, -14], [POOLR.x1 - POOLR.x0, 0, 0], [0, 0, 14], [0, -1, 0], tile);
-	for (const [x0, y0, x1, y1] of [[POOLR.x0 - 3, POOLR.y0 - 3, POOLR.x1 + 3, POOLR.y0], [POOLR.x0 - 3, POOLR.y1, POOLR.x1 + 3, POOLR.y1 + 3], [POOLR.x0 - 3, POOLR.y0, POOLR.x0, POOLR.y1], [POOLR.x1, POOLR.y0, POOLR.x1 + 3, POOLR.y1]]) box(B, Z, x0, y0, 0, x1, y1, 1.5, allFaces(TILES[5], TILES[4], TILES[4]));
-	// the back wall: tiles below, a rail, plaster with the mural and two shoji, cedar posts and a beam
-	const mural = (X, Zz) => { const u = (X - 75) / 100, v = (Zz - 44) / 52; const mt = v < 0.75 - Math.abs(u - 0.62) * 1.6 && v > 0.15; if (mt) return v > 0.62 ? TILES[5] : v > 0.5 && hash(Math.floor(X), Math.floor(Zz)) < 0.5 ? TILES[4] : TILES[2]; const wave = v < 0.32 + 0.12 * Math.sin(u * 14) && v > 0; if (wave) return (Math.floor(u * 40 + v * 30) % 3 === 0) ? TILES[5] : TILES[3]; return v > 0.9 ? TILES[2] : TILES[4]; };
-	const shoji = (X, Zz, x0, x1, z0, z1) => (X - x0) % 7 < 1 || (Zz - z0) % 8 < 1 || X - x0 < 1.5 || x1 - X < 1.5 || Zz - z0 < 1.5 || z1 - Zz < 1.5 ? CEDAR[2] : SHOJI[2];
-	const backIn = (X, Zz) => {
-		Zz /= ZK;
-		if (X % 50 < 4) return X % 50 < 1 ? CEDAR[1] : CEDAR[3];
-		if (Zz > 100 && Zz < 106) return Zz < 101 ? CEDAR[1] : CEDAR[2];
-		if (Zz < 34) return tile(X, Zz);
-		if (Zz < 38) return Zz < 35 ? CEDAR[1] : CEDAR[3];
-		if (Zz >= 106) return Zz < 107 ? CEDAR[1] : PLAS[1];
-		if (X > 75 && X < 175 && Zz > 44 && Zz < 96) return X < 77 || X > 173 || Zz < 46 || Zz > 94 ? CEDAR[1] : mural(X, Zz);
-		if (X > 8 && X < 44 && Zz > 50 && Zz < 92) return shoji(X, Zz, 8, 44, 50, 92);
-		if (X > 196 && X < 244 && Zz > 50 && Zz < 92) return shoji(X, Zz, 196, 244, 50, 92);
-		return hash(Math.floor(X / 3), Math.floor(Zz / 3)) < 0.12 ? PLAS[1] : PLAS[2];
-	};
-	quad(B, Z, [0, 0, 0], [HOUSE.x1, 0, 0], [0, 0, HOUSE.z1], [0, 1, 0], backIn);
-	quad(B, Z, [0, -2, 0], [HOUSE.x1, 0, 0], [0, 0, HOUSE.z1], [0, -1, 0], (X, Zz) => (X > 30 && X < 70 && Zz > 50 && Zz < 80 ? shoji(X, Zz, 30, 70, 50, 80) : X > 150 && X < 190 && Zz > 50 && Zz < 80 ? shoji(X, Zz, 150, 190, 50, 80) : X % 5 < 1 ? CEDAR[0] : Zz % 40 < 2 ? CEDAR[0] : CEDAR[1]));
-	// the left wall and its gable, inside
-	quad(B, Z, [0, 0, 0], [0, HOUSE.y1, 0], [0, 0, HOUSE.ridge], [1, 0, 0], (Y, Zz) => { const top = HOUSE.z1 + (HOUSE.ridge - HOUSE.z1) * (1 - Math.abs(Y - 42) / 42); if (Zz > top) return null; if (Y % 42 < 4) return CEDAR[2]; const z = Zz / ZK; if (z < 34) return tile(Y, z); if (z < 38) return CEDAR[3]; if (z > 100 && z < 106 && Zz < HOUSE.z1) return CEDAR[2]; if (Zz > HOUSE.z1) return (Math.abs(Y - 42) < 2 || Zz - HOUSE.z1 < 2) ? CEDAR[1] : PLAS[1]; return PLAS[2]; });
-	// the end wall, outside: boards, a round window, the doorway the track runs out of; and its gable
-	const endOut = (Y, Zz) => { const top = HOUSE.z1 + (HOUSE.ridge - HOUSE.z1) * (1 - Math.abs(Y - 42) / 42); if (Zz > top) return null; const gable = Zz > HOUSE.z1; if (FACE2 && !gable && Zz > 8) return null; Zz = gable ? Zz : Zz / ZK; if (Y > 48 && Y < 76 && Zz < 64) return null; const rw = Math.hypot(Y - 22, Zz - 72); if (rw < 12) return rw > 10.5 ? CEDAR[0] : (Math.abs(Y - 22) < 0.6 || Math.abs(Zz - 72) < 0.6) ? CEDAR[1] : SHOJI[2]; if (Y > 46 && Y < 78 && Zz >= 64 && Zz < 68) return CEDAR[0]; return Y % 5 < 1 ? CEDAR[0] : gable ? CEDAR[2] : CEDAR[1]; };
-	quad(B, Z, [HOUSE.x1 + 1, 0, 0], [0, HOUSE.y1, 0], [0, 0, HOUSE.ridge], [1, 0, 0], endOut);
-	if (FACE2) quad(B, Z, [0, HOUSE.y1, 0], [HOUSE.x1, 0, 0], [0, 0, HOUSE.z1], [0, -1, 0], (X, Zz) => { const z = Zz / ZK; if (X % 50 < 4) return X % 50 < 1 ? CEDAR[1] : CEDAR[3]; if (z > 100 && z < 106) return CEDAR[2]; if (z < 34) return tile(X, z); if (z < 38) return CEDAR[3]; if (z >= 106) return PLAS[1]; if (X % 50 > 10 && X % 50 < 44 && z > 50 && z < 92) return shoji(X % 50, z, 10, 44, 50, 92); return PLAS[2]; });
-	// the front corner posts and the cut beam: the cutaway's frame
-	box(B, Z, 0, HOUSE.y1 - 4, 0, 4, HOUSE.y1, HOUSE.z1, allFaces(CEDAR[3], CEDAR[2], CEDAR[3]));
-	box(B, Z, HOUSE.x1 - 4, HOUSE.y1 - 4, 0, HOUSE.x1 + 1, HOUSE.y1, HOUSE.z1, allFaces(CEDAR[3], CEDAR[2], CEDAR[3]));
-	box(B, Z, 0, HOUSE.y1 - 4, HOUSE.z1 - 6, HOUSE.x1, HOUSE.y1, HOUSE.z1, allFaces(CEDAR[4], CEDAR[2], CEDAR[3]));
-	// the roof: only the back slope (the front is cut away), slate tiles in rows, a ridge cap
-	{
-		const O = [-6, -8, HOUSE.z1 - 4], U = [HOUSE.x1 + 14, 0, 0], V = [0, 50, HOUSE.ridge - HOUSE.z1 + 4];
-		quad(B, Z, O, U, V, [0, -0.6, 0.8], (u, v) => { const row = Math.floor(v / 4), cut = v % 4 < 1; if (V[1] * 0 + v > Math.hypot(V[1], V[2]) - 3) return KAWARA[3]; if (cut) return KAWARA[0]; return (Math.floor((u + row * 3) / 6) % 2) ? KAWARA[1] : KAWARA[2]; });
-		quad(B, Z, O, U, V, [0, 0.6, 0.8], (u, v) => (v > Math.hypot(V[1], V[2]) - 7 ? (v % 4 < 1 ? KAWARA[0] : KAWARA[2]) : null)); // a lip of front slope at the ridge
-	}
-	// the loft on the left: planks, a post down to the floor in front of the track
-	box(B, Z, LOFT.x0, 0, LOFT.z - 5, LOFT.x1, HOUSE.y1 - 4, LOFT.z, { top: (u, v) => (v % 7 < 1 ? CEDAR[1] : Math.floor(v / 7) % 2 ? CEDAR[3] : CEDAR[4]), yp: (u, v) => (v < 1 ? CEDAR[1] : CEDAR[2]), xp: (u, v) => (v < 1 ? CEDAR[1] : CEDAR[2]) });
-	box(B, Z, LOFT.x1 - 4, HOUSE.y1 - 8, 0, LOFT.x1, HOUSE.y1 - 4, LOFT.z - 5, allFaces(CEDAR[3], CEDAR[2], CEDAR[3]));
-	for (let z = 8; z < LOFT.z; z += 9) box(B, Z, LOFT.x1, 36, z, LOFT.x1 + 2, 48, z + 1.5, allFaces(CEDAR[4], CEDAR[3], CEDAR[3]));
-	box(B, Z, LOFT.x1, 35, 0, LOFT.x1 + 2, 37, LOFT.z, allFaces(CEDAR[3], CEDAR[2], CEDAR[2])); box(B, Z, LOFT.x1, 47, 0, LOFT.x1 + 2, 49, LOFT.z, allFaces(CEDAR[3], CEDAR[2], CEDAR[2]));
-	// the bridge over the pool: an arched deck along the track, railings either side
-	for (let X = POOLR.x0 - 4; X < POOLR.x1 + 4; X += 0.5) { const h = bridgeH(clamp(X, POOLR.x0, POOLR.x1)); quad(B, Z, [X, TRACKY - 7, h - 2], [0.6, 0, 0], [0, 14, 0], [0, 0, 1], (u, v) => (Math.floor(X) % 6 < 1 ? CEDAR[1] : CEDAR[4])); quad(B, Z, [X, TRACKY + 7, h - 3], [0.6, 0, 0], [0, 0, 3], [0, 1, 0], flat(CEDAR[2])); }
-	for (const ry of [TRACKY - 7, TRACKY + 7]) { for (let X = POOLR.x0 - 2; X <= POOLR.x1 + 2; X += 15) box(B, Z, X, ry - 1, bridgeH(clamp(X, POOLR.x0, POOLR.x1)), X + 2, ry + 1, bridgeH(clamp(X, POOLR.x0, POOLR.x1)) + 11, allFaces(LANTR[2], LANTR[1], LANTR[2])); for (let X = POOLR.x0 - 2; X <= POOLR.x1 + 2; X += 0.5) box(B, Z, X, ry - 1, bridgeH(clamp(X, POOLR.x0, POOLR.x1)) + 10, X + 0.6, ry + 1, bridgeH(clamp(X, POOLR.x0, POOLR.x1)) + 12, { top: flat(LANTR[3]), yp: flat(LANTR[1]), xp: flat(LANTR[2]) }); }
-	// buckets, stools, a shelf of towels
-	for (const [x, y, z] of [[182, 14, 0], [192, 14, 0], [187, 16, 9]]) box(B, Z, x, y, z, x + 8, y + 8, z + 9, { top: (u, v) => (u < 1 || v < 1 || u > 7 || v > 7 ? CEDAR[3] : CEDAR[1]), yp: (u, v) => (v % 4 < 1 ? CEDAR[0] : CEDAR[4]), xp: (u, v) => (v % 4 < 1 ? CEDAR[0] : CEDAR[3]) });
-	for (const x of [62, 210]) box(B, Z, x, 20, 0, x + 10, 30, 6, allFaces(CEDAR[4], CEDAR[2], CEDAR[3]));
-	box(B, Z, 200, 1, 61, 244, 10, 63, allFaces(CEDAR[4], CEDAR[2], CEDAR[2]));
-	for (let i = 0; i < 6; i++) box(B, Z, 202 + i * 7, 2, 63, 208 + i * 7, 9, 67 + (i % 2), allFaces(i % 2 ? "#e8e4f0" : TILES[3], i % 2 ? "#c8c4d4" : TILES[2], i % 2 ? "#d8d4e4" : TILES[2]));
-	// the veranda outside the end door: a deck, a low rail, a rain barrel, then the garden at the back
-	box(B, Z, HOUSE.x1 + 1, -60, 0, 274, HOUSE.y1 + 20, 3, { top: (u, v) => (u % 6 < 1 ? CEDAR[1] : Math.floor(u / 6) % 2 ? CEDAR[3] : CEDAR[2]), xp: flat(CEDAR[1]), yp: flat(CEDAR[1]) });
-	for (let y = -58; y <= HOUSE.y1 + 18; y += 14) box(B, Z, 271, y, 3, 273, y + 2, 15, allFaces(CEDAR[3], CEDAR[2], CEDAR[2]));
-	box(B, Z, 271, -58, 14, 273, HOUSE.y1 + 20, 16, allFaces(CEDAR[4], CEDAR[2], CEDAR[3]));
-	box(B, Z, 282, -24, 0, 292, -14, 13, { top: (u, v) => (u > 1.5 && u < 8.5 && v > 1.5 && v < 8.5 ? "#1a2a44" : CEDAR[2]), xp: (u, v) => (v % 5 < 1 ? ROCK[2] : CEDAR[2]), yp: (u, v) => (v % 5 < 1 ? ROCK[2] : CEDAR[3]), yn: (u, v) => (v % 5 < 1 ? ROCK[2] : CEDAR[2]) });
-	// the stone lantern and a little shrine in the back garden
-	const st = (a, b, c) => allFaces(a, b, c);
-	box(B, Z, 226, -50, 0, 236, -40, 3, st(ROCK[4], ROCK[3], ROCK[3])); box(B, Z, 229, -47, 3, 233, -43, 14, st(ROCK[4], ROCK[2], ROCK[3]));
-	box(B, Z, 225, -51, 14, 237, -39, 22, { top: flat(ROCK[4]), xp: (u, v) => (u > 3 && u < 9 && v > 2 && v < 6 ? "#ffc070" : ROCK[3]), yp: (u, v) => (u > 3 && u < 9 && v > 2 && v < 6 ? "#ffc070" : ROCK[3]), yn: flat(ROCK[2]) });
-	box(B, Z, 222, -54, 22, 240, -36, 25, st(ROCK[4], ROCK[3], ROCK[3])); box(B, Z, 228, -48, 25, 234, -42, 29, st(ROCK[4], ROCK[3], ROCK[3]));
-	box(B, Z, 120, -66, 0, 140, -52, 18, { top: flat(KAWARA[2]), xp: (u, v) => (v > 14 ? KAWARA[1] : u > 5 && u < 9 && v < 10 ? "#ffc070" : CEDAR[2]), yp: flat(CEDAR[1]), yn: flat(CEDAR[1]) });
-	for (let i = 0; i < 9; i++) { const x = 40 + hash(i, 9) * 70, y = -78 + hash(i, 10) * 18, h = 40 + hash(i, 11) * 34; box(B, Z, x, y, 0, x + 2, y + 2, h, { top: flat(MOSS[3]), xp: (u, v) => (v % 9 < 1 ? MOSS[0] : MOSS[2]), yp: (u, v) => (v % 9 < 1 ? MOSS[0] : MOSS[3]), yn: flat(MOSS[2]) }); }
-}
-let FACE2 = false;
-const LAMPS = [[36, 30, 108], [135, 40, 108], [222, 30, 108], [251, 22, 85]];
-function lightAt(X, Y, Z) {
-	const inside = X > -2 && X < HOUSE.x1 + 2 && Y > -2 && Y < HOUSE.y1 + 4;
-	let warm = inside ? 0.22 : 0.06;
-	for (const [lx, ly, lz] of LAMPS) warm += 0.8 * Math.max(0, 1 - Math.hypot(X - lx, Y - ly, (Z - lz) * 0.7) / 120) ** 2;
-	if (X > 230 && X < 270 && Y < -30) warm += 0.5 * Math.max(0, 1 - Math.hypot(X - 231, Y + 45) / 40);
-	return { warm: Math.min(0.9, warm), cool: inside ? 0.05 : 0.22 };
-}
-function litSprite(drawFn, X, Y, Z, k = 1) {
-	const sav = col.slice(); drawFn();
-	const L = lightAt(X, Y, Z), wr = L.warm * 0.42 * k, cl = L.cool * 0.5 * k;
-	for (let i = 0; i < N * 3; i += 3) if (col[i] !== sav[i] || col[i + 1] !== sav[i + 1] || col[i + 2] !== sav[i + 2]) { const l = 0.7 - 0.4 * (col[i] + col[i + 1] + col[i + 2]) / 3; lit[i] += (wr * 1.0 + cl * 0.55) * l; lit[i + 1] += (wr * 0.64 + cl * 0.65) * l; lit[i + 2] += (wr * 0.32 + cl * 1.0) * l; }
-}
-function renderStatic() { FACE2 = CAM.th - TH0 > Math.PI / 4 + 0.1; sky(); scene(); }
-function glowW(X, Y, Z, r, h, k) {
-	const p = proj(X, Y, Z), px = Math.floor(p[0]), py = Math.floor(p[1]);
-	if (px < 0 || py < 0 || px >= W || py >= H) return;
-	let seen = 0, n = 0;
-	for (const [dx, dy] of [[0, 0], [-2, 0], [2, 0], [0, -2], [0, 2]]) { const x = clamp(px + dx, 0, W - 1), y = clamp(py + dy, 0, H - 1); n++; if (ZB[y * W + x] <= p[2] + 3) seen++; }
-	if (seen) glow(p[0], p[1], r, h, k * seen / n);
-}
-
-// ---------------------------------------------------------------- the stage
-function makeDioramaStage(cv, readout) {
-	const HOME = 212, LEFT = 44, EX0 = 30, BRX = 135;
-	const T = { LIFT1: 1.0, STOMP1: 1.4, LIFT2: 1.9, STOMP2: 2.3, SALTW: 3.5, SALT: 3.9, SLAND: 4.5, CROUCH: 5.0, CHARGE: 5.4, LAND: 5.95, SKID: 6.2, PALMS: [7.0, 7.4, 7.8, 8.2], BOW: 8.85, SPILL: 9.15, SLUMP: 9.5, REFILL: 11.0, SCOOP: 11.5, HOP: 11.9, HOMED: 12.5, ASIDE: 12.6, RUN: 12.9, CORNER: 14.05, TURNED: 14.85, LANTERN: 15.5, FADE: 17.0, LOOP: 17.5 };
-	const WV = 190, PV = 300, SALTX = [16, 40, 64], HITS = [9.95, 10.3, 10.65];
-	let S, parts, J;
-	const reset = () => { S = { t: 0, flags: {}, pops: [] }; parts = []; J = makeJuice(); };
-	reset();
-	const once = (k) => (S.flags[k] ? false : (S.flags[k] = true));
-	const outE = (k) => 1 - (1 - clamp(k)) ** 3;
-	const pop = (w, X, Y, Z, t) => S.pops.push({ w, X, Y, Z, t0: t });
-	// ---------------------------------------------------------------- the kappa, in track space (X along the room, h up) plus depth Y
-	function kap(t) {
-		const o = { X: HOME, Y: TRACKY, h: 0, face: -1, legL: 0, legR: 0, lean: 0, arm: [0, 0], crouch: 0, bow: 0, dish: 1, kneel: 0, brow: "proud", belly: Math.max(0, Math.sin(t * 5)) * (t < T.LIFT1 ? 1 : 0), sx: 1, sy: 1, rot: 0 };
-		for (const [lt, st, leg] of [[T.LIFT1, T.STOMP1, "legR"], [T.LIFT2, T.STOMP2, "legL"]]) { if (t > lt && t < st) { const k = smooth(lt, st - 0.05, t); o[leg] = k; o.lean = (leg === "legR" ? -0.18 : 0.18) * k; o.brow = "strain"; } if (t >= st && t < st + 0.3) { const a = t - st; o.sy = 1 - 0.15 * Math.exp(-a * 9); o.sx = 2 - o.sy; o.crouch = 0.4 * Math.exp(-a * 6); o.brow = "fierce"; } }
-		if (t > T.SALTW && t < T.SALT + 0.3) { const k = t < T.SALT ? smooth(T.SALTW, T.SALT, t) : 1; o.arm = t < T.SALT ? [-k, 0] : [1, 0]; o.lean = t < T.SALT ? 0.15 * k : -0.2; o.brow = "sly"; }
-		if (t > T.CROUCH && t < T.CHARGE) { const k = smooth(T.CROUCH, T.CHARGE - 0.05, t); o.crouch = k; o.lean = -0.3 * k; o.arm = [0.5 * k, 0.5 * k]; o.brow = "fierce"; }
-		if (t >= T.CHARGE && t < T.LAND) { const u = (t - T.CHARGE) / (T.LAND - T.CHARGE); o.X = lerp(HOME, LEFT + 18, u); o.h = 4 * 22 * u * (1 - u); o.lean = -0.5; o.arm = [1, 1]; o.sx = 1.1; o.sy = 0.92; o.brow = "fierce"; }
-		if (t >= T.LAND && t < T.SKID) { const k = smooth(T.LAND, T.SKID, t); o.X = lerp(LEFT + 18, LEFT, k); o.crouch = 0.6 * (1 - k); o.lean = -0.4 * (1 - k); o.brow = "fierce"; }
-		if (t >= T.SKID && t < T.REFILL) { o.X = LEFT; o.face = 1; o.brow = t < T.BOW ? "angry" : "proud"; }
-		for (const pt of T.PALMS) { const a = t - pt; if (a > -0.15 && a < 0.25) { o.arm = a < 0 ? [-0.4, 0] : [1.2, 0]; o.lean = a < 0 ? 0.15 : -0.2; } }
-		if (t >= T.BOW && t < T.SLUMP) { o.bow = smooth(T.BOW, T.SPILL, t); o.brow = t < T.SPILL ? "polite" : "shock"; }
-		if (t >= T.SPILL) o.dish = t < T.SCOOP + 0.2 ? 0 : 1;
-		if (t >= T.SLUMP && t < T.REFILL) { const k = smooth(T.SLUMP, T.SLUMP + 0.3, t); o.bow = 1 - 0.6 * k; o.kneel = k; o.brow = "sad"; }
-		// off the track: he walks back into the room to the pool's edge, scoops his dish full, and leaps home
-		if (t >= T.REFILL && t < T.SCOOP) { const k = smooth(T.REFILL, T.SCOOP, t); o.X = lerp(LEFT, 92, k); o.Y = lerp(TRACKY, 30, k); o.face = 1; o.kneel = 1 - smooth(T.REFILL, T.REFILL + 0.25, t); o.brow = "sad"; }
-		if (t >= T.SCOOP && t < T.HOP) { o.X = 92; o.Y = 30; o.face = 1; o.bow = Math.sin(clamp((t - T.SCOOP) / 0.4) * Math.PI) * 0.9; o.brow = "proud"; }
-		if (t >= T.HOP && t < T.HOMED) { const u = (t - T.HOP) / (T.HOMED - T.HOP); o.X = lerp(92, HOME, u); o.Y = lerp(30, TRACKY, u); o.h = 4 * 50 * u * (1 - u); o.face = 1; o.sx = 0.92; o.sy = 1.1; o.brow = "proud"; }
-		if (t >= T.HOMED) { o.X = HOME; o.face = -1; const a = t - T.HOMED; o.sy = 1 - 0.18 * Math.exp(-a * 8) * Math.cos(a * 16); o.sx = 2 - o.sy; o.brow = "proud"; }
-		// and off the track again: he steps back out of Elfy's way and bows her through
-		if (t >= T.ASIDE && t < T.LOOP) { const k = smooth(T.ASIDE, T.ASIDE + 0.35, t); o.Y = lerp(TRACKY, 30, k); o.bow = t > T.RUN + 0.2 && t < T.RUN + 1.0 ? 0.7 * Math.sin(clamp((t - T.RUN - 0.2) / 0.8) * Math.PI) : 0; o.brow = "polite"; o.face = t > T.RUN + 0.6 ? 1 : -1; }
-		if (o.kneel > 0.5 && HITS.some((h) => t >= h && t < h + 0.12)) o.flash = 1;
-		return o;
-	}
-	// ---------------------------------------------------------------- Elfy: s along the track, h up
-	function elfy(t) {
-		const X0 = EX0 + 10, sOf = (X) => X + 10, bh = bridgeH(BRX);
-		const ret = (a, at, X, h, flip) => ({ a, at, s: sOf(X), h, flip });
-		const crest = (st) => st + (HOME - 22 - EX0) / WV;
-		for (const st of [T.STOMP1, T.STOMP2]) { const j = crest(st) - 0.17; if (t >= j && t < j + 0.36) { const k = (t - j) / 0.36; return ret(k < 0.3 ? "jump" : k < 0.6 ? "apex" : "fall", k, EX0, 4 * 26 * k * (1 - k)); } }
-		if (t < 3.6) return ret("idle", t, EX0, 0);
-		if (t < 4.0) { const k = (t - 3.6) / 0.4; return ret(k < 0.5 ? "jump" : "fall", k, lerp(EX0, BRX, k), lerp(0, bh, k) + 4 * 30 * k * (1 - k)); }
-		if (t < 5.45) return ret(t < 4.15 ? "land" : t > T.CROUCH ? "crouch" : "idle", t - 4.0, BRX, bh, t > 4.3 && t < 5.0);
-		if (t < 6.1) { const k = (t - 5.45) / 0.65; return ret(k < 0.25 ? "jump" : k < 0.45 ? "air_jump" : k < 0.6 ? "apex" : "fall", k >= 0.25 && k < 0.45 ? (k - 0.25) * 0.65 : t - 5.45, BRX, bh + 4 * 84 * k * (1 - k)); }
-		for (const [i, pt] of T.PALMS.entries()) { const arrive = pt + (BRX - LEFT - 34) / PV, low = i % 2 === 0; if (low && t >= arrive - 0.2 && t < arrive + 0.22) { const k = (t - arrive + 0.2) / 0.42; return ret(k < 0.4 ? "jump" : k < 0.6 ? "apex" : "fall", k, BRX, bh + 4 * 30 * k * (1 - k), true); } if (!low && t >= arrive - 0.18 && t < arrive + 0.2) return ret(t < arrive - 0.08 ? "crouch_down" : "crouch", t - arrive + 0.18, BRX, bh, true); }
-		if (t < T.BOW) return ret(t < 6.25 ? "land" : "idle", t - 6.1, BRX, bh, t > 6.3);
-		if (t < T.SPILL + 0.2) return ret("crouch_down", Math.min(0.08, t - T.BOW), BRX, bh, true);
-		if (t < 9.75) { const k = (t - T.SPILL - 0.2) / (9.75 - T.SPILL - 0.2); return ret(k < 0.4 ? "jump" : "fall", k, lerp(BRX, 80, k), lerp(bh, 0, k) + 4 * 14 * k * (1 - k), true); }
-		if (t < 10.8) { const h = HITS.find((q) => t >= q - 0.06 && t < q + 0.3); return ret(h !== undefined ? "strike_side" : "idle", h !== undefined ? t - h + 0.06 : t, 80, 0, true); }
-		if (t < T.RUN) return ret("idle", t, 80, 0, t < 11.4 || t > T.HOMED);
-		// the run: the length of the room, over the bridge, out of the end door and round the corner
-		const s0 = sOf(80), s1 = TL1, s2 = TL1 + 104;
-		if (t < T.CORNER) { const k = (t - T.RUN) / (T.CORNER - T.RUN), s = lerp(s0, s1, k), X = s - 10; return { a: "run", at: t, s, h: bridgeH(X) }; }
-		if (t < T.LANTERN) { const k = (t - T.CORNER) / (T.LANTERN - T.CORNER), s = lerp(s1, s2, k); return { a: "run", at: t, s, h: 3 }; }
-		return { a: "idle", at: t, s: s2, h: 3 };
-	}
-	// ---------------------------------------------------------------- the camera: still for the fight, a quarter turn at the corner
-	// the camera: a slow sway of its angle all the time, a drift toward the middle of the fight, and a quarter turn at
-	// the corner. The drift follows a time-averaged midpoint so the kappa's leaps don't jerk it.
-	function camAt(t) {
-		const k = smooth(T.CORNER - 0.1, T.TURNED, t);
-		let mid = 0; for (const d of [0, 0.25, 0.5, 0.75, 1.0]) { const tt = Math.max(0, t - d), e = elfy(tt), o = kap(tt); mid += (trackAt(e.s)[0] + o.X) / 2 / 5; }
-		const drift = clamp((mid - 125) * 0.22, -16, 16) * (1 - k);
-		const sway = 0.055 * Math.sin((t / 14) * TAU) + 0.02 * Math.sin((t / 5.3) * TAU);
-		const F1 = [125 + drift, 42, 31.5], F2 = [262, -24, 64];
-		return { th: TH0 + sway + k * Math.PI / 2, F: [lerp(F1[0], F2[0], k), lerp(F1[1], F2[1], k), lerp(F1[2], F2[2], k)] };
-	}
-	// ---------------------------------------------------------------- world particles
-	const spawn = (p) => parts.push({ age: 0, g: 260, ...p });
-	function stepWorld(dt) { for (const p of parts) { p.age += dt; p.vz -= (p.g || 0) * dt; p.X += p.vx * dt; p.Y += p.vy * dt; p.Z += p.vz * dt; const fl = p.floor ?? 0; if (p.Z < fl && p.vz < 0) { p.Z = fl; p.vz *= -0.3; p.vx *= 0.5; p.vy *= 0.5; } } parts = parts.filter((p) => p.age < p.life); }
-	let rainSplash = [];
-	function update(dt) {
-		if (juiceStep(J, dt)) return;
-		const t = (S.t += dt), R = Math.random, o = kap(t);
-		if (t >= T.LOOP) { reset(); return; }
-		const atX = (X, Y, Z, n, c, sp = 80, up = 60) => { for (let i = 0; i < n; i++) spawn({ X, Y: Y + (R() - 0.5) * 6, Z, vx: (R() - 0.5) * sp, vy: (R() - 0.5) * sp * 0.6, vz: up * (0.5 + R()), life: 0.5 + R() * 0.4, c }); };
-		for (const st of [T.STOMP1, T.STOMP2]) { if (t >= st && once("st" + st)) { kick(J, 4, 0.36, 0.14); pop("DOSUKOI!", HOME, TRACKY, 90, t); atX(HOME, TRACKY, 1, 20, CEDAR[4], 120, 50); } const x = HOME - 22 - (t - st) * WV; if (t > st && x > POOLR.x0 && x < POOLR.x1 && R() < dt * 60) atX(x, TRACKY + (R() - 0.5) * 20, -8, 2, R() < 0.5 ? ACIDL[4] : ACIDL[5], 40, 70); }
-		if (t >= T.SALT && once("salt")) { kick(J, 1.6, 0.1, 0.04); pop("PSSHH", HOME - 20, TRACKY, 80, t); }
-		SALTX.forEach((x, i) => { if (t >= T.SLAND + i * 0.05 && once("sl" + i)) atX(x, TRACKY, 1, 8, "#ffffff", 50, 30); });
-		if (t >= T.SLAND + 0.15 && once("slL")) atX(30, 40, LOFT.z + 1, 8, "#ffffff", 50, 30);
-		if (t >= T.CHARGE && once("charge")) { kick(J, 2.4, 0.16, 0.06); pop("HAKKEYOI!", HOME - 30, TRACKY, 96, t); }
-		if (t >= T.LAND && once("land")) { kick(J, 4.4, 0.45, 0.18); pop("DON!", LEFT + 18, TRACKY, 80, t); atX(LEFT + 18, TRACKY, 1, 18, CEDAR[4], 140, 60); }
-		T.PALMS.forEach((pt, i) => { if (t >= pt && once("p" + i)) { kick(J, 1.8, 0.1, 0.04); if (i === 0) pop("TSUPPARI!", LEFT, TRACKY, 96, t); } });
-		if (t >= T.BOW && once("bow")) pop("...!", LEFT, TRACKY, 90, t);
-		if (t > T.SPILL && t < T.SLUMP + 0.2 && R() < dt * 70) { const p = headAt(o); spawn({ X: p[0] + 4, Y: p[1], Z: p[2], vx: 30 + R() * 40, vy: (R() - 0.5) * 10, vz: R() * 20, life: 0.9, c: R() < 0.5 ? ACIDL[4] : ACIDL[5], g: 300 }); }
-		if (t >= T.SLUMP && once("slump")) kick(J, 2.4, 0.2, 0.06);
-		for (const h of HITS) if (t >= h && once("hit" + h)) { kick(J, 2.2, 0.16, 0.07); atX(62, TRACKY, 30, 14, R() < 0.5 ? "#ffffff" : KSKIN[4], 160, 40); if (h === HITS[2]) pop("BONK!", 62, TRACKY, 80, t); }
-		if (t >= T.SCOOP && once("scoop")) { pop("GLUG", 92, 30, 70, t); atX(96, 32, -8, 10, ACIDL[4], 40, 50); }
-		if (t >= T.HOMED && once("homed")) { kick(J, 3, 0.26, 0.08); atX(HOME, TRACKY, 1, 14, CEDAR[4], 120, 50); }
-		if (t >= T.RUN + 0.3 && once("after")) pop("AFTER YOU", HOME, 30, 92, t);
-		// steam off the pool, always
-		if (R() < dt * 14) spawn({ X: POOLR.x0 + R() * (POOLR.x1 - POOLR.x0), Y: POOLR.y0 + R() * (POOLR.y1 - POOLR.y0), Z: -6, vx: (R() - 0.5) * 4, vy: (R() - 0.5) * 4, vz: 12 + R() * 8, g: 0, life: 3 + R(), c: "steam", r: 2 + R() * 2 });
-		stepWorld(dt);
-		// rain splashes on the island and the roof
-		if (R() < dt * 90) { const X = ISLE.x0 + R() * (ISLE.x1 - ISLE.x0), Y = ISLE.y0 + R() * (ISLE.y1 - ISLE.y0), inside = X > 0 && X < HOUSE.x1 && Y > 0 && Y < HOUSE.y1; if (!inside) rainSplash.push({ X, Y, Z: X > 251 && X < 274 && Y > -60 && Y < HOUSE.y1 + 20 ? 3 : 0, age: 0 }); }
-		rainSplash = rainSplash.filter((r) => (r.age += dt) < 0.25);
-	}
-	// ---------------------------------------------------------------- drawing the kappa (the bathhouse page's, smaller, with louder brows)
-	function headAt(o) { const kn = o.crouch * 10 + o.kneel * 14; return [o.X + o.face * -3 * 0.7, o.Y, o.h + (78 - kn - o.bow * 20) * 0.7]; }
-	function drawKappa(o, t, x, y) {
-		const kn = o.crouch * 10 + o.kneel * 14, bodyY = y - 30 + kn, bel = o.belly;
-		for (const [sd, lift] of [[-1, o.legL], [1, o.legR]]) {
-			const fx = x + sd * 16, fy = y - lift * 34, hip = [x + sd * 9, bodyY + 8];
-			for (let j = 0; j <= 10; j++) { const u = j / 10; disc(lerp(hip[0], fx, u) + sd * 4 * Math.sin(u * Math.PI), lerp(hip[1], fy - 2, u), 5.5 - u * 1.5, sd < 0 ? KSKIN[2] : KSKIN[3]); }
-			for (let dx = -6; dx <= 6; dx++) { put(fx + dx, fy - 1, KSKIN[1]); put(fx + dx, fy, KSKIN[0]); }
-		}
-		for (let yy = -34; yy <= 10; yy++) for (let dx = -10; dx <= 36; dx++) { const r = Math.hypot((dx - 13) / 23, yy / 34); if (r > 1) continue; const hex = ((Math.floor((dx + 30) / 8) + Math.floor((yy + 40) / 9)) % 2); put(x + 10 + dx, bodyY - 14 + yy - o.bow * 10, r > 0.9 ? SHELL[0] : r > 0.82 ? SHELL[3] : hex ? SHELL[2] : SHELL[1]); }
-		for (let yy = -30; yy <= 14; yy++) { const w = 22 + 6 * Math.sin(clamp((yy + 30) / 44) * Math.PI) + bel * 2 * (yy > -6 ? 1 : 0); for (let dx = -w; dx <= w; dx++) { const plate = Math.hypot(dx / (w * 0.6), (yy - 2) / 13) < 1; put(x + dx - o.bow * (14 - yy) * 0.35, bodyY + yy - 12, plate ? (Math.round(yy) % 5 === 0 ? "#c8c0a0" : "#e8e0c0") : dx < -w + 2 ? KSKIN[4] : dx > w - 3 ? KSKIN[1] : KSKIN[3]); } }
-		for (let yy = 0; yy < 8; yy++) for (let dx = -27; dx <= 27; dx++) put(x + dx, bodyY + 2 + yy, yy === 0 ? LANTR[3] : yy === 7 ? LANTR[0] : LANTR[1 + (yy > 3 ? 0 : 1)]);
-		for (let k = -3; k <= 3; k++) for (let j = 0; j < 10; j++) put(x + k * 4 - 2, bodyY + 10 + j, LANTR[1 + (j % 2)]);
-		const bx = -o.bow * 16, by = o.bow * 20;
-		for (const [sd, a] of [[-1, o.arm[0]], [1, o.arm[1]]]) {
-			const sh = [x + sd * 22 + bx * 0.6, bodyY - 30 + by * 0.6], hand = a > 0 ? [x - 30 - 16 * a, bodyY - 26 - (sd > 0 ? 10 : 0)] : a < 0 ? [x + 24, bodyY - 48] : [x + sd * 26 + bx * 0.3, bodyY - 8 + by * 0.4];
-			for (let j = 0; j <= 10; j++) { const u = j / 10; disc(lerp(sh[0], hand[0], u), lerp(sh[1], hand[1], u), 5 - u * 1.5, sd < 0 ? KSKIN[3] : KSKIN[2]); }
-			for (let dx = -4; dx <= 4; dx++) for (let dy = -4; dy <= 4; dy++) if (Math.hypot(dx, dy) < 4.4) put(hand[0] + dx, hand[1] + dy, KSKIN[4]);
-			if (a < 0 && t > T.SALTW && t < T.SALT) for (let k = 0; k < 4; k++) put(hand[0] + (k % 2) * 2 - 1, hand[1] - 2 - k, "#ffffff");
-		}
-		const hx0 = x - 4 + bx, hy0 = bodyY - 48 + by;
-		for (let yy = -11; yy <= 11; yy++) for (let dx = -12; dx <= 12; dx++) if (Math.hypot(dx / 12, yy / 11) < 1) put(hx0 + dx, hy0 + yy, dx < -8 ? KSKIN[4] : dx > 8 ? KSKIN[2] : KSKIN[3]);
-		for (let yy = -1; yy <= 4; yy++) for (let dx = -17; dx <= -8; dx++) if (dx > -17 + Math.abs(yy - 1.5) * 1.4) put(hx0 + dx, hy0 + yy, yy === 2 ? "#a07810" : "#f0c838");
-		const dizzy = o.kneel > 0.5;
-		for (const ex of [-6, 2]) { for (let dx = -2; dx <= 2; dx++) for (let dy = -2; dy <= 2; dy++) if (Math.hypot(dx, dy) < 2.6) put(hx0 + ex + dx, hy0 - 3 + dy, "#fffbe8"); if (dizzy) { const a = t * 10; put(hx0 + ex + Math.cos(a) * 1.5, hy0 - 3 + Math.sin(a) * 1.5, "#000000"); } else put(hx0 + ex - 1, hy0 - 3, "#000000"); }
-		// the brows: thick and black, and they do all the talking
-		const BR = { proud: [0.35, -0.35, -8], fierce: [-0.55, 0.55, -6], strain: [-0.3, 0.6, -7], sly: [0.5, 0.1, -7], angry: [-0.7, 0.7, -6], polite: [0.5, -0.5, -10], shock: [0.15, -0.15, -11], sad: [0.65, -0.65, -8] }[o.brow] || [0, 0, -8];
-		for (const [ex, ang] of [[-6, BR[0]], [2, BR[1]]]) for (let j = -3.5; j <= 3.5; j += 0.5) for (let q = 0; q < 2.6 - Math.abs(j) * 0.25; q++) put(hx0 + ex + j * Math.cos(ang), hy0 + BR[2] + j * Math.sin(ang) - q, "#05070a");
-		for (let a = Math.PI; a <= TAU; a += 0.08) for (let r = 9; r < 13; r++) if (Math.sin(a * 9) > -0.3) put(hx0 + Math.cos(a) * r, hy0 - 4 + Math.sin(a) * r * 0.55 - 4, "#0e1218");
-		for (let dx = -9; dx <= 9; dx++) { put(hx0 + dx, hy0 - 12, "#e8e0c8"); put(hx0 + dx, hy0 - 11, "#b8b098"); }
-		if (o.dish > 0.5) { for (let dx = -8; dx <= 8; dx++) put(hx0 + dx, hy0 - 13, (dx + Math.floor(t * 8)) % 6 === 0 ? ACIDL[5] : ACIDL[4]); light(hx0, hy0 - 13, ACIDL[3], 0.6); glow(hx0, hy0 - 14, 12, ACIDL[3], 0.35); }
-		else for (let dx = -8; dx <= 8; dx += 3) put(hx0 + dx, hy0 - 13, "#8a8a70");
-		if (o.flash) for (let i = 0; i < 60; i++) put(x + (Math.random() - 0.5) * 50, y - Math.random() * 70, "#ffffff", 0.6);
-	}
-	// a re-placing transform that keeps the depth test (for the kappa's flip, scale and squash)
-	function xformZ(drawFn, cx, cy, sx, sy, zt) {
+	// re-place what drawFn painted: rotated about (cx, cy), mirrored if sx < 0, depth-tested at the play plane
+	function stamp(drawFn, cx, cy, rot, sx) {
 		const sav = col.slice(); ZT = null; drawFn();
-		let x0 = W, y0 = H, x1 = -1, y1 = -1; const src = new Map();
+		const src = new Map(); let x0 = W, y0 = H, x1 = -1, y1 = -1;
 		for (let p = 0, i = 0; p < N; p++, i += 3) { if (col[i] === sav[i] && col[i + 1] === sav[i + 1] && col[i + 2] === sav[i + 2]) continue; const x = p % W, y = (p - x) / W; src.set(p, [col[i], col[i + 1], col[i + 2]]); if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
 		col.set(sav); if (x1 < 0) return;
-		const X0 = Math.floor(Math.min(cx + (x0 - cx) * sx, cx + (x1 + 1 - cx) * sx)), X1 = Math.ceil(Math.max(cx + (x0 - cx) * sx, cx + (x1 + 1 - cx) * sx)), Y0 = Math.floor(cy + (y0 - cy) * sy), Y1 = Math.ceil(cy + (y1 + 1 - cy) * sy);
-		for (let Y = Math.max(0, Y0); Y <= Math.min(H - 1, Y1); Y++) for (let X = Math.max(0, X0); X <= Math.min(W - 1, X1); X++) {
-			const qx = Math.floor(cx + (X + 0.5 - cx) / sx), qy = Math.floor(cy + (Y + 0.5 - cy) / sy); if (qx < 0 || qy < 0 || qx >= W || qy >= H) continue;
-			const got = src.get(qy * W + qx); if (!got) continue; const j = Y * W + X; if (ZB[j] > zt) continue;
-			col[j * 3] = got[0]; col[j * 3 + 1] = got[1]; col[j * 3 + 2] = got[2];
+		const c = Math.cos(rot), s = Math.sin(rot), r = Math.ceil(Math.hypot(Math.max(cx - x0, x1 - cx), Math.max(cy - y0, y1 - cy))) + 2;
+		for (let Y = Math.max(0, Math.floor(cy - r)); Y <= Math.min(H - 1, Math.ceil(cy + r)); Y++) for (let X = Math.max(0, Math.floor(cx - r)); X <= Math.min(W - 1, Math.ceil(cx + r)); X++) {
+			const ux = X + 0.5 - cx, uy = Y + 0.5 - cy, u = (ux * c + uy * s) / sx, v = -ux * s + uy * c, qx = Math.floor(cx + u), qy = Math.floor(cy + v);
+			if (qx < 0 || qy < 0 || qx >= W || qy >= H) continue; const got = src.get(qy * W + qx); if (!got) continue;
+			const j = Y * W + X; if (ZB[j] > PLANE_D + 1e-7) continue; col[j * 3] = got[0]; col[j * 3 + 1] = got[1]; col[j * 3 + 2] = got[2];
 		}
 	}
-	// ---------------------------------------------------------------- painting a frame
+	const PX = (x) => W / 2 + (x - SCAM.x), PY = (z) => H / 2 - (z - SCAM.z);
 	let camKey = "";
 	const showTrack = { on: true };
 	function paint() {
 		const t = S.t, cam = camAt(t);
-		CAM.th = cam.th; CAM.F = cam.F;
-		const key = cam.th.toFixed(4) + "," + cam.F.map((v) => v.toFixed(2)).join(",");
-		if (key !== camKey) { renderStatic(); camKey = key; }
-		col.set(BASE); ZB.set(BASEZ); lit.fill(0);
+		SCAM.x = cam.x; SCAM.z = cam.z;
+		const key = cam.x.toFixed(2) + "," + cam.z.toFixed(2);
+		if (key !== camKey) { renderStaticS(); camKey = key; }
+		col.set(SBASE); ZB.set(SBZ); lit.fill(0);
 		juiceShake(J, t); const SX = OX, SY = OY; OX = 0; OY = 0;
-		const on = Math.sin(t * 30) > -0.2, P = proj;
-		const dot = (X, Y, Z, h, a = 1, bias = 1) => { const p = P(X, Y, Z); ZT = p[2] + bias; put(p[0], p[1], h, a); ZT = null; return p; };
-		// the acid in the pool: alive, glowing, rippling
-		ZT = null;
-		quad(col, ZB, [POOLR.x0, POOLR.y0, -8], [POOLR.x1 - POOLR.x0, 0, 0], [0, POOLR.y1 - POOLR.y0, 0], [0, 0, 1], (u, v) => { const w = Math.sin(u * 0.35 + t * 2) + Math.sin(v * 0.5 - t * 1.6) + Math.sin((u + v) * 0.2 + t); return w > 1.6 ? ACIDL[5] : w > 0.6 ? ACIDL[4] : w > -0.8 ? ACIDL[3] : ACIDL[2]; }, 0.6);
-		for (let i = 0; i < 6; i++) glowW(POOLR.x0 + 10 + i * 12, (POOLR.y0 + POOLR.y1) / 2, -7, 34, ACIDL[3], 0.28);
-		// the paper lanterns, swaying under the beam, and the light they throw
-		for (const [X, Y] of [[36, 30], [135, 40], [222, 30]]) {
-			const sw = Math.sin(t * 1.3 + X) * 2, top = P(X, Y, 124), c = P(X + sw * 0.5, Y, 108);
-			ZT = c[2] + 2; line(top[0], top[1], c[0], c[1] - 6, "#1a1012");
-			for (let yy = -6; yy <= 6; yy++) for (let dx = -4; dx <= 4; dx++) if ((dx / 4.4) ** 2 + (yy / 6.5) ** 2 <= 1) put(c[0] + dx, c[1] + yy, Math.abs(yy) > 5 ? "#1a1012" : yy % 3 === 0 ? LANTR[1] : dx < -1 ? LANTR[4] : LANTR[3]);
-			ZT = null; glowW(X + sw * 0.5, Y, 108, 40, LANTR[3], 0.5); glowW(X + sw * 0.5, Y, 108, 10, LANTR[4], 0.6);
+		const on = Math.sin(t * 30) > -0.2;
+		const pl = (fn) => { ZT = PLANE_D + 1e-7; fn(); ZT = null; }; // draw on the play plane, behind anything nearer
+		// glows: candles in the arches, the moon, the gate's lamp once the realm is cleared
+		for (const [X, Y] of [[-39, 31], [361, 41], [231, 201]]) { const d = Y + CD; glow(sxOf(X, d), syOf(-237, d), 22, CANDLE[2], 0.5); }
+		for (const [X, Z] of [[70, 176], [250, 182]]) { const sw = Math.sin(t * 1.2 + X) * 1.5, px = PX(X + sw), py = PY(Z); ZT = PLANE_D + 1e-7; line(PX(X), PY(CH.ceil), px, py - 5, LAVD[1]); for (let yy = -5; yy <= 5; yy++) for (let dx = -3; dx <= 3; dx++) if ((dx / 3.4) ** 2 + (yy / 5.5) ** 2 <= 1) put(px + dx, py + yy, Math.abs(yy) > 4 ? LAVD[1] : dx < 0 ? CANDLE[3] : CANDLE[2]); ZT = null; glow(px, py, 60, CANDLE[1], 0.35); glow(px, py, 14, CANDLE[3], 0.5); }
+		{ const fl = PY(0); glow(PX(160), fl, 120, CANDLE[1], 0.12); }
+		{ const d = 2100 + CD; for (const X of [-300, 200, 700]) glow(sxOf(X, d), syOf(560, d), 150, GOLDR[3], 0.28); }
+		const gl = t > T.CHECK ? smooth(T.CHECK, T.CHECK + 0.5, t) : 0.15, gx = sxOf(164, 17 + CD), gy = syOf(CH.ceil + 110, 17 + CD);
+		glow(gx, gy, 40, CANDLE[2], 0.7 * gl); disc(gx, gy, 3, CANDLE[3], 0.5 + gl * 0.5);
+		// webs in the chamber's top corners, dew glinting; and the web over the hatch until she is beaten
+		pl(() => {
+			for (const [cx, cz, sx] of [[CH.x0, CH.ceil, 1], [CH.x1, CH.ceil, -1]]) { for (let k = 0; k < 6; k++) { const a = (k / 5) * Math.PI / 2; line(PX(cx), PY(cz), PX(cx + sx * Math.cos(a) * 60), PY(cz - Math.sin(a) * 60), SILK[1], 0.5); } for (let r = 14; r < 60; r += 12) for (let k = 0; k < 5; k++) { const a0 = (k / 5) * Math.PI / 2, a1 = ((k + 1) / 5) * Math.PI / 2; line(PX(cx + sx * Math.cos(a0) * r), PY(cz - Math.sin(a0) * r), PX(cx + sx * Math.cos(a1) * r), PY(cz - Math.sin(a1) * r), SILK[1], 0.45); } if (Math.sin(t * 2 + cx) > 0.8) put(PX(cx + sx * 30), PY(cz - 20), "#ffffff"); }
+			const open = smooth(T.HATCH, T.OPEN, t), hx0 = CH.hatch[0], hx1 = CH.hatch[1];
+			if (open < 1) for (let k = 0; k <= 8; k++) { const xa = lerp(hx0, hx1, k / 8); line(PX(xa), PY(CH.ceil), PX(lerp(xa, (hx0 + hx1) / 2, open)), PY(CH.ceil + 16 * (1 - open)), SILK[2], 0.7 * (1 - open)); line(PX(hx0), PY(CH.ceil + 2 + k * 1.8), PX(hx1), PY(CH.ceil + 2 + k * 1.8), SILK[1], 0.6 * (1 - open)); }
+			if (open > 0) for (let y = PY(CH.ceil + 16); y < PY(0); y += 1) for (let x = PX(hx0 + 4); x < PX(hx1 - 4); x += 2) put(x + ((y >> 1) & 1), y, "#fff0c8", 0.06 * open * (1 - (y - PY(CH.ceil)) / 240));
+		});
+		// warnings, all on the plane: the drop's thread and ring, the lap's path, each spit's ring
+		const ringAt = (x, z, r, c, a) => { for (let an = 0; an < TAU; an += 0.25) put(PX(x + Math.cos(an) * r), PY(z) + Math.sin(an) * r * 0.25, c, a); };
+		const dashV = (x, z0, z1, c, a) => { for (let z = Math.min(z0, z1); z < Math.max(z0, z1); z += 3) put(PX(x), PY(z), c, a); };
+		pl(() => {
+			if (t > T.DROP_W && t < T.DROP) { dashV(220, 0, CH.ceil, t > T.DROP - 0.1 ? "#ffffff" : SILK[2], on ? 0.9 : 0.35); ringAt(220, 0, 12, SILK[2], on ? 0.9 : 0.4); }
+			if (t > T.LAP_W && t < T.LAP) { const c = t > T.LAP - 0.1 ? "#ffffff" : PLUM[4], a = on ? 0.85 : 0.3; for (let x = CH.x0 + 2; x < 220; x += 3) put(PX(x), PY(2), c, a); dashV(CH.x0 + 3, 0, CH.ceil, c, a); for (let x = CH.x0 + 2; x < CH.x1 - 2; x += 3) put(PX(x), PY(CH.ceil - 2), c, a); dashV(CH.x1 - 3, 0, CH.ceil, c, a); }
+			for (const [tw, td, x] of [[T.D1W, T.D1, 120], [T.D2W, T.D2, 190]]) if (t > tw && t < td) { dashV(x, 0, CH.ceil, t > td - 0.1 ? "#ffffff" : SILK[2], on ? 0.9 : 0.35); ringAt(x, 0, 12, SILK[2], on ? 0.9 : 0.4); }
+			if (t > T.SPIT - 0.4 && t < T.SPLAT) for (const x of SPITS) ringAt(x, 0, 12, t > T.SPLAT - 0.12 ? "#ffffff" : SILK[2], on ? 0.9 : 0.4);
+		});
+		// the spit, in flight, then stuck to the floor as sticky stars of web
+		pl(() => {
+			if (t > T.SPIT && t < T.SPLAT) { const k = (t - T.SPIT) / (T.SPLAT - T.SPIT); for (const x of SPITS) { const p = [lerp(160, x, k), lerp(CH.ceil - 20, 2, k) + 4 * 20 * k * (1 - k)]; disc(PX(p[0]), PY(p[1]), 3.2, SILK[3]); disc(PX(p[0]) - 1, PY(p[1]) - 1, 1.2, SILK[1]); } }
+			if (t >= T.SPLAT && t < T.UNRAVEL) for (const x of SPITS) for (let k = 0; k < 8; k++) { const a = (k / 8) * TAU; line(PX(x), PY(1), PX(x + Math.cos(a) * 12), PY(1) + Math.sin(a) * 3, SILK[2], 0.8); }
+			// her trailing silk on the second lap
+			if (t > T.LAP2 && t < T.DANGLE) { const pts = []; for (let tt = T.LAP2; tt < Math.min(t, T.SNAG); tt += 0.04) { const q = spider(tt); pts.push([q.x, q.z]); } for (let i = 1; i < pts.length; i++) line(PX(pts[i - 1][0]), PY(pts[i - 1][1]), PX(pts[i][0]), PY(pts[i][1]), SILK[2], 0.7); }
+		});
+		// Nana herself, turned onto whatever she is walking on, with her thread when she hangs
+		const o = spider(t);
+		if (o.surf !== "gone") {
+			if (o.thread) pl(() => line(PX(o.thread[0]), PY(o.thread[1]), PX(o.x), PY(o.z), SILK[2], 0.9));
+			const rot = { floor: 0, lwall: Math.PI / 2, ceil: Math.PI, rwall: -Math.PI / 2, thread: Math.PI }[o.surf], sx = o.surf === "ceil" || o.surf === "thread" || o.surf === "rwall" ? -o.face : o.face;
+			const cx = PX(o.x), cy = PY(o.z);
+			stamp(() => drawSpider({ ...o, face: 1 }, t, cx, cy), cx, cy, rot, sx);
 		}
-		// light from the shoji, the round window and the stone lantern
-		for (const [X, Y, Z, r, k] of [[26, 1, 83, 30, 0.25], [220, 1, 83, 34, 0.25], [251, 22, 85, 22, 0.5], [231, -45, 18, 14, 0.6], [130, -52, 6, 10, 0.4]]) glowW(X, Y, Z, r, "#ffb060", k);
-		// a ghost attendant drifting along the back wall with a towel
-		{ const gx = 120 + Math.sin(t * 0.35) * 60, gz = 40 + Math.sin(t * 1.1) * 4, c = P(gx, 10, gz); ZT = c[2] + 2; for (let yy = -12; yy <= 14; yy++) { const w = yy < -2 ? Math.sqrt(Math.max(0, 1 - ((yy + 6) / 7) ** 2)) * 6 : 6 - (yy + 2) * 0.12 + Math.sin(yy * 0.6 + t * 6) * 1; for (let dx = -w; dx <= w; dx++) put(c[0] + dx, c[1] + yy, yy > 10 ? MINTG[2] : MINTG[4], 0.55); } put(c[0] - 2, c[1] - 7, MINTG[0]); put(c[0] + 2, c[1] - 7, MINTG[0]); for (let dx = 0; dx < 8; dx++) put(c[0] + 6 + dx, c[1] + 1 + Math.sin(dx + t * 4) * 0.6, "#ffffff", 0.8); ZT = null; glowW(gx, 10, gz, 16, MINTG[3], 0.25); }
-		// the noren curtain in the end doorway, stirring
-		if (!FACE2) for (let i = 0; i < 4; i++) for (let z = 59; z < 74; z += 0.5) for (let y = 0; y < 6; y += 0.5) { const Y = 49 + i * 7 + y, sw = Math.sin(t * 2 + i) * (74 - z) * 0.06, p = P(HOUSE.x1 + 1.5 + sw, Y, z); ZT = p[2] + 0.5; put(p[0], p[1], z > 72 ? "#141c3c" : y < 0.6 || y > 5.4 ? "#0e1430" : "#2a3c78"); ZT = null; }
-		// warnings: the crest's floor flicker; the salt's rings; the charge's arc; each palm's lane
-		const trackLine = (x0, x1, Z, c, a) => { for (let X = Math.min(x0, x1); X <= Math.max(x0, x1); X += 2) dot(X, TRACKY, Z + bridgeH(X) * (Z < 20 ? 1 : 0), c, a, 3); };
-		const ringW = (X, Y, Z, r, c, a) => { for (let an = 0; an < TAU; an += 0.2) dot(X + Math.cos(an) * r, Y + Math.sin(an) * r, Z, c, a, 3); };
-		for (const [lt, st] of [[T.LIFT1, T.STOMP1], [T.LIFT2, T.STOMP2]]) if (t > lt && t < st) trackLine(0, HOME - 22, 0.5, t > st - 0.1 ? "#ffffff" : CEDAR[5], on ? 0.9 : 0.35);
-		if (t > T.SALTW && t < T.SLAND) { for (const x of SALTX) ringW(x, TRACKY, 0.5, 8, t > T.SLAND - 0.12 ? "#ffffff" : "#c8d0dc", on ? 0.9 : 0.4); ringW(30, 40, LOFT.z + 0.5, 8, "#c8d0dc", on ? 0.9 : 0.4); }
-		if (t > T.CROUCH && t < T.CHARGE) { for (let k = 0; k <= 1; k += 0.03) { const X = lerp(HOME, LEFT + 18, k); dot(X, TRACKY, 4 * 22 * k * (1 - k) + 40, t > T.CHARGE - 0.1 ? "#ffffff" : MINTG[4], on ? 0.8 : 0.3, 3); } ringW(LEFT + 18, TRACKY, 0.5, 14, MINTG[4], on ? 0.9 : 0.4); }
-		T.PALMS.forEach((pt, i) => { if (t > pt - 0.35 && t < pt) trackLine(LEFT + 30, 250, i % 2 === 0 ? 16 : 46, t > pt - 0.1 ? "#ffffff" : "#ffffff", on ? 0.7 : 0.25); });
-		// the crests: a ripple of floorboards running the length of the room (a splash through the pool)
-		for (const st of [T.STOMP1, T.STOMP2]) { const cx = HOME - 22 - (t - st) * WV; if (t < st || cx < -4) continue; if (cx > POOLR.x0 && cx < POOLR.x1) continue; for (let dy = -14; dy <= 14; dy += 0.5) for (let ds = -7; ds <= 7; ds += 0.5) { const hgt = 6 * Math.exp(-((ds / 3) ** 2)) * (1 - Math.abs(dy) / 18); dot(cx + ds, TRACKY + dy, hgt, hgt > 4 ? CEDAR[5] : CEDAR[4], 1, 1); } }
-		// the salt, in its arc; the palms, white handprints of force flying down the track
-		if (t > T.SALT && t < T.SLAND + 0.1) { const k = clamp((t - T.SALT) / (T.SLAND - T.SALT)); for (const x of [...SALTX, 30]) for (let n = 0; n < 4; n++) { const X = lerp(HOME - 20, x, k) + (n - 1.5) * 2, Y = x === 30 && false ? 40 : TRACKY, Z = lerp(70, x === 30 ? LOFT.z : 0, k) + 4 * 30 * k * (1 - k) + n; dot(X, x === SALTX[0] ? TRACKY : Y, Z, "#ffffff", 1, 3); } }
-		T.PALMS.forEach((pt, i) => { const X = LEFT + 34 + (t - pt) * PV; if (t < pt || X > 262) return; const Z = i % 2 === 0 ? 16 : 46, p = P(X, TRACKY, Z); ZT = p[2] + 3; for (let yy = -5; yy <= 5; yy++) for (let dx = -4; dx <= 4; dx++) if ((dx / 4.4) ** 2 + (yy / 5.4) ** 2 <= 1) put(p[0] + dx, p[1] + yy, "#ffffff", 0.85); for (let f = -2; f <= 2; f++) for (let j = 0; j < 3; j++) put(p[0] + 5 + j, p[1] + f * 2, "#ffffff", 0.8); for (let j = 1; j < 18; j++) put(p[0] - j * 2, p[1] - j, "#ffffff", 0.4 - j * 0.02); ZT = null; light(p[0], p[1], "#ffffff", 0.4); });
-		// the kappa, then Elfy, each depth-tested against the room
-		const o = kap(t), kp = P(o.X, o.Y, o.h);
-		litSprite(() => xformZ(() => drawKappa(o, t, Math.round(kp[0]), Math.round(kp[1])), kp[0], kp[1], (o.face < 0 ? 1 : -1) * 0.7 * o.sx, 0.7 * o.sy, kp[2] + 4), o.X, o.Y, o.h + 40, 0.3);
-		if (o.kneel > 0.5) for (let i = 0; i < 3; i++) { const a = t * 5 + i * TAU / 3, hp = P(...headAt(o)); put(hp[0] + Math.cos(a) * 10, hp[1] - 12 + Math.sin(a) * 3, "#ffffff"); }
-		const e = elfy(t), [ex, ey] = trackAt(e.s), ep = P(ex, ey, e.h);
-		litSprite(() => { ZT = ep[2] + 2; drawElfy(e.a, e.at, Math.round(ep[0]), Math.round(ep[1]), 0, !!e.flip); ZT = null; }, ex, ey, e.h + 24);
-		// world particles: splinters, acid, salt, steam
-		for (const p of parts) { const q = P(p.X, p.Y, p.Z); if (p.c === "steam") { const a = 0.18 * Math.sin(Math.PI * clamp(p.age / p.life)); ZT = q[2] + 2; disc(q[0], q[1], p.r + p.age * 2, "#d8e8f0", a); ZT = null; continue; } ZT = q[2] + 2; put(q[0], q[1], p.c, 1 - p.age / p.life * 0.5); ZT = null; }
-		// the rain: streaks over everything, little splashes where it lands
-		for (let i = 0; i < 150; i++) { const x = (hash(i, 1) * W + t * 40) % W, y = (hash(i, 2) * H + t * 340 * (0.8 + hash(i, 3) * 0.4)) % H; for (let j = 0; j < 5; j++) put(x - j * 0.25, y - j, "#8aa0d0", 0.25); }
-		for (const r of rainSplash) { const q = P(r.X, r.Y, r.Z); ZT = q[2] + 1; put(q[0] - 1, q[1], "#a8bce8", 0.6); put(q[0] + 1, q[1], "#a8bce8", 0.6); put(q[0], q[1] - 1, "#c8d8ff", 0.5); ZT = null; }
-		// the ghost at the round window, waving Elfy off at the end
-		if (t > T.LANTERN) { const k = smooth(T.LANTERN, T.LANTERN + 0.4, t), p = FACE2 ? P(228, 34, 46) : P(HOUSE.x1 + 1.5, 22, 85); ZT = p[2] + 2; for (let yy = -5; yy <= 6; yy++) for (let dx = -5; dx <= 5; dx++) if (Math.hypot(dx, yy) < 5.5) put(p[0] + dx, p[1] + yy, MINTG[4], 0.7 * k); put(p[0] - 2, p[1] - 1, MINTG[0], k); put(p[0] + 2, p[1] - 1, MINTG[0], k); const wv = Math.sin(t * 10) * 2; for (let j = 0; j < 5; j++) put(p[0] + 6 + wv * (j / 5), p[1] - j, MINTG[4], 0.8 * k); ZT = null; glow(p[0], p[1], 14, MINTG[3], 0.3 * k); }
-		// sound words over the action
-		for (const w of S.pops) { const q = P(w.X, w.Y, w.Z), a = t - w.t0; soundWord(w.w, clamp(q[0], 40, W - 40), Math.max(8, q[1]), Math.min(1, a / 0.7) * (a < 0.9 ? 1 : 0), w.w === "DOSUKOI!" || w.w === "HAKKEYOI!" ? "#ffffff" : MINTG[4], "#05070a", 2); }
-		// the track: its line through the world, and the pure 2D game it is, in the corner
+		// Elfy, lit by where she stands
+		const e = elfy(t), ex = Math.round(PX(e.x)), ey = Math.round(PY(e.z));
+		{ const sav = col.slice(); pl(() => drawElfy(e.a, e.at, ex, ey, 0, !!e.flip)); const inCh = e.z > -5 && e.z < CH.ceil, warm = inCh ? 0.16 : 0.06, cool = inCh ? 0.06 : 0.16; for (let i = 0; i < N * 3; i += 3) if (col[i] !== sav[i] || col[i + 1] !== sav[i + 1] || col[i + 2] !== sav[i + 2]) { lit[i] += warm + cool * 0.5; lit[i + 1] += warm * 0.64 + cool * 0.6; lit[i + 2] += warm * 0.3 + cool; } }
+		// particles: dust, silk, splinters of web
+		pl(() => { for (const p of parts) put(PX(p.x), PY(p.z), p.c, 1 - p.age / p.life * 0.5); });
+		// words
+		for (const w of S.pops) { const a = t - w.t0; soundWord(w.w, clamp(PX(w.x), 50, W - 50), clamp(PY(w.z), 8, H - 20), Math.min(1, a / 0.7) * (a < 1.1 && a >= 0 ? 1 : 0), w.c || SILK[2], "#0c0814", 2); }
+		for (const q of S.quips) { const a = t - q.t0; if (a < 0 || a > 1.4) continue; soundWord(q.w, clamp(PX(q.x), 80, W - 80), clamp(PY(q.z) + (q.z > 150 ? 34 : -50) - a * 6, 8, H - 20), Math.min(1, a / 0.6) * (a < 1.25 ? 1 : 0), "#ffffff", "#0c0814", 1); }
+		// the track view: the plane as the game sees it, in the corner
 		if (showTrack.on) {
-			for (let s = 0; s < TL1 + 104; s += 3) { const [X, Y] = trackAt(s), q = P(X, Y, X > POOLR.x0 && X < POOLR.x1 && Y === TRACKY ? bridgeH(X) : s > TL1 ? 3 : 0.5); ZT = q[2] + 3; put(q[0], q[1], "#7ae8ff", 0.55); ZT = null; }
-			const bx = 10, by = H - 70, bw = 176, bh = 60, sc = bw / (TL1 + 110), hs = 0.34;
+			const bx = 8, by = H - 92, bw = 120, bh = 84, sc = 0.25;
 			for (let y = by; y < by + bh; y++) for (let x = bx; x < bx + bw; x++) put(x, y, "#05070d", 0.82);
 			for (let x = bx; x < bx + bw; x++) { put(x, by, "#7ae8ff", 0.5); put(x, by + bh - 1, "#7ae8ff", 0.5); } for (let y = by; y < by + bh; y++) { put(bx, y, "#7ae8ff", 0.5); put(bx + bw - 1, y, "#7ae8ff", 0.5); }
-			const g0 = by + bh - 8, TX = (s) => bx + 3 + s * sc, TY = (h) => g0 - h * hs;
-			for (let s = 0; s < TL1 + 104; s += 0.5) { const X = s - 10, onB = s <= TL1 && X > POOLR.x0 && X < POOLR.x1; put(TX(s), TY(onB ? bridgeH(X) : 0), onB ? CEDAR[5] : "#c8d0dc"); }
-			for (let s = POOLR.x0 + 10; s < POOLR.x1 + 10; s += 0.5) put(TX(s), TY(-8), ACIDL[4]);
-			for (let s = 10; s < LOFT.x1 + 10; s += 0.5) put(TX(s), TY(LOFT.z), "#c8d0dc");
-			for (let y = by + 4; y < by + bh - 4; y += 2) put(TX(TL1), y, "#7ae8ff", 0.6);
-			const sq = (s, h, w, hh, c) => { for (let y = 0; y < hh; y++) for (let x = -w; x <= w; x++) put(TX(s) + x, TY(h) - y, c); };
-			if (Math.abs(o.Y - TRACKY) < 1) sq(o.X + 10, o.h, 3, 9, "#e0283a"); else for (let y = 0; y < 9; y++) for (let x = -3; x <= 3; x++) if ((x + y) % 2 === 0) put(TX(o.X + 10) + x, TY(o.h) - y, "#e0283a", 0.5);
-			sq(e.s, e.h, 1.5, 6, "#4dff6a");
-			soundWord("TRACK", bx + 22, by + 4, 1, "#7ae8ff", "#05070d", 1);
+			const TX = (x) => bx + 14 + (x + 40) * sc, TY = (z) => by + bh - 8 - (z + 260) * sc * 0.62;
+			const seg = (x0, x1, z) => { for (let x = x0; x < x1; x += 1) put(TX(x), TY(z), "#c8d0dc"); };
+			seg(CH.x0, CH.hole[0], 0); seg(CH.hole[1], CH.x1, 0); seg(CH.x0, CH.hatch[0], CH.ceil); seg(CH.hatch[1], CH.x1, CH.ceil); seg(L1.x0, L1.x1, L1.z); seg(L2.x0, L2.x1, L2.z); for (const s of STEPS) seg(Math.max(-40, s.x0), Math.min(340, s.x1), s.z);
+			for (let z = -10; z < CH.ceil; z += 1) { put(TX(CH.x0), TY(z), "#c8d0dc"); put(TX(CH.x1), TY(z), "#c8d0dc"); }
+			if (o.surf !== "gone") for (let y = -2; y <= 2; y++) for (let x = -2; x <= 2; x++) put(TX(o.x) + x, TY(o.z) + y, "#e0283a");
+			for (let y = 0; y < 4; y++) for (let x = -1; x <= 1; x++) put(TX(e.x) + x, TY(e.z) - y, "#4dff6a");
+			soundWord("TRACK", bx + 20, by + 4, 1, "#7ae8ff", "#05070d", 1);
 		}
-		// the hit's impact frame; the loop's fade
-		if (t >= T.LAND && t < T.LAND + 0.05) impactFrame("#f0fff8", "#05070d", 0.3);
+		if (t >= T.D1 + 0.15 && t < T.D1 + 0.2) impactFrame("#f8f4ff", "#05070d", 0.3);
 		const fade = Math.min(smooth(0, 0.5, t), 1 - smooth(T.FADE, T.LOOP, t));
 		if (fade < 1) for (let i = 0; i < N * 3; i++) { col[i] *= fade; lit[i] *= fade; }
 		OX = SX; OY = SY;
-		readout.textContent = t < T.LIFT1 ? "the bathhouse as a floating diorama; the fight underneath is pure 2D: distance along the track, and height (the inset, bottom left)" : t < T.SALTW ? "shiko · DOSUKOI! · each stomp sends a crest of floorboards along the track, splashing through the pool · jump each" : t < T.CROUCH ? "the salt · rings on the track and on the loft · Elfy gets up on the bridge" : t < T.SKID ? "the tachiai · HAKKEYOI! · its arc drawn first; it leaps the pool along the track · double jump" : t < T.BOW ? "the tsuppari · palms of force down the track, each lane flickering first: low, high, low, high" : t < T.REFILL ? "the bow · Elfy bows, it bows back, spills its dish and slumps · weak window" : t < T.ASIDE ? "off the track: it walks back into the room, to the pool's edge (dashed in the inset), scoops its dish full and leaps home" : t < T.CORNER ? "AFTER YOU · it steps out of the track and bows her through; she runs out of the end door" : t < T.LANTERN ? "the corner: the track turns and the camera swings a quarter turn with it, so forward stays down-right" : "the next face: the veranda, the back garden, a ghost waving from the round window";
+		readout.textContent = t < 3.4 ? "the climb in: up from the terrace below, step to step, through the hole in the chamber floor; the camera rises with her, the bridge she came by runs off into the fog" : t < T.LAP_W ? "Nana Nightloom, knitting upside down on the ceiling (above Elfy, so its underside shows) · OH! A VISITOR~ · she drops on a thread, its line and ring dashed first" : t < 7.2 ? "the lap · her whole route round the room is dashed first: along the floor (jump her), up the wall, across the ceiling, down the other wall" : t < T.SPIT - 0.3 ? "the drops · she scuttles over Elfy on the ceiling, a thread to Elfy's spot is dashed, and she drops · dash" : t < T.LAP2 ? "phase two · KNIT ONE, PURL TWO! · three spits of web onto rings; they stick to the floor" : t < T.DANGLE ? "the second lap, too fast, trailing silk across the room · SNAG! · she runs into her own thread" : t < T.UNRAVEL ? "weak window · wound up in her own silk, dangling · jump and hit" : t < T.UP ? "she comes apart in a cloud of silk; the web over the hatch unravels and light comes down" : "up through the hatch to the terrace and the gate: the realm is cleared, the checkpoint lit, and the next realm hangs above, lit gold";
 	}
 	return { cv, update, paint, reset, showTrack };
 }
@@ -1377,7 +1087,7 @@ function present(cv) {
 	sctx.imageSmoothingEnabled = false; sctx.drawImage(pix, ox, oy, cw, ch);
 	sctx.imageSmoothingEnabled = true; sctx.globalCompositeOperation = "lighter"; sctx.drawImage(lig, ox, oy, cw, ch); sctx.globalCompositeOperation = "source-over";
 }
-const cvs = document.getElementById("stage-dio"), st = makeDioramaStage(cvs, document.getElementById("readout-dio"));
+const cvs = document.getElementById("stage-spire"), st = makeSpireStage(cvs, document.getElementById("readout-spire"));
 function resize() { const w = Math.max(W, Math.round(cvs.clientWidth * Math.min(2, window.devicePixelRatio || 1) / W) * W); cvs.width = w; cvs.height = Math.round(w * 9 / 16); }
 window.addEventListener("resize", resize); resize();
 let paused = window.matchMedia("(prefers-reduced-motion: reduce)").matches, slow = false, last = 0;

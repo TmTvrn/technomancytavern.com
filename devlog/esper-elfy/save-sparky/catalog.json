@@ -4,7 +4,7 @@
    "id": "blizzard-arena",
    "kind": "realm",
    "number": 1,
-   "title": "Realm 1: The Blizzard Arena · Square Off devlog",
+   "title": "Realm 1: The Blizzard Arena · Save Sparky devlog",
    "name": "The Blizzard Arena",
    "tagline": "Nine enemies, each with its own fire, in a blizzard that has opinions.",
    "page": "realms/blizzard-arena.html",
@@ -13,7 +13,7 @@
     "#ffb36b"
    ],
    "h1": "Realm 1: The Blizzard Arena",
-   "eyebrow": "Square Off devlog · realm 1 · not boss patterns",
+   "eyebrow": "Save Sparky devlog · realm 1 · not boss patterns",
    "lede": "Enemies whose attacks aren't boss patterns, each with its own fire. Drawn at the game's pixel scale in the blizzard arena, with Elfy for size. Every attack has a warning you can read from across the room: a pose, a sound made visible, a mark on the floor. Realm 2: the desert jungle.",
    "fights": [
     {
@@ -168,7 +168,7 @@
    "id": "desert-jungle",
    "kind": "realm",
    "number": 2,
-   "title": "Realm 2: The Desert Jungle · Square Off devlog",
+   "title": "Realm 2: The Desert Jungle · Save Sparky devlog",
    "name": "The Desert Jungle",
    "tagline": "A jungle grown through a desert, a lava river on the horizon, and nine bosses who take water personally.",
    "page": "realms/desert-jungle.html",
@@ -177,7 +177,7 @@
     "#8fd2f2"
    ],
    "h1": "Realm 2: The Desert Jungle",
-   "eyebrow": "Square Off devlog · realm 2 · the desert jungle",
+   "eyebrow": "Save Sparky devlog · realm 2 · the desert jungle",
    "lede": "A new setting for water: a desert at dusk with a jungle grown through it, mesas and a low sun, a river of lava glowing across the middle distance, palms and hanging vines, sand that darkens where water touches it. Drawn at the game's pixel scale, with Elfy for size. Realm 1: the winter studies.",
    "fights": [
     {
@@ -337,7 +337,7 @@
    "id": "hell-cavern",
    "kind": "realm",
    "number": 3,
-   "title": "Realm 3: The Hell Cavern · Square Off devlog",
+   "title": "Realm 3: The Hell Cavern · Save Sparky devlog",
    "name": "The Hell Cavern",
    "tagline": "Ice in hell: lava falls, violet soulfire, and a chandelier that eats ceilings.",
    "page": "realms/hell-cavern.html",
@@ -346,7 +346,7 @@
     "#d8b0ff"
    ],
    "h1": "Realm 3: The Hell Cavern",
-   "eyebrow": "Square Off devlog · realm 3 · the hell cavern",
+   "eyebrow": "Save Sparky devlog · realm 3 · the hell cavern",
    "lede": "Ice in hell. A basalt cavern under the world: lava falls pouring off ledges into a river glowing behind the floor, stalactites, and against all that red a second colour, ultraviolet soulfire in iron braziers and violet crystal veins in the rock. Embers rise from where the heat is, ride the updrafts, pool on the ceiling and fall as ash; ice snuffs them, and frost turns lava to black glass that thaws again. Drawn at the game's pixel scale, with Elfy for size. Realm 1 · Realm 2.",
    "fights": [
     {
@@ -473,7 +473,7 @@
    "id": "rust-orchard",
    "kind": "realm",
    "number": 4,
-   "title": "Realm 4: The Rust Orchard · Square Off devlog",
+   "title": "Realm 4: The Rust Orchard · Save Sparky devlog",
    "name": "The Rust Orchard",
    "tagline": "Blades in autumn: a wood grown through the wreck of something enormous that fell out of the sky.",
    "page": "realms/rust-orchard.html",
@@ -482,7 +482,7 @@
     "#f6c050"
    ],
    "h1": "Realm 4: The Rust Orchard",
-   "eyebrow": "Square Off devlog · realm 4 · the rust orchard",
+   "eyebrow": "Save Sparky devlog · realm 4 · the rust orchard",
    "lede": "Blades in autumn. A wood at dusk grown through the wreck of something enormous that fell out of the sky: crimson and gold trees leaning over rusted hull plates still blinking with cold teal lights, god-rays slanting through the canopy, fog at three depths, fireflies low. A catwalk bolted to the hull, a great bough and a gantry hung on chains make the room three storeys tall, and the enemies here use all of it. The leaves never stop falling: they swing down and settle in drifts, whirl in every gust, crunch up under every landing, and every blade that passes through them cuts them in two. Drawn at the game's pixel scale, with Elfy for size. Realm 1 · Realm 2 · Realm 3.",
    "fights": [
     {
@@ -591,7 +591,7 @@
    "id": "sanctum",
    "kind": "realm",
    "number": 5,
-   "title": "Realm 5: The Sanctum Above the Clouds · Square Off devlog",
+   "title": "Realm 5: The Sanctum Above the Clouds · Save Sparky devlog",
    "name": "The Sanctum Above the Clouds",
    "tagline": "A white-marble cathedral afloat on a sea of cloud, with poison and dark magic where the prayers should be.",
    "page": "realms/sanctum.html",
@@ -600,7 +600,7 @@
     "#e8a0e8"
    ],
    "h1": "Realm 5: The Sanctum Above the Clouds",
-   "eyebrow": "Square Off devlog · realm 5 · the sanctum above the clouds",
+   "eyebrow": "Save Sparky devlog · realm 5 · the sanctum above the clouds",
    "lede": "Poison and dark magic in a holy place. A cathedral of white marble and gold leaf afloat on a sea of cloud at sunrise: colonnades on cloud banks, a great rose window, golden balance scales and bells on chains. Something has got into it. Violet-black rot creeps across the marble from the right, the clouds there curdle into tar, the gold tarnishes, and the feathers drifting down are white on the holy side and black on the other. Poison is magenta, dark magic black with violet rims, warnings white for blades and magenta for poison, and the biggest hits land on a gold-on-black impact frame. Drawn at the game's pixel scale, with Elfy for size. Realm 1 · Realm 2 · Realm 3 · Realm 4.",
    "fights": [
     {
@@ -703,7 +703,7 @@
    "id": "orrery",
    "kind": "realm",
    "number": 6,
-   "title": "Realm 6: The Orrery at the End of the Sun · Square Off devlog",
+   "title": "Realm 6: The Orrery at the End of the Sun · Save Sparky devlog",
    "name": "The Orrery at the End of the Sun",
    "tagline": "An observatory orbiting a dying sun, where gravity is optional and so is the clock.",
    "page": "realms/orrery.html",
@@ -712,7 +712,7 @@
     "#ff80d8"
    ],
    "h1": "Realm 6: The Orrery at the End of the Sun",
-   "eyebrow": "Square Off devlog · realm 6 · the orrery at the end of the sun",
+   "eyebrow": "Save Sparky devlog · realm 6 · the orrery at the end of the sun",
    "lede": "Gravity, time, space and starlight. An abandoned observatory of brass and black glass orbiting a dying red giant: the dome cracked open to space, the bloated crimson sun filling the window, and behind everything a gigantic orrery turning, nested rings and model planets. These are bosses in the hard style: three or four moves each with a distinct tell, a feint that punishes reacting too early, a second phase that changes the room, and punish windows sized to how committed each attack is. The setting is warm, so the enemies are lunar silver and magenta plasma; blades warn in white, projectiles in magenta, gravity in gold. Drawn at the game's pixel scale, with Elfy for size. Realm 1 · Realm 2 · Realm 3 · Realm 4 · Realm 5.",
    "fights": [
     {
@@ -816,7 +816,7 @@
    "id": "ossuary",
    "kind": "realm",
    "number": 7,
-   "title": "Realm 7: Noon at the Ossuary Chapel · Square Off devlog",
+   "title": "Realm 7: Noon at the Ossuary Chapel · Save Sparky devlog",
    "name": "Noon at the Ossuary Chapel",
    "tagline": "Gothic, undead, poisoned, and dressed for a wedding at high noon.",
    "page": "realms/ossuary.html",
@@ -825,7 +825,7 @@
     "#f0a8ff"
    ],
    "h1": "Realm 7: Noon at the Ossuary Chapel",
-   "eyebrow": "Square Off devlog · realm 7 · noon at the ossuary chapel",
+   "eyebrow": "Save Sparky devlog · realm 7 · noon at the ossuary chapel",
    "lede": "Gothic, undead and poisoned, and dressed for a wedding at high noon. A chapel built inside an ossuary: every wall is bones, skulls stacked in niches and femurs laid in herringbone, all of it painted in sorbet pastels, blush and lilac and butter and cream. Sun pours through a rose window in long shafts full of dust; a lilac runner runs down the aisle between chequered marble; there are garlands, a candle in every niche, petals hanging in the air, and three balconies piped like the tiers of a cake. The elements are new: bone, mirror-light, wine, wax, ink and sugar. Poison is violet and magenta; blades warn in white. Realm 6: the orrery.",
    "fights": [
     {
@@ -935,7 +935,7 @@
    "id": "bathhouse",
    "kind": "realm",
    "number": 8,
-   "title": "Realm 8: The Last Bathhouse · Square Off devlog",
+   "title": "Realm 8: The Last Bathhouse · Save Sparky devlog",
    "name": "The Last Bathhouse",
    "tagline": "A bathhouse kept by its ghosts: mint spirits, lime acid, and a very polite kappa.",
    "page": "realms/bathhouse.html",
@@ -944,7 +944,7 @@
     "#dcff5a"
    ],
    "h1": "Realm 8: The Last Bathhouse",
-   "eyebrow": "Square Off devlog · realm 8 · the last bathhouse",
+   "eyebrow": "Save Sparky devlog · realm 8 · the last bathhouse",
    "lede": "A public bathhouse long closed, at midnight, still being kept by its ghosts. Dark cedar pillars and beams, indigo-and-cream tiles, a great faded mural of a mountain over waves on the back wall, red paper lanterns, steam always rolling; and the soaking pool sunk in the middle of the floor is full of glowing lime acid, an arched footbridge over it, wooden lofts either side. Mint is spectral, lime is acid, and both are kept well clear of Elfy's own saturated green: mint leans cyan and pale, lime leans yellow. Realm 7: the ossuary chapel.",
    "fights": [
     {
@@ -1049,7 +1049,7 @@
    "id": "bazaar",
    "kind": "realm",
    "number": 9,
-   "title": "Realm 9: The Midas Night Bazaar · Square Off devlog",
+   "title": "Realm 9: The Midas Night Bazaar · Save Sparky devlog",
    "name": "The Midas Night Bazaar",
    "tagline": "Molten gold, rubber-hose cartoons, a scale that tips, and bosses who act with their eyebrows.",
    "page": "realms/bazaar.html",
@@ -1058,7 +1058,7 @@
     "#ffe07a"
    ],
    "h1": "Realm 9: The Midas Night Bazaar",
-   "eyebrow": "Square Off devlog · realm 9 · the midas night bazaar",
+   "eyebrow": "Save Sparky devlog · realm 9 · the midas night bazaar",
    "lede": "A night market in a canyon, under a colossal golden hand whose fingers pour molten gold in two glowing falls. Striped stalls, paper lanterns, gold in the cracks of the cobbles, stall-roof ledges either side and, in the middle, a great merchant's scale whose pans tilt with whatever lands on them. Gold here is molten and stretchy: it sags, pulls, snaps and drips. The shopkeepers are goofy hybrids from mixed-up lore, drawn like 1930s rubber-hose cartoons: noodle limbs, white gloves, pie-cut eyes and big brows that do all the acting, with hand-lettered sound words on the big hits. Realm 8: the last bathhouse.",
    "fights": [
     {
@@ -1161,7 +1161,7 @@
    "id": "rooftop",
    "kind": "realm",
    "number": 10,
-   "title": "Realm 10: The Psi-Tower Rooftop · Square Off devlog",
+   "title": "Realm 10: The Psi-Tower Rooftop · Save Sparky devlog",
    "name": "The Psi-Tower Rooftop",
    "tagline": "Sunset, floating slabs, and eight psychic kids who monologue mid-fight.",
    "page": "realms/rooftop.html",
@@ -1170,7 +1170,7 @@
     "#ecd4ff"
    ],
    "h1": "Realm 10: The Psi-Tower Rooftop",
-   "eyebrow": "Square Off devlog · realm 10 · the psi-tower rooftop",
+   "eyebrow": "Save Sparky devlog · realm 10 · the psi-tower rooftop",
    "lede": "The roof of a skyscraper academy at sunset, where the city's psychic kids come to settle things. A striped retro sun sinking behind a neon skyline, a water tower, a VS billboard, a painted helipad; and three slabs of the roof torn up and held in the air by somebody's telekinesis, bobbing in a violet glow. These eight are Elfy's size, which makes them fast: shonen psychics with chunky boots, big shiny eyes and a pose for everything, who talk while they fight. Their words pop up over their heads when they laugh or leer, along with the menace marks, anger veins and sweat drops. Every attack still shows itself first (a dashed outline is a warning), but the windows are short. Realm 9: the Midas night bazaar.",
    "fights": [
     {
@@ -1321,7 +1321,7 @@
    "id": "kappa-diorama",
    "kind": "study",
    "number": null,
-   "title": "Ozeki Kappa, in the Round · Square Off devlog (study)",
+   "title": "Ozeki Kappa, in the Round · Save Sparky devlog (study)",
    "name": "Ozeki Kappa, in the Round",
    "tagline": "Can a fight live inside an isometric miniature? Yes, with a track and a depth buffer.",
    "page": "studies/kappa-diorama.html",
@@ -1330,7 +1330,7 @@
     "#c0fbec"
    ],
    "h1": "Ozeki Kappa, in the Round",
-   "eyebrow": "Square Off devlog · study · diorama test · the last bathhouse, floating",
+   "eyebrow": "Save Sparky devlog · study · diorama test · the last bathhouse, floating",
    "lede": "Can the fights live inside an isometric pixel-art diorama? Here the bathhouse from realm 8 is a cutaway floating in the rain at night: cedar posts and indigo tiles, the mural, the shoji glowing, the acid pool steaming, lanterns swaying, a ghost attendant drifting past with a towel. Everything is drawn by code at 640 × 360 and scaled up with sharp pixels. The fight inside it is the same 2D fight as before. Elfy only moves forward and back along a track (the cyan line), plus up. The inset in the corner shows that game, the real one, as plain 2D.",
    "fights": [
     {
@@ -1358,7 +1358,7 @@
    "id": "silk-spire",
    "kind": "study",
    "number": null,
-   "title": "The Silk Spire · Square Off devlog (study)",
+   "title": "The Silk Spire · Save Sparky devlog (study)",
    "name": "The Silk Spire",
    "tagline": "A perspective-camera level with a spider on the ceiling: the one we threw out, kept for the lessons.",
    "page": "studies/silk-spire.html",
@@ -1367,7 +1367,7 @@
     "#eeecfa"
    ],
    "h1": "The Silk Spire",
-   "eyebrow": "Square Off devlog · study · level study · a realm of the climb",
+   "eyebrow": "Save Sparky devlog · study · level study · a realm of the climb",
    "lede": "A level, not a diorama: one realm of the climb, with its one boss. Elfy arrives from below, up the steps from the bridge she came by. She meets Nana Nightloom, a knitting granny spider who walks the floor, the walls and the ceiling. She wins, the web over the hatch unravels, and she climbs out to the terrace, where the realm's gate is its checkpoint and the next realm hangs above her, lit gold. The game is still a flat 2D plane (the inset). The world around it is built in depth all the way out: a colonnade you see straight through, floating stairs and islands, towers, a city of spires in the fog, a sea of cloud far below. Everything is drawn by code.",
    "fights": [
     {
@@ -1393,7 +1393,7 @@
    "id": "rime-chapel",
    "kind": "study",
    "number": null,
-   "title": "The Rime Chapel · Square Off devlog (study)",
+   "title": "The Rime Chapel · Save Sparky devlog (study)",
    "name": "The Rime Chapel",
    "tagline": "Saint Rime, circled: a chapel you walk round, the whole miniature turning a quarter at each corner.",
    "page": "studies/rime-chapel.html",
@@ -1402,7 +1402,7 @@
     "#e4f6ff"
    ],
    "h1": "The Rime Chapel",
-   "eyebrow": "Square Off devlog · study · level study · Saint Rime, all the way round",
+   "eyebrow": "Save Sparky devlog · study · level study · Saint Rime, all the way round",
    "lede": "Saint Rime, the Frost Chandelier from realm 3 (the one that skitters across the ceiling and down the walls), in a miniature. A frozen chapel sits on a floating rock under an aurora, with a cloister walk round all four sides and open rafters overhead for it to hang from. The camera is close, looking at one side almost face on, and the track runs right round the building. When the fight goes round a corner, the whole miniature turns a quarter with it, the way Fez turns its world. Some attacks are dodged by ducking round the corner. Everything is drawn by code.",
    "fights": [
     {
