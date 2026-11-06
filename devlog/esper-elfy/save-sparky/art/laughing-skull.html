@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="The 48 px skull bursts out laughing: the jaw drops in whole pixels, the head bobs, the eyes flare. Six smaller skulls circle it.">
+<title>Laughing Skull</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: title and controls, one large pixel stage, then a row of the six orbiting styles with names. Dark single look. */
+:root {
+	--bg: #070b0d;
+	--panel: #10171b;
+	--line: #1f2c31;
+	--fg: #e2ece6;
+	--muted: #8fa39a;
+	--ghost: #5cffb0;
+	--display: "Chakra Petch", "Segoe UI", system-ui, sans-serif;
+	--body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+	--mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+	color-scheme: dark;
+}
+html, body { background: var(--bg); color: var(--fg); }
+body {
+	font-family: var(--body); font-size: 15px; line-height: 1.55;
+	padding-block: 32px 48px;
+	padding-left: max(16px, env(safe-area-inset-left, 0px));
+	padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 1100px; margin: 0 auto; display: grid; gap: 20px; }
+header { display: grid; gap: 8px; max-width: 70ch; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+h1 { font-family: var(--display); font-weight: 600; font-size: clamp(30px, 5vw, 46px); line-height: 1.05; margin: 0; }
+p { margin: 0; color: var(--muted); max-width: 70ch; }
+.controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+button {
+	font-family: var(--mono); font-size: 13px; color: var(--fg);
+	background: var(--panel); border: 1px solid var(--line); border-radius: 4px;
+	padding: 8px 14px; cursor: pointer;
+}
+button:hover { border-color: var(--muted); }
+button:focus-visible { outline: 2px solid var(--ghost); outline-offset: 2px; }
+button[aria-pressed="true"] { border-color: var(--ghost); color: var(--ghost); }
+kbd { font-family: var(--mono); font-size: 11px; color: var(--muted); margin-left: 6px; }
+#stage { display: block; width: 100%; max-width: 100%; aspect-ratio: 8 / 5; border: 1px solid var(--line); background: #000; image-rendering: pixelated; }
+.cast { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+@media (min-width: 800px) { .cast { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+.cast figure { margin: 0; display: grid; gap: 6px; justify-items: center; text-align: center; }
+.cast canvas { width: 72px; height: 72px; image-rendering: pixelated; background: #0c1418; border: 1px solid var(--line); }
+.cast strong { font-family: var(--display); font-weight: 500; font-size: 15px; }
+.cast span { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+</style>
+</head>
+<body>
+<nav style="font:14px/1.2 system-ui,sans-serif;padding:8px 16px;background:#05071a;border-bottom:1px solid #232838"><a href="./" style="color:#3ef2ff;text-decoration:none">&larr; Art studies</a></nav>
+<div class="wrap" id="app">
+	<header>
+		<div class="eyebrow">Save Sparky · pixel detail</div>
+		<h1>Laughing Skull</h1>
+		<p>The 48 px skull with the tight two-row teeth of the 32 px one. Every so often it bursts out laughing: the jaw drops in whole pixels, the head bobs, the eyes flare and the ghost fire shows through its mouth. Six smaller skulls circle it, spin faster while it laughs, and chatter along.</p>
+	</header>
+	<div class="controls">
+		<button id="laugh" type="button">Make it laugh<kbd>L</kbd></button>
+		<button id="pause" type="button" aria-pressed="false">Pause<kbd>Space</kbd></button>
+		<button id="slow" type="button" aria-pressed="false">Slow motion ¼×<kbd>S</kbd></button>
+	</div>
+	<canvas id="stage" aria-label="A large pixel-art skull laughing while six smaller skulls orbit it"></canvas>
+	<div class="cast" id="cast"></div>
+</div>
+
+<script>
+"use strict";
+const TAU = Math.PI * 2;
+const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+const hash = (x, y) => { let h = (x * 374761393 + y * 668265263) | 0; h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };
+const BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5].map((v) => (v + 0.5) / 16);
+
+const PAL = {
+	bone: ["#141d1a", "#25332d", "#3d5248", "#5f7a69", "#87a48b", "#b3cdb0", "#dcefd6", "#f6fff2"],
+	ember: ["#1a0508", "#3a0b12", "#5e1420", "#8a2232", "#b53a48", "#d9686e", "#f3a3a0", "#ffe0d8"],
+	ice: ["#0b1626", "#16304d", "#24507a", "#3a78aa", "#62a6d6", "#9cd4f4", "#d4f1ff", "#ffffff"],
+	ash: ["#09080e", "#15121e", "#221d30", "#352c4a", "#4f4269", "#706192", "#9c8cc2", "#d4c8f2"],
+};
+
+// ================================================================ skull generator (normalized space: u, v in [-1, 1], v down)
+function inEll(u, v, cx, cy, rx, ry) { const x = (u - cx) / rx, y = (v - cy) / ry; return x * x + y * y <= 1; }
+function ellD(u, v, cx, cy, rx, ry) { const x = (u - cx) / rx, y = (v - cy) / ry; return Math.sqrt(x * x + y * y); }
+const inCranium = (u, v) => inEll(u, v, 0, -0.22, 0.78, 0.7);
+const inFace = (u, v) => inEll(u, v, -0.42, 0.17, 0.3, 0.24) || inEll(u, v, 0.42, 0.17, 0.3, 0.24) || (Math.abs(u) < 0.5 - Math.max(0, v - 0.4) * 0.35 && v > 0 && v < 0.58);
+const inJaw = (u, v) => v >= 0.6 && v < 0.88 && Math.abs(u) < 0.42 - Math.max(0, v - 0.76) * 1.3;
+const inNose = (u, v) => v > 0.22 && v < 0.43 && Math.abs(u) < 0.11 * ((v - 0.22) / 0.21) + 0.015;
+const L = (() => { const x = -0.5, y = -0.7, z = 0.55, l = Math.hypot(x, y, z); return [x / l, y / l, z / l]; })();
+function lightAt(u, v) {
+	let nx, ny;
+	if (inCranium(u, v) && v < 0.05) { nx = u / 0.78; ny = (v + 0.22) / 0.7; } else { nx = u / 0.62; ny = 0.15 + (v - 0.3) * 0.6; }
+	const r2 = nx * nx + ny * ny, nz = Math.sqrt(Math.max(0.05, 1 - Math.min(0.95, r2)));
+	return clamp(nx * L[0] + ny * L[1] + nz * L[2]);
+}
+
+// options: N, pal, steps, sockets, teeth gap spacing, and feature flags. Returns color, mask and part grids, jaw closed.
+function genSkull(o) {
+	const N = o.N, W = N, H = N, pal = o.pal, steps = o.steps, n = steps.length;
+	const z = o.zoom || 1, oy = o.offY || 0;
+	const U = (x) => (((x + 0.5) / N) * 2 - 1) / z, V = (y) => (((y + 0.5) / N) * 2 - 1 - oy) / z;
+	const pxV = 2 / N / z;
+	const col = new Array(W * H).fill(null), mask = new Uint8Array(W * H), part = new Uint8Array(W * H);
+	const set = (x, y, c) => { if (x >= 0 && y >= 0 && x < W && y < H) col[y * W + x] = c; };
+	const sockets = o.sockets;
+	const inSocket = (u, v) => sockets.some(([cx, cy, rx, ry]) => inEll(u, v, cx, cy, rx, ry));
+
+	for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+		const u = U(x), v = V(y), i = y * W + x;
+		const jaw = inJaw(u, v), up = inCranium(u, v) || inFace(u, v);
+		const horn = o.horns && hornAt(((x + 0.5) / N) * 2 - 1, ((y + 0.5) / N) * 2 - 1);
+		if (!jaw && !up && !horn) continue;
+		mask[i] = 1; part[i] = jaw ? 1 : 0;
+		if (horn && !up) { mask[i] = 3; set(x, y, pal[clamp(Math.floor(lightAt(u * 0.6, v * 0.6) * 4) + 2, 0, 7)]); continue; }
+		if (inSocket(u, v) || inNose(u, v)) { mask[i] = 2; set(x, y, pal[0]); continue; }
+		if (N >= 24 && Math.abs(v - 0.59) < pxV * 0.55 && Math.abs(u) < 0.4) { mask[i] = 2; set(x, y, pal[0]); continue; }
+		let l = lightAt(u, v);
+		const ds = Math.min(...sockets.map(([cx, cy, rx, ry]) => ellD(u, v, cx, cy, rx, ry)));
+		if (ds < 1.35) l -= 0.22 * (1.35 - ds) / 0.35;
+		let s = l * n, si = Math.floor(s);
+		if (o.dither && s - si > 0.82 && ((x + y) & 1)) si++;
+		set(x, y, pal[steps[clamp(si, 0, n - 1)]]);
+	}
+	// teeth: a gap every `tw` columns, upper row a step brighter than the lower
+	if (o.tw) for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+		const u = U(x), v = V(y), i = y * W + x;
+		const upper = v > 0.47 && v < 0.58, lower = v > 0.6 && v < 0.71;
+		if (!(upper || lower) || Math.abs(u) > 0.38 || mask[i] !== 1) continue;
+		const c = Math.round(((u * z + 1) / 2) * N);
+		if (c % o.tw === 0) { set(x, y, pal[1]); continue; }
+		set(x, y, pal[steps[Math.max(0, n - (upper ? 2 : 3))]]);
+		if (o.goldTooth && upper && Math.abs(Math.floor(c / o.tw) - Math.floor(N / 2 / o.tw) + 1) === 0) set(x, y, "#ffd25a");
+	}
+	// lit rim under each socket and shadow under the brow (sockets only, not the mouth or nose)
+	if (o.rims) for (let y = 1; y < H - 1; y++) for (let x = 0; x < W; x++) {
+		const i = y * W + x;
+		if (mask[i] !== 1) continue;
+		if (mask[i - W] === 2 && inSocket(U(x), V(y - 1))) set(x, y, pal[steps[n - 1]]);
+		if (mask[i + W] === 2 && inSocket(U(x), V(y + 1)) && V(y) < -0.1) set(x, y, pal[steps[0]]);
+	}
+	if (o.highlight) for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+		if (mask[y * W + x] === 1 && inEll(U(x), V(y), -0.3, -0.55, 0.16 + 4 / N, 0.1 + 3 / N)) set(x, y, pal[Math.min(7, steps[n - 1] + 1)]);
+	}
+	for (const path of o.cracks || []) {
+		for (let k = 0; k < path.length - 1; k++) {
+			const P = ([u, v]) => [Math.round(((u * z + 1) / 2) * N - 0.5), Math.round(((v * z + oy + 1) / 2) * N - 0.5)];
+			const [x0, y0] = P(path[k]), [x1, y1] = P(path[k + 1]);
+			const st = Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0), 1);
+			for (let i = 0; i <= st; i++) {
+				const x = Math.round(x0 + ((x1 - x0) * i) / st), y = Math.round(y0 + ((y1 - y0) * i) / st);
+				if (mask[y * W + x] === 1) set(x, y, pal[1]);
+			}
+		}
+	}
+	// eye positions (pixel centers) for the glowing points
+	const eyes = sockets.map(([cx, cy]) => [Math.floor(((cx * z + 1) / 2) * N), Math.floor(((cy * z + 0.05 + oy + 1) / 2) * N)]);
+	return { N, W, H, col, mask, part, eyes, o };
+}
+
+function hornAt(u, v) {
+	for (const s of [-1, 1]) {
+		// a curved horn: a band between two arcs, tapering to a tip above the temple
+		const x = u * s;
+		if (x < 0.4 || v > -0.45 || v < -1) continue;
+		const t = clamp((-0.45 - v) / 0.5), cx = 0.55 + 0.38 * t * t, w = 0.17 * (1 - t);
+		if (Math.abs(x - cx) < w) return true;
+	}
+	return false;
+}
+
+// open the jaw by `open` pixels: paste the upper part, the jaw shifted down, a dark mouth between, then outline
+function compose(sk, open, dim, eyeK, rim) {
+	const { N, W, col, mask, part, o } = sk, H = N + 6, pal = o.pal;
+	const out = new Array(W * H).fill(null), m = new Uint8Array(W * H);
+	for (let y = 0; y < N; y++) for (let x = 0; x < W; x++) {
+		const i = y * W + x;
+		if (!mask[i]) continue;
+		const ty = part[i] ? y + open : y;
+		out[ty * W + x] = col[i]; m[ty * W + x] = 1;
+	}
+	// the mouth: rows the jaw left behind, dark with a green glow deep inside
+	if (open > 0) for (let x = 0; x < W; x++) {
+		let top = -1, bot = -1;
+		for (let y = 0; y < H; y++) { if (m[y * W + x] && y < N && !part[y * W + x] && mask[y * W + x]) top = y; }
+		for (let y = H - 1; y >= 0; y--) { if (m[y * W + x]) { const sy = y - open; if (sy >= 0 && sy < N && part[sy * W + x]) bot = y; } }
+		if (top < 0 || bot < 0) continue;
+		let firstJaw = -1;
+		for (let y = top + 1; y < H; y++) if (m[y * W + x]) { firstJaw = y; break; }
+		for (let y = top + 1; y < firstJaw; y++) {
+			const u = ((x + 0.5) / N) * 2 - 1;
+			out[y * W + x] = Math.abs(u) < 0.18 && open > 2 ? "#0f3a2c" : "#060c0a"; m[y * W + x] = 1;
+		}
+	}
+	// eyes
+	for (const [ex, ey] of sk.eyes) {
+		const r = Math.max(0, Math.floor(N / 40));
+		for (let y = -r; y <= r; y++) for (let x = -r; x <= r; x++) {
+			if (x * x + y * y > r * r + 0.5) continue;
+			const core = x === 0 && y === 0;
+			out[(ey + y) * W + ex + x] = core ? (eyeK > 0.6 ? "#ffffff" : o.eyeCore) : o.eye;
+		}
+	}
+	if (dim) for (let i = 0; i < out.length; i++) { const c = out[i]; if (c) { const k = pal.indexOf(c); if (k > 0) out[i] = pal[k - 1]; } }
+	// rim light on the right edge
+	if (rim) for (let y = 0; y < H; y++) for (let x = W - 1; x > 0; x--) if (m[y * W + x]) { if (y < N * 0.75) out[y * W + x] = rim; break; }
+	// outline: lighter on the lit side when the sprite is big enough for it
+	const res = out.slice();
+	for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+		const i = y * W + x;
+		if (m[i]) continue;
+		let best = -1, any = false;
+		for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+			const nx = x + dx, ny = y + dy;
+			if (nx < 0 || ny < 0 || nx >= W || ny >= H || !m[ny * W + nx]) continue;
+			any = true; best = Math.max(best, pal.indexOf(out[ny * W + nx]));
+		}
+		if (any) res[i] = o.selOut && best >= o.steps[o.steps.length - 2] && !dim ? pal[1] : "#040806";
+	}
+	return { W, H, px: res };
+}
+
+// ================================================================ the cast
+const HERO = genSkull({
+	N: 48, pal: PAL.bone, steps: [1, 2, 3, 5, 6], tw: 2, dither: true, rims: true, highlight: true, selOut: true,
+	sockets: [[-0.31, 0.02, 0.22, 0.24], [0.31, 0.02, 0.22, 0.24]],
+	cracks: [[[0.12, -0.88], [0.19, -0.62], [0.09, -0.44], [0.21, -0.26]], [[0.19, -0.62], [0.37, -0.56], [0.45, -0.41]]],
+	eye: "#5cffb0", eyeCore: "#d8ffec",
+});
+const STYLES = [
+	{ name: "Bonehead", note: "16 px classic", glow: "#5cffb0", o: { N: 16, pal: PAL.bone, steps: [2, 4, 6], sockets: [[-0.31, 0.02, 0.22, 0.24], [0.31, 0.02, 0.22, 0.24]], eye: "#5cffb0", eyeCore: "#ffffff" } },
+	{ name: "Imp", note: "20 px, horns, ember", glow: "#ff6a3d", o: { N: 20, pal: PAL.ember, steps: [2, 4, 5, 6], zoom: 0.78, offY: 0.16, horns: true, tw: 2, sockets: [[-0.3, 0.04, 0.22, 0.2], [0.3, 0.04, 0.22, 0.2]], eye: "#ff8a3d", eyeCore: "#fff0b0" } },
+	{ name: "Frostbite", note: "18 px, ice, cracked", glow: "#9fe8ff", o: { N: 18, pal: PAL.ice, steps: [2, 4, 5, 6], highlight: true, sockets: [[-0.31, 0.02, 0.22, 0.24], [0.31, 0.02, 0.22, 0.24]], cracks: [[[0.15, -0.85], [0.25, -0.5], [0.1, -0.3]]], eye: "#9fe8ff", eyeCore: "#ffffff" } },
+	{ name: "Cyclops", note: "18 px, one big socket", glow: "#c89bff", o: { N: 18, pal: PAL.ash, steps: [2, 3, 5, 6], sockets: [[0, 0, 0.32, 0.3]], tw: 3, eye: "#c89bff", eyeCore: "#ffffff" } },
+	{ name: "Wisp", note: "16 px, ghost flame crown", glow: "#5cffb0", flame: true, o: { N: 16, pal: PAL.bone, steps: [3, 4, 6], zoom: 0.85, offY: 0.15, sockets: [[-0.31, 0.02, 0.22, 0.24], [0.31, 0.02, 0.22, 0.24]], eye: "#5cffb0", eyeCore: "#ffffff" } },
+	{ name: "Grinner", note: "20 px, gold tooth", glow: "#5cffb0", o: { N: 20, pal: PAL.bone, steps: [2, 3, 5, 6], tw: 2, goldTooth: true, highlight: true, sockets: [[-0.3, 0.02, 0.21, 0.22], [0.3, 0.02, 0.21, 0.22]], eye: "#5cffb0", eyeCore: "#ffffff" } },
+];
+for (const s of STYLES) s.sk = genSkull(s.o);
+
+// ================================================================ stage: 192 x 120 pixels, color grid plus smooth light grid
+const SW = 192, SH = 120;
+const colorCv = document.createElement("canvas"), lightCv = document.createElement("canvas");
+colorCv.width = lightCv.width = SW; colorCv.height = lightCv.height = SH;
+const cctx = colorCv.getContext("2d"), lctx = lightCv.getContext("2d");
+const cimg = cctx.createImageData(SW, SH), limg = lctx.createImageData(SW, SH);
+const lit = new Float32Array(SW * SH * 3);
+const rgbCache = new Map();
+function rgb(h) { let c = rgbCache.get(h); if (!c) { c = [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)]; rgbCache.set(h, c); } return c; }
+function put(x, y, h, a = 1) {
+	x = Math.floor(x); y = Math.floor(y);
+	if (x < 0 || y < 0 || x >= SW || y >= SH) return;
+	const c = rgb(h), d = cimg.data, i = (y * SW + x) * 4;
+	d[i] += (c[0] - d[i]) * a; d[i + 1] += (c[1] - d[i + 1]) * a; d[i + 2] += (c[2] - d[i + 2]) * a;
+}
+function glow(x, y, r, h, k) {
+	const c = rgb(h);
+	for (let py = Math.max(0, Math.floor(y - r)); py <= Math.min(SH - 1, Math.ceil(y + r)); py++)
+		for (let px = Math.max(0, Math.floor(x - r)); px <= Math.min(SW - 1, Math.ceil(x + r)); px++) {
+			const d = Math.hypot(px + 0.5 - x, py + 0.5 - y) / r;
+			if (d >= 1) continue;
+			const f = (1 - d) * (1 - d) * k / 255, i = (py * SW + px) * 3;
+			lit[i] += c[0] * f; lit[i + 1] += c[1] * f; lit[i + 2] += c[2] * f;
+		}
+}
+function blitSprite(spr, x0, y0) {
+	for (let y = 0; y < spr.H; y++) for (let x = 0; x < spr.W; x++) { const c = spr.px[y * spr.W + x]; if (c) put(x0 + x, y0 + y, c); }
+}
+
+// ================================================================ laughing
+const st = { t: 0, phase: "idle", next: 1.2, laughT: 0, has: 0, open: 0, bobY: 0, shakeX: 0, eyeK: 0, spin: 1 };
+const HA = 0.15;
+function startLaugh() { st.phase = "laugh"; st.laughT = 0; st.has = 5 + Math.floor(Math.random() * 3); }
+function update(dt) {
+	st.t += dt;
+	if (st.phase === "idle") {
+		st.next -= dt; st.open = 0; st.shakeX = 0;
+		st.bobY = Math.round(Math.sin(st.t * 2) * 1);
+		st.eyeK += (0.4 - st.eyeK) * Math.min(1, dt * 4);
+		if (st.next <= 0) startLaugh();
+	} else {
+		st.laughT += dt;
+		const k = Math.floor(st.laughT / HA), ph = (st.laughT % HA) / HA;
+		if (k >= st.has) { st.phase = "idle"; st.next = 1.6 + Math.random() * 1.4; }
+		else {
+			// each "ha": the jaw drops fast and closes slower; later has are smaller
+			const big = 4 - Math.min(2, Math.floor(k / 3));
+			st.open = Math.round(big * Math.pow(Math.sin(Math.PI * Math.min(1, ph * 1.3)), 0.7));
+			st.bobY = -Math.round(st.open / 2) - 1;
+			st.shakeX = k % 2 ? 1 : 0;
+			st.eyeK += (1 - st.eyeK) * Math.min(1, dt * 12);
+		}
+	}
+	st.spin += ((st.phase === "laugh" ? 2.6 : 1) - st.spin) * Math.min(1, dt * 3);
+	orbitA += dt * st.spin * (TAU / 5.5);
+	for (const m of motes) { m.y -= m.v * dt; m.x += Math.sin(st.t + m.p) * 3 * dt; if (m.y < -2) { m.y = SH + 2; m.x = Math.random() * SW; } }
+}
+let orbitA = 0;
+const motes = Array.from({ length: 40 }, () => ({ x: Math.random() * SW, y: Math.random() * SH, v: 3 + Math.random() * 8, p: Math.random() * TAU, back: Math.random() < 0.5 }));
+
+const BG = ["#05080a", "#070b0e", "#091013", "#0b1418", "#0d181d"];
+function render() {
+	const d = cimg.data;
+	lit.fill(0);
+	for (let y = 0; y < SH; y++) for (let x = 0; x < SW; x++) {
+		const v = y / SH, c = rgb(BG[clamp(Math.floor(v * (BG.length - 1) + BAYER[(y & 3) * 4 + (x & 3)]), 0, BG.length - 1)]), i = (y * SW + x) * 4;
+		d[i] = c[0]; d[i + 1] = c[1]; d[i + 2] = c[2]; d[i + 3] = 255;
+	}
+	const cx = 96, cy = 54;
+	glow(cx, 104, 46, "#2f8a72", 0.35 + 0.25 * st.eyeK);
+	for (const m of motes) if (m.back) { put(m.x, m.y, "#2f8a72", 0.7); }
+
+	// orbit: a tilted ellipse; depth decides draw order and a darker palette on the far side
+	const RX = 72, RY = 16, TILT = -0.14;
+	const orbit = STYLES.map((s, i) => {
+		const a = orbitA + (i * TAU) / STYLES.length, ex = Math.cos(a) * RX, ey = Math.sin(a) * RY;
+		return { s, i, z: Math.sin(a), x: cx + ex * Math.cos(TILT) - ey * Math.sin(TILT), y: cy + 14 + ex * Math.sin(TILT) + ey * Math.cos(TILT) + Math.sin(st.t * 3 + i) * 1.5 };
+	}).sort((a, b) => a.z - b.z);
+	const drawSmall = (q) => {
+		const far = q.z < 0, s = q.s;
+		// ghost trail behind each skull along the orbit
+		for (let k = 1; k <= 5; k++) {
+			const a = orbitA + (q.i * TAU) / STYLES.length - k * 0.09 * st.spin, ex = Math.cos(a) * RX, ey = Math.sin(a) * RY;
+			put(cx + ex * Math.cos(TILT) - ey * Math.sin(TILT), cy + 14 + ex * Math.sin(TILT) + ey * Math.cos(TILT), s.glow, (1 - k / 6) * (far ? 0.25 : 0.5));
+		}
+		const chatter = st.phase === "laugh" && hash(q.i, Math.floor(st.t * 10)) > 0.45 ? 1 : 0;
+		const spr = compose(s.sk, chatter, far, st.eyeK, null);
+		const x0 = Math.round(q.x - spr.W / 2), y0 = Math.round(q.y - s.sk.N / 2);
+		if (s.flame) for (let k = 0; k < 7; k++) {
+			const fx = x0 + 4 + k, h = 2 + Math.floor(hash(k, Math.floor(st.t * 12)) * 4);
+			for (let j = 0; j < h; j++) put(fx, y0 + 2 - j, j === h - 1 ? "#d8ffec" : j > h / 2 ? "#5cffb0" : "#2f8a72", far ? 0.5 : 1);
+		}
+		blitSprite(spr, x0, y0);
+		for (const [ex, ey] of s.sk.eyes) glow(x0 + ex + 0.5, y0 + ey + 0.5, 6, s.glow, (far ? 0.3 : 0.7) * (0.6 + 0.4 * st.eyeK));
+	};
+	for (const q of orbit) if (q.z < 0) drawSmall(q);
+
+	// the big skull
+	const hero = compose(HERO, st.open, false, st.eyeK, "#7dffc2");
+	const hx = Math.round(cx - 24 + st.shakeX), hy = Math.round(cy - 26 + st.bobY);
+	blitSprite(hero, hx, hy);
+	for (const [ex, ey] of HERO.eyes) glow(hx + ex + 0.5, hy + ey + 0.5, 14, "#5cffb0", 0.5 + 0.6 * st.eyeK);
+	if (st.open > 0) glow(hx + 24, hy + 30 + st.open / 2, 9 + st.open * 2, "#5cffb0", 0.16 * st.open);
+
+	for (const q of orbit) if (q.z >= 0) drawSmall(q);
+	for (const m of motes) if (!m.back) { put(m.x, m.y, "#5cffb0", 0.8); glow(m.x, m.y, 3, "#5cffb0", 0.25); }
+
+	const L = limg.data;
+	for (let i = 0, j = 0; i < SW * SH * 3; i += 3, j += 4) {
+		d[j] = Math.min(255, d[j] + lit[i] * 120); d[j + 1] = Math.min(255, d[j + 1] + lit[i + 1] * 120); d[j + 2] = Math.min(255, d[j + 2] + lit[i + 2] * 120);
+		L[j] = Math.min(255, lit[i] * 230); L[j + 1] = Math.min(255, lit[i + 1] * 230); L[j + 2] = Math.min(255, lit[i + 2] * 230); L[j + 3] = 255;
+	}
+	cctx.putImageData(cimg, 0, 0);
+	lctx.putImageData(limg, 0, 0);
+	const W = stage.width, H = stage.height;
+	sctx.globalCompositeOperation = "source-over";
+	sctx.imageSmoothingEnabled = false;
+	sctx.drawImage(colorCv, 0, 0, W, H);
+	sctx.imageSmoothingEnabled = true;
+	sctx.globalCompositeOperation = "lighter";
+	sctx.drawImage(lightCv, 0, 0, W, H);
+	sctx.globalCompositeOperation = "source-over";
+}
+
+// ================================================================ cast cards
+const cast = document.getElementById("cast");
+for (const s of STYLES) {
+	const fig = document.createElement("figure"), cv = document.createElement("canvas");
+	const spr = compose(s.sk, 0, false, 0.4, null), size = 24;
+	cv.width = cv.height = size;
+	cv.setAttribute("aria-label", `${s.name}: ${s.note}`);
+	const c = cv.getContext("2d"), img = c.createImageData(size, size);
+	const ox = Math.floor((size - spr.W) / 2), oy = Math.floor((size - s.sk.N) / 2) + 1;
+	for (let y = 0; y < spr.H; y++) for (let x = 0; x < spr.W; x++) {
+		const h = spr.px[y * spr.W + x], X = x + ox, Y = y + oy;
+		if (!h || X < 0 || Y < 0 || X >= size || Y >= size) continue;
+		const [r, g, b] = rgb(h), i = (Y * size + X) * 4;
+		img.data[i] = r; img.data[i + 1] = g; img.data[i + 2] = b; img.data[i + 3] = 255;
+	}
+	c.putImageData(img, 0, 0);
+	fig.append(cv);
+	fig.insertAdjacentHTML("beforeend", `<strong>${s.name}</strong><span>${s.note}</span>`);
+	cast.appendChild(fig);
+}
+
+// ================================================================ loop and controls
+const stage = document.getElementById("stage"), sctx = stage.getContext("2d");
+function resize() {
+	const dpr = Math.min(2, window.devicePixelRatio || 1);
+	const w = Math.max(SW, Math.round(stage.clientWidth * dpr));
+	stage.width = w; stage.height = Math.round((w * SH) / SW);
+}
+window.addEventListener("resize", () => { resize(); render(); });
+let paused = window.matchMedia("(prefers-reduced-motion: reduce)").matches, slow = false, last = 0;
+function frame(now) {
+	const dt = Math.min(0.05, (now - last) / 1000 || 0);
+	last = now;
+	if (!paused) update(dt * (slow ? 0.25 : 1));
+	render();
+	requestAnimationFrame(frame);
+}
+const $ = (id) => document.getElementById(id);
+function setPaused(v) { paused = v; $("pause").setAttribute("aria-pressed", String(v)); $("pause").firstChild.textContent = v ? "Play" : "Pause"; }
+function toggleSlow() { slow = !slow; $("slow").setAttribute("aria-pressed", String(slow)); }
+$("laugh").addEventListener("click", startLaugh);
+$("pause").addEventListener("click", () => setPaused(!paused));
+$("slow").addEventListener("click", toggleSlow);
+window.addEventListener("keydown", (e) => {
+	if (e.target.closest && e.target.closest("button") && e.code === "Space") return;
+	if (e.code === "Space") { e.preventDefault(); setPaused(!paused); }
+	else if (e.code === "KeyL") startLaugh();
+	else if (e.code === "KeyS") toggleSlow();
+});
+setPaused(paused);
+resize();
+requestAnimationFrame(frame);
+</script>
+
+</body>
+</html>

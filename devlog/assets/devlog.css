@@ -32,3 +32,5 @@ figure.clip video { display: block; width: 100%; height: auto; image-rendering: 
 figure.clip figcaption { padding: 8px 4px 2px; font-size: 18px; color: var(--dim); }
 figure.clip figcaption b { color: var(--cyan); font-weight: 400; }
 .meta { color: var(--dim); font-size: 18px; }
+.wrap > *, article > *, .clips > * { min-width: 0; }
+figure.clip, article { max-width: 100%; }

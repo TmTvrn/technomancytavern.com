@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Every frame drawn from a posed 3D body, then turned into 48 px pixel art with hard shading steps and outlines.">
+<title>Kick, Spin, Victory in 3D</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: header and controls, the live stage, a turnaround row (eight facings), then every animation frame of the kick and spin as a grid. Dark single look. */
+:root {
+	--bg: #090a10;
+	--panel: #12141c;
+	--line: #242838;
+	--fg: #e8e8f2;
+	--muted: #989cb4;
+	--psy: #4dff6a;
+	--display: "Chakra Petch", "Segoe UI", system-ui, sans-serif;
+	--body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+	--mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+	color-scheme: dark;
+}
+html, body { background: var(--bg); color: var(--fg); }
+body {
+	font-family: var(--body); font-size: 15px; line-height: 1.55;
+	padding-block: 32px 48px;
+	padding-left: max(16px, env(safe-area-inset-left, 0px));
+	padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 1100px; margin: 0 auto; display: grid; gap: 18px; }
+header { display: grid; gap: 8px; max-width: 74ch; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+h1 { font-family: var(--display); font-weight: 600; font-size: clamp(30px, 5vw, 46px); line-height: 1.05; margin: 0; }
+h2 { font-family: var(--display); font-weight: 500; font-size: 22px; margin: 8px 0 0; }
+p { margin: 0; color: var(--muted); max-width: 74ch; }
+.controls { display: flex; flex-wrap: wrap; gap: 8px; }
+button {
+	font-family: var(--mono); font-size: 13px; color: var(--fg);
+	background: var(--panel); border: 1px solid var(--line); border-radius: 4px;
+	padding: 8px 12px; cursor: pointer;
+}
+button:hover { border-color: var(--muted); }
+button:focus-visible { outline: 2px solid var(--psy); outline-offset: 2px; }
+button[aria-pressed="true"] { border-color: var(--psy); color: var(--psy); }
+kbd { font-family: var(--mono); font-size: 11px; color: var(--muted); margin-left: 6px; }
+#stage { display: block; width: 100%; max-width: 100%; aspect-ratio: 16 / 9; border: 1px solid var(--line); border-radius: 4px; background: #000; }
+.turn { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+@media (min-width: 760px) { .turn { grid-template-columns: repeat(8, minmax(0, 1fr)); } }
+.turn figure, .frames figure { margin: 0; display: grid; gap: 2px; }
+.turn canvas, .frames canvas { display: block; width: 100%; aspect-ratio: 72 / 64; border: 1px solid var(--line); border-radius: 3px; background: #000; }
+.turn figcaption, .frames figcaption { font-family: var(--mono); font-size: 11px; color: var(--muted); text-align: center; }
+.frames { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+@media (min-width: 760px) { .frames { grid-template-columns: repeat(10, minmax(0, 1fr)); } }
+</style>
+</head>
+<body>
+<nav style="font:14px/1.2 system-ui,sans-serif;padding:8px 16px;background:#05071a;border-bottom:1px solid #232838"><a href="./" style="color:#3ef2ff;text-decoration:none">&larr; Art studies</a></nav>
+<div class="wrap" id="app">
+	<header>
+		<div class="eyebrow">Save Sparky · 48 px animation</div>
+		<h1>Kick, Spin, Victory in 3D</h1>
+		<p>Every frame is drawn from a posed 3D body, then turned into 48 px pixel art with hard shading steps and outlines. She pivots into a side kick with her head turned to the target, turns a real full circle, and lands the victory pose. The hand-placed face rides on top, narrowing as her head turns. The animation runs at 15 drawings a second, like hand-animated sprites; the fire and sparks move at full speed.</p>
+	</header>
+	<div class="controls">
+		<button id="pause" type="button" aria-pressed="false">Pause<kbd>Space</kbd></button>
+		<button id="slow" type="button" aria-pressed="false">Slow motion ¼×<kbd>S</kbd></button>
+		<button id="replay" type="button">Replay<kbd>R</kbd></button>
+	</div>
+	<canvas id="stage" aria-label="The heroine pivots into a green-fire side kick, turns a full circle and strikes a victory pose"></canvas>
+	<h2>Turnaround</h2>
+	<p>The same body at eight facings, 45° apart. This is what makes a true spin possible: every angle is drawn, none are squashed.</p>
+	<div class="turn" id="turn"></div>
+	<h2>Every frame of the kick and spin</h2>
+	<p>All 30 drawings from 0.6 s to 2.6 s, in order.</p>
+	<div class="frames" id="frames"></div>
+</div>
+
+<script>
+"use strict";
+const TAU = Math.PI * 2, D = Math.PI / 180;
+const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+const smooth = (t) => t * t * (3 - 2 * t);
+const easeOut = (t) => 1 - (1 - t) ** 3;
+const BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5].map((v) => (v + 0.5) / 16);
+const hash = (x, y) => { let h = (x * 374761393 + y * 668265263) | 0; h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };
+
+// ================================================================ vector and matrix helpers (3x3 row-major)
+const add = (a, b) => [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
+const sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
+const mulS = (a, s) => [a[0] * s, a[1] * s, a[2] * s];
+const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+const norm = (a) => { const l = Math.hypot(a[0], a[1], a[2]) || 1; return [a[0] / l, a[1] / l, a[2] / l]; };
+const vl = (a, b, t) => [lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2], b[2], t)];
+const mv = (M, v) => [M[0] * v[0] + M[1] * v[1] + M[2] * v[2], M[3] * v[0] + M[4] * v[1] + M[5] * v[2], M[6] * v[0] + M[7] * v[1] + M[8] * v[2]];
+const mtv = (M, v) => [M[0] * v[0] + M[3] * v[1] + M[6] * v[2], M[1] * v[0] + M[4] * v[1] + M[7] * v[2], M[2] * v[0] + M[5] * v[1] + M[8] * v[2]];
+const mm = (A, B) => { const r = new Array(9); for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) r[i * 3 + j] = A[i * 3] * B[j] + A[i * 3 + 1] * B[3 + j] + A[i * 3 + 2] * B[6 + j]; return r; };
+const rotY = (a) => { const c = Math.cos(a), s = Math.sin(a); return [c, 0, s, 0, 1, 0, -s, 0, c]; };
+const rotZ = (a) => { const c = Math.cos(a), s = Math.sin(a); return [c, -s, 0, s, c, 0, 0, 0, 1]; };
+const rotX = (a) => { const c = Math.cos(a), s = Math.sin(a); return [1, 0, 0, 0, c, -s, 0, s, c]; };
+const I3 = [1, 0, 0, 0, 1, 0, 0, 0, 1];
+// a frame whose z axis points along d (used to orient feet)
+function frameAlong(d) {
+	const z = norm(d), up = Math.abs(z[1]) > 0.9 ? [1, 0, 0] : [0, 1, 0];
+	const x = norm([up[1] * z[2] - up[2] * z[1], up[2] * z[0] - up[0] * z[2], up[0] * z[1] - up[1] * z[0]]);
+	const y = [z[1] * x[2] - z[2] * x[1], z[2] * x[0] - z[0] * x[2], z[0] * x[1] - z[1] * x[0]];
+	return [x[0], y[0], z[0], x[1], y[1], z[1], x[2], y[2], z[2]];
+}
+
+// ================================================================ palette
+const RAMP = {
+	skin: ["#5a3328", "#8e5442", "#bf7b62", "#dea086", "#f2c3a5", "#fde0cb"],
+	hair: ["#5c421a", "#8a6a2a", "#b8913e", "#ddb85e", "#f1d688", "#fff2c2"],
+	shave: ["#6e5442", "#8e6c55", "#a8846a", "#bf9a7e", "#cfac90", "#dcbda2"],
+	jacket: ["#1e0e33", "#35195a", "#4f2783", "#6c3aa8", "#9364cb", "#bf98ea"],
+	suit: ["#07070d", "#10101a", "#1a1a28", "#272739", "#3a3b52", "#565874"],
+	boot: ["#1a0c2e", "#2e1650", "#462378", "#6234a3", "#8457c4", "#a982dd"],
+};
+const PSY = ["#0e4519", "#1d8a32", "#3fe055", "#9dff9a", "#eaffe4"];
+const IRIS = "#3dd66e", INK = "#0b0710", LIPS = "#9a3a52", LIPL = "#c06a7c", TEETH = "#fbf6f2", LID = "#3a1a2a", PUP = "#120a10";
+const LIGHT = norm([-0.45, 0.6, 0.65]);
+
+// ================================================================ poses (local space: y up, ground at 0, x = her left = screen right when facing us, z = toward us)
+// limbs: arms A (her right, screen left) and B (her left); e elbow, h hand. legs: k knee, a ankle, f foot direction.
+const POSES = {
+	stance: { yaw: 35, head: 0, roll: 0, pitch: 4, pelvis: 20.4, face: "neutral",
+		A: { e: [-6.8, 29, 2.4], h: [-3.2, 33.6, 4.6] }, B: { e: [6.6, 29.2, 2], h: [3.4, 33.4, 4.6] },
+		LA: { k: [-3.4, 10.8, 1.4], a: [-3.8, 2.2, 0.4], f: [-0.25, 0, 1] }, LB: { k: [3.6, 10.8, -0.6], a: [4.4, 2.2, -1.2], f: [0.4, 0, 1] } },
+	chamber: { yaw: 6, head: 58, roll: -12, pitch: 0, pelvis: 20.6, face: "fierce",
+		A: { e: [-7.2, 30, 2], h: [-3.6, 34.4, 4.4] }, B: { e: [5.8, 29.6, 3], h: [2.8, 33.8, 4.6] },
+		LA: { k: [-2.6, 11, 0.6], a: [-3, 2.2, 0.3], f: [-0.2, 0, 1] }, LB: { k: [8.4, 17.4, 1.6], a: [5.2, 10.8, 0.6], f: [1, -0.2, 0.25] } },
+	kick: { yaw: 0, head: 62, roll: -19, pitch: 0, pelvis: 20.8, face: "fierce",
+		A: { e: [-8.4, 30.2, 1.2], h: [-11.6, 26.8, 1.8] }, B: { e: [5.4, 28.8, 3.2], h: [2.6, 33.2, 4.4] },
+		LA: { k: [-2.2, 11, 0.8], a: [-2.8, 2.2, 0.4], f: [-0.2, 0, 1] }, LB: { k: [10.6, 19.8, 0.6], a: [18.8, 21, 0.3], f: [1, 0.1, 0] } },
+	tuck: { yaw: 20, head: 0, roll: 0, pitch: 0, pelvis: 21, face: "focus",
+		A: { e: [-4.4, 29.2, 3.2], h: [1.4, 31.8, 4.4] }, B: { e: [4.4, 29.2, 3.2], h: [-1.4, 31.4, 4.6] },
+		LA: { k: [-1.6, 11, 0.4], a: [-1.6, 2.2, 0.2], f: [-0.1, 0, 1] }, LB: { k: [1.6, 11, 0.4], a: [1.6, 2.2, 0.2], f: [0.1, 0, 1] } },
+	victory: { yaw: 25, head: 8, roll: 5, pitch: 0, pelvis: 21, face: "victory", vSign: true,
+		A: { e: [-7.8, 27.2, -0.6], h: [-5.2, 22.4, 1.6] }, B: { e: [8.2, 37.4, 1.4], h: [6.2, 43.8, 3.2] },
+		LA: { k: [-2.4, 11.6, -2.6], a: [-1.6, 6.6, -7.2], f: [0, 0.35, -1] }, LB: { k: [2.4, 11, 0.4], a: [2.4, 2.2, 0.3], f: [0.15, 0, 1] } },
+};
+const LOOP = 5.2, KICK_T = 0.97, SPIN = [1.75, 2.45];
+const KEYS = [
+	[0, "stance", 35], [0.6, "stance", 35], [0.85, "chamber", 6, smooth], [0.97, "kick", 0, easeOut], [1.37, "kick", 0], [1.55, "chamber", 6, smooth],
+	[1.75, "tuck", 20, smooth], [2.45, "tuck", 380, (t) => smooth(t)], [2.57, "victory", 385, easeOut], [4.4, "victory", 385], [5.2, "stance", 395, smooth],
+];
+function lerpPose(a, b, k) {
+	const limb = (p, q) => { const o = {}; for (const key of Object.keys(p)) o[key] = vl(p[key], q[key], k); return o; };
+	return {
+		head: lerp(a.head, b.head, k), roll: lerp(a.roll, b.roll, k), pitch: lerp(a.pitch, b.pitch, k), pelvis: lerp(a.pelvis, b.pelvis, k),
+		A: limb(a.A, b.A), B: limb(a.B, b.B), LA: limb(a.LA, b.LA), LB: limb(a.LB, b.LB),
+		face: k < 0.5 ? a.face : b.face, vSign: k < 0.6 ? !!a.vSign : !!b.vSign,
+	};
+}
+function poseAt(t) {
+	let i = 0;
+	while (i < KEYS.length - 1 && KEYS[i + 1][0] <= t) i++;
+	const [t0, n0, y0] = KEYS[i], [t1, n1, y1, ease] = KEYS[Math.min(KEYS.length - 1, i + 1)];
+	const k = t1 > t0 ? (ease || smooth)(clamp((t - t0) / (t1 - t0))) : 0;
+	const p = lerpPose(POSES[n0], POSES[n1], k);
+	p.yaw = lerp(y0, y1, k);
+	p.hop = 0;
+	if (t > SPIN[0] && t < SPIN[1]) p.hop = 3.5 * Math.sin(Math.PI * (t - SPIN[0]) / (SPIN[1] - SPIN[0]));
+	return p;
+}
+
+// ================================================================ build the 3D body for a pose
+function buildBody(P) {
+	const yawM = rotY(P.yaw * D), lean = mm(rotZ(P.roll * D), rotX(P.pitch * D)), dy = P.pelvis - 21;
+	const pivot = [0, 21, 0];
+	const up = (v) => add(mv(lean, sub([v[0], v[1] + dy, v[2]], pivot)), pivot);      // upper body: lean around the pelvis
+	const W = (v) => { const w = mv(yawM, v); return [w[0], w[1] + P.hop, w[2]]; };   // then turn to face, then hop
+	const bodyM = mm(yawM, lean), headM = mm(bodyM, rotY(P.head * D));
+	const prims = [];
+	const E = (id, mat, c, r, M) => prims.push({ t: "e", id, mat, c, r, M, MT: M });
+	const C = (id, mat, a, b, r) => prims.push({ t: "c", id, mat, a, b, r });
+
+	// torso, built in the upper-body frame
+	const U = (v) => W(up(v));
+	E("pelvis", "suit", W([0, P.pelvis, 0]), [5.2, 3.4, 3.4], yawM);
+	E("waist", "suit", U([0, 25.6, 0]), [3.7, 3.6, 2.7], bodyM);
+	E("chest", "torso", U([0, 31, -0.2]), [5.5, 5.4, 3.3], bodyM);
+	E("bustA", "torso", U([-2.5, 30.6, 2.4]), [2.4, 2.2, 2.1], bodyM);
+	E("bustB", "torso", U([2.5, 30.6, 2.4]), [2.4, 2.2, 2.1], bodyM);
+	E("hood", "jacket", U([0, 36.4, -2.6]), [4.4, 2, 2.6], bodyM);
+	C("neck", "skin", U([0, 35.6, 0.2]), U([0, 39.4, 0.4]), 1.35);
+	// head, in the head frame (turns on top of the body)
+	const hc = U([0, 43, 0.3]);
+	const H = (v) => add(hc, mv(headM, v));
+	E("head", "head", hc, [4.3, 5, 4.6], headM);
+	E("jaw", "head", H([0, -2.7, 0.7]), [3.2, 2.6, 3.4], headM);
+	E("cap", "hair", H([-0.4, 2.4, -1.0]), [4.8, 3.4, 4.9], headM);
+	E("fringe", "hair", H([-2.0, 2.2, 2.4]), [2.9, 1.9, 2.4], mm(headM, rotZ(-0.35)));
+	E("lock", "hair", H([-3.9, -1.4, 1.1]), [1.4, 3.9, 2.4], mm(headM, rotZ(0.12)));
+	E("ear", "skin", H([4.3, 0.9, -0.3]), [0.7, 1.8, 0.9], mm(headM, rotZ(-0.5)));
+	// arms
+	for (const [side, s] of [["A", -1], ["B", 1]]) {
+		const L = P[side], sh = U([5.4 * s, 35.2, -0.3]), el = U(L.e), ha = U(L.h);
+		C("upper" + side, "jacket", sh, el, 1.95);
+		C("fore" + side, "fore", el, ha, 1.35);
+		E("hand" + side, "glove", ha, [1.55, 1.55, 1.55], I3);
+		if (side === "B" && P.vSign) {
+			const dir = norm(sub(ha, el));
+			C("fingerB1", "skin", add(ha, [-0.6, 0.8, 0]), add(ha, add(mulS(dir, 2.4), [-1.1, 0.6, 0])), 0.6);
+			C("fingerB2", "skin", add(ha, [0.6, 0.8, 0]), add(ha, add(mulS(dir, 2.4), [1.1, 0.6, 0])), 0.6);
+		}
+	}
+	// legs
+	for (const [side, s] of [["LA", -1], ["LB", 1]]) {
+		const L = P[side], hip = W([2.6 * s, P.pelvis - 1.5, 0]), kn = W(L.k), an = W(L.a);
+		C("thigh" + side, "thigh", hip, kn, 2.45);
+		C("shin" + side, "boot", kn, an, 1.75);
+		const fd = norm(mv(yawM, L.f)), fm = frameAlong(fd);
+		E("foot" + side, "boot", add(an, add(mulS(fd, 1.7), [0, -0.9, 0])), [1.4, 1.2, 2.5], fm);
+	}
+	return { prims, bodyM, headM, hc, yawM, P };
+}
+
+// ================================================================ ray casting (orthographic, looking down -z)
+function hitEllipsoid(p, x, y) {
+	const ro = mtv(p.M, [x - p.c[0], y - p.c[1], 60 - p.c[2]]), rd = mtv(p.M, [0, 0, -1]);
+	const o = [ro[0] / p.r[0], ro[1] / p.r[1], ro[2] / p.r[2]], d = [rd[0] / p.r[0], rd[1] / p.r[1], rd[2] / p.r[2]];
+	const a = dot(d, d), b = dot(o, d), c = dot(o, o) - 1, h = b * b - a * c;
+	if (h < 0) return null;
+	const t = (-b - Math.sqrt(h)) / a;
+	const pl = add(o, mulS(d, t)), nl = [pl[0] / p.r[0], pl[1] / p.r[1], pl[2] / p.r[2]];
+	return { t, n: norm(mv(p.M, nl)), local: [pl[0] * p.r[0], pl[1] * p.r[1], pl[2] * p.r[2]] };
+}
+function hitCapsule(p, x, y) {
+	const ro = [x, y, 60], rd = [0, 0, -1], ba = sub(p.b, p.a), oa = sub(ro, p.a);
+	const baba = dot(ba, ba), bard = dot(ba, rd), baoa = dot(ba, oa), rdoa = dot(rd, oa), oaoa = dot(oa, oa);
+	const a = baba - bard * bard, b = baba * rdoa - baoa * bard, c = baba * oaoa - baoa * baoa - p.r * p.r * baba;
+	let h = b * b - a * c, t = -1;
+	if (h >= 0 && a > 1e-6) {
+		t = (-b - Math.sqrt(h)) / a;
+		const yy = baoa + t * bard;
+		if (!(yy > 0 && yy < baba)) {
+			const oc = yy <= 0 ? oa : sub(ro, p.b), bb = dot(rd, oc), cc = dot(oc, oc) - p.r * p.r;
+			h = bb * bb - cc;
+			t = h > 0 ? -bb - Math.sqrt(h) : -1;
+		}
+	} else {
+		for (const e of [p.a, p.b]) { const oc = sub(ro, e), bb = dot(rd, oc), cc = dot(oc, oc) - p.r * p.r, hh = bb * bb - cc; if (hh > 0) { const tt = -bb - Math.sqrt(hh); if (t < 0 || tt < t) t = tt; } }
+	}
+	if (t < 0) return null;
+	const pt = add(ro, mulS(rd, t)), k = clamp(dot(sub(pt, p.a), ba) / baba);
+	return { t, n: norm(sub(pt, add(p.a, mulS(ba, k)))), k };
+}
+function bounds(p) {
+	if (p.t === "e") { const R = Math.max(p.r[0], p.r[1], p.r[2]); return [p.c[0] - R, p.c[0] + R, p.c[1] - R, p.c[1] + R]; }
+	return [Math.min(p.a[0], p.b[0]) - p.r, Math.max(p.a[0], p.b[0]) + p.r, Math.min(p.a[1], p.b[1]) - p.r, Math.max(p.a[1], p.b[1]) + p.r];
+}
+
+// ================================================================ render one 48 px drawing
+const SW = 72, SH = 64, CX = 30, GROUND = 58;
+function material(hit, p, body, wp) {
+	const id = p.id;
+	if (p.mat === "head") {
+		const hl = mtv(body.headM, sub(wp, body.hc));
+		if (hl[0] > 1.7 && hl[1] > -0.4) return "shave";
+		return "skin";
+	}
+	if (p.mat === "torso") {
+		// cropped jacket over the shoulders and back, open at the front over the bodysuit
+		const bl = mtv(body.bodyM, sub(wp, [0, 0, 0]));
+		const y = bl[1] - (body.P.pelvis - 21);
+		const open = 0.7 + (36 - y) * 0.48;
+		if (y < 28.4) return "suit";
+		if (bl[2] > 0.6 && Math.abs(bl[0]) < open) return "suit";
+		return "jacket";
+	}
+	if (p.mat === "fore") return hit.k < 0.4 ? "jacket" : "suit";
+	if (p.mat === "glove") return "suit";
+	if (p.mat === "thigh") return hit.k > 0.88 ? "boot" : "suit";
+	return p.mat;
+}
+function renderSprite(P, opts = {}) {
+	const body = buildBody(P), prims = body.prims;
+	const N = SW * SH, col = new Array(N).fill(null), depth = new Float32Array(N).fill(-1e9), pid = new Array(N).fill(null), matA = new Array(N).fill(null), shade = new Int8Array(N);
+	const bb = prims.map(bounds);
+	for (let py = 0; py < SH; py++) {
+		const wy = GROUND - (py + 0.5);
+		for (let px = 0; px < SW; px++) {
+			const wx = px + 0.5 - CX;
+			let best = null, bp = null;
+			for (let i = 0; i < prims.length; i++) {
+				const b = bb[i];
+				if (wx < b[0] || wx > b[1] || wy < b[2] || wy > b[3]) continue;
+				const p = prims[i], h = p.t === "e" ? hitEllipsoid(p, wx, wy) : hitCapsule(p, wx, wy);
+				if (h && (!best || h.t < best.t)) { best = h; bp = p; }
+			}
+			if (!best) continue;
+			const i = py * SW + px, wp = [wx, wy, 60 - best.t];
+			const m = material(best, bp, body, wp);
+			let l = 0.3 + 0.7 * Math.max(0, dot(best.n, LIGHT));
+			if (m === "hair" && best.n[1] > 0.55) l += 0.12;
+			const q = clamp(Math.floor(l * 4 * 0.999), 0, 3);
+			col[i] = RAMP[m][q + 1]; depth[i] = wp[2]; pid[i] = bp.id; matA[i] = m; shade[i] = q + 1;
+		}
+	}
+	// outlines: ink around the silhouette, a darker line where a nearer part overlaps a farther one
+	const out = col.slice();
+	for (let y = 0; y < SH; y++) for (let x = 0; x < SW; x++) {
+		const i = y * SW + x;
+		if (!col[i]) {
+			if ((x > 0 && col[i - 1]) || (x < SW - 1 && col[i + 1]) || (y > 0 && col[i - SW]) || (y < SH - 1 && col[i + SW])) out[i] = INK;
+			continue;
+		}
+		for (const j of [i - 1, i + 1, i - SW, i + SW]) {
+			if (j < 0 || j >= N || !col[j]) continue;
+			if (depth[j] - depth[i] > 2.4 && !(pid[i] === "hand" + "B" && String(pid[j]).startsWith("finger"))) { out[i] = RAMP[matA[i]][0]; break; }
+		}
+	}
+	// the hand-placed face, projected onto the head
+	const P2 = body.P, fwd = mv(body.headM, [0, 0, 1]);
+	const toScr = (v) => [Math.round(CX + v[0] - 0.5), Math.round(GROUND - v[1] - 0.5)];
+	const onHead = (x, y) => { const id = pid[y * SW + x]; return id === "head" || id === "jaw"; };
+	const set = (x, y, c) => { if (x >= 0 && y >= 0 && x < SW && y < SH && onHead(x, y)) out[y * SW + x] = c; };
+	if (fwd[2] > 0.25) {
+		const lookRight = fwd[0] >= 0;
+		const eyes = [[-1.65, 0.1, 4.2], [1.75, 0.1, 4.15]].map((e) => {
+			const wpos = add(body.hc, mv(body.headM, e)), en = mv(body.headM, norm([e[0] / 4.3, e[1] / 5, e[2] / 4.6]));
+			return { s: toScr(wpos), vis: en[2], w: en[2] > 0.62 ? 2 : 1 };
+		});
+		const f = P2.face, blink = opts.blink;
+		eyes.forEach((e, k) => {
+			if (e.vis < 0.2) return;
+			const [x, y] = e.s, w = e.w, x0 = w === 2 ? x : x;
+			const xs = w === 2 ? [x0, x0 + 1] : [x0];
+			const pupilX = w === 2 ? (lookRight ? x0 + 1 : x0) : x0, irisX = w === 2 ? (lookRight ? x0 : x0 + 1) : null;
+			const wink = f === "victory" && k === 1;
+			if (blink || wink) { for (const xx of xs) set(xx, y, LID); return; }
+			if (f === "fierce" || f === "focus") {
+				// lids slant down toward the nose
+				const inner = k === 0 ? xs[xs.length - 1] : xs[0], outer = k === 0 ? xs[0] : xs[xs.length - 1];
+				set(outer, y - 1, LID); if (w === 2) { set(inner, y, LID); set(outer, y, IRIS); } else set(outer, y, IRIS);
+				return;
+			}
+			for (const xx of xs) set(xx, y - 1, LID);
+			set(pupilX, y, PUP); if (irisX !== null) set(irisX, y, IRIS);
+		});
+		const mpos = add(body.hc, mv(body.headM, [0.2, -2.5, 3.9])), [mx, my] = toScr(mpos);
+		const wide = fwd[2] > 0.6, dir = lookRight ? 1 : -1;
+		const M = {
+			neutral: wide ? [[0, 0, LIPS], [1, 0, LIPL]] : [[0, 0, LIPS]],
+			fierce: wide ? [[-1, 0, LIPS], [0, 0, TEETH], [1, 0, TEETH], [2, 0, LIPS]] : [[0, 0, TEETH], [dir, 0, LIPS]],
+			focus: [[0, 0, LIPS]],
+			victory: wide ? [[-1, -1, LIPS], [0, 0, LIPS], [1, 0, TEETH], [2, -1, LIPS]] : [[0, 0, TEETH], [dir, -1, LIPS]],
+		}[P2.face] || [];
+		for (const [dx, dyy, c] of M) set(mx + dx, my + dyy, c);
+	}
+	// where the kicking foot is, for the fire
+	const footP = buildFootTip(body);
+	return { px: out, foot: toScr(footP.pos), fdir: footP.dir, hand: toScr(add(body.prims.find((p) => p.id === "handB").c, [0, 0, 0])) };
+}
+function buildFootTip(body) {
+	const foot = body.prims.find((p) => p.id === "footLB");
+	const fd = mv(foot.M, [0, 0, 1]);
+	return { pos: add(foot.c, mulS(fd, 2.6)), dir: norm([fd[0], -fd[1]]) };
+}
+
+// ================================================================ stage
+const W = 144, H = 81, OX = 26, OY = 12, FLOOR = OY + GROUND;
+const rgbCache = new Map();
+const rgb = (h) => { let c = rgbCache.get(h); if (!c) { c = [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)]; rgbCache.set(h, c); } return c; };
+const SKY = ["#0a0c16", "#0d101d", "#111526", "#151a2f", "#1a2039"];
+const BG = new Uint8ClampedArray(W * H * 4);
+for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+	const c = rgb(y >= FLOOR ? (y === FLOOR ? "#3d4766" : y - FLOOR < 2 ? "#262d45" : "#1a1f33") : SKY[clamp(Math.floor((y / FLOOR) * (SKY.length - 1) + BAYER[(y & 3) * 4 + (x & 3)]), 0, SKY.length - 1)]);
+	const i = (y * W + x) * 4;
+	BG[i] = c[0]; BG[i + 1] = c[1]; BG[i + 2] = c[2]; BG[i + 3] = 255;
+	if (y < FLOOR && x % 16 === 0 && y % 2 === 0) { BG[i] += 10; BG[i + 1] += 12; BG[i + 2] += 20; }
+}
+
+// drawings are made at 15 per second and cached
+const FPS = 15, cache = new Map();
+function drawingAt(t, blink = false) {
+	const f = Math.floor(t * FPS) % Math.round(LOOP * FPS), key = f + (blink ? "b" : "");
+	if (!cache.has(key)) cache.set(key, renderSprite(poseAt(f / FPS), { blink }));
+	return cache.get(key);
+}
+
+const fx = { parts: [], ghosts: [], ghostT: 0, shake: 0, flash: 0, vdone: false };
+let clock = 0, freeze = 0, blinkAt = 1.4, blinking = 0;
+function stepSim(dt) {
+	if (freeze > 0) { freeze -= dt; fx.shake = Math.max(0, fx.shake - dt); return; }
+	const before = clock;
+	clock = (clock + dt) % LOOP;
+	const wrapped = clock < before;
+	if (wrapped) { fx.parts.length = 0; fx.ghosts.length = 0; }
+	const d = drawingAt(clock);
+	if (!wrapped && before < KICK_T && clock >= KICK_T) {
+		freeze = 0.09; fx.shake = 0.16; fx.flash = 0.12;
+		for (let i = 0; i < 26; i++) { const ang = (Math.random() - 0.5) * 1.6, sp = 60 + Math.random() * 160; fx.parts.push({ x: OX + d.foot[0], y: OY + d.foot[1], vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp, life: 0.25 + Math.random() * 0.35, age: 0, kind: Math.random() < 0.6 ? "fire" : "spark" }); }
+	}
+	if (clock > 0.95 && clock < 1.58) {
+		const n = clock < 1.37 ? 4 : 1;
+		for (let i = 0; i < n; i++) fx.parts.push({ x: OX + d.foot[0] + Math.random(), y: OY + d.foot[1] + (Math.random() - 0.5) * 2, vx: 70 + Math.random() * 110, vy: -15 - Math.random() * 25 + (Math.random() - 0.5) * 30, life: 0.18 + Math.random() * 0.3, age: 0, kind: "fire" });
+	}
+	if (clock > SPIN[0] && clock < SPIN[1] && Math.random() < 0.5) {
+		const ang = Math.random() * TAU;
+		fx.parts.push({ x: OX + CX + Math.cos(ang) * 12, y: OY + 28 + Math.sin(ang) * 20, vx: -Math.sin(ang) * 30, vy: -10, life: 0.35, age: 0, kind: "spark", behind: Math.sin(ang) < 0 });
+	}
+	if (clock > 2.57 && !fx.vdone) { fx.vdone = true; for (let i = 0; i < 12; i++) { const ang = (i / 12) * TAU; fx.parts.push({ x: OX + CX + Math.cos(ang) * 16, y: OY + 30 + Math.sin(ang) * 22, vx: Math.cos(ang) * 40, vy: Math.sin(ang) * 30, life: 0.5, age: 0, kind: "spark", behind: true }); } }
+	if (clock < 2.5) fx.vdone = false;
+	for (const p of fx.parts) { p.age += dt; p.x += p.vx * dt; p.y += p.vy * dt; if (p.kind === "fire") { p.vx *= Math.exp(-dt * 3); p.vy -= 40 * dt; } else p.vx *= Math.exp(-dt * 2); }
+	fx.parts = fx.parts.filter((p) => p.age < p.life);
+	fx.shake = Math.max(0, fx.shake - dt); fx.flash = Math.max(0, fx.flash - dt);
+	fx.ghostT += dt;
+	const trail = (clock > 0.85 && clock < 1.45) || (clock > SPIN[0] && clock < SPIN[1] + 0.05);
+	if (trail && fx.ghostT > 1 / FPS) { fx.ghostT = 0; fx.ghosts.push({ t: clock, age: 0 }); }
+	for (const g of fx.ghosts) g.age += dt;
+	fx.ghosts = fx.ghosts.filter((g) => g.age < 0.2);
+	blinkAt -= dt; if (blinking > 0) blinking -= dt;
+	if (blinkAt <= 0) { blinking = 0.13; blinkAt = 2.4 + Math.random() * 2; }
+}
+
+function composeFrame(t, img, lit, still) {
+	const d = img.data;
+	d.set(BG); lit.fill(0);
+	const put = (x, y, h, a = 1) => { x = Math.floor(x); y = Math.floor(y); if (x < 0 || y < 0 || x >= W || y >= H) return; const c = rgb(h), i = (y * W + x) * 4; d[i] += (c[0] - d[i]) * a; d[i + 1] += (c[1] - d[i + 1]) * a; d[i + 2] += (c[2] - d[i + 2]) * a; };
+	const glow = (x, y, r, h, k) => { const c = rgb(h); for (let py = Math.max(0, Math.floor(y - r)); py <= Math.min(H - 1, Math.ceil(y + r)); py++) for (let px = Math.max(0, Math.floor(x - r)); px <= Math.min(W - 1, Math.ceil(x + r)); px++) { const q = Math.hypot(px + 0.5 - x, py + 0.5 - y) / r; if (q >= 1) continue; const f = (1 - q) * (1 - q) * k / 255, i = (py * W + px) * 3; lit[i] += c[0] * f; lit[i + 1] += c[1] * f; lit[i + 2] += c[2] * f; } };
+	const sh = !still && fx.shake > 0 ? [Math.round((Math.random() - 0.5) * 2), Math.round((Math.random() - 0.5) * 2)] : [0, 0];
+	const ox = OX + sh[0], oy = OY + sh[1];
+	const P = poseAt(t);
+	for (let x = -8; x <= 8; x++) put(ox + CX + x, FLOOR, "#0a0c16", 0.55 * (1 - clamp(P.hop / 4) * 0.5));
+	if (!still) {
+		for (const g of fx.ghosts) { const s = drawingAt(g.t), a = 0.32 * (1 - g.age / 0.2); for (let y = 0; y < SH; y++) for (let x = 0; x < SW; x++) if (s.px[y * SW + x]) put(ox + x, oy + y, PSY[1], a); }
+		for (const p of fx.parts) if (p.behind) { const u = p.age / p.life; put(p.x, p.y, PSY[3], 1 - u); glow(p.x, p.y, 3, PSY[3], 0.3 * (1 - u)); }
+	}
+	const s = drawingAt(t, !still && blinking > 0);
+	for (let y = 0; y < SH; y++) for (let x = 0; x < SW; x++) { const c = s.px[y * SW + x]; if (c) put(ox + x, oy + y, c); }
+	if (P.face === "fierce") glow(ox + s.hand[0] - 4, oy + 16, 4, PSY[2], 0.15);
+	// fire jet from the kicking boot
+	const fw = [ox + s.foot[0], oy + s.foot[1]];
+	if (t > 0.95 && t < 1.5) {
+		const k = t < 1.37 ? 1 : 1 - (t - 1.37) / 0.13, len = 16 * k, dir = s.fdir;
+		for (let a = 0; a < len + 2; a++) for (let b = -4; b <= 4; b++) {
+			const w = 1.2 + a * 0.44 * (1 - a / (len + 3));
+			if (Math.abs(b + Math.sin(t * 40 + a * 0.6) * 0.6) > w) continue;
+			if (hash(a + Math.floor(t * 60), b + 9) < 0.25 + (a / (len + 4)) * 0.5) continue;
+			const x = fw[0] + dir[0] * a - dir[1] * b, y = fw[1] + dir[1] * a + dir[0] * b;
+			put(x, y, a < 1 ? PSY[4] : a < len * 0.35 ? PSY[3] : a < len * 0.75 ? PSY[2] : PSY[1]);
+		}
+		glow(fw[0] + dir[0] * 6, fw[1] + dir[1] * 6, 16, PSY[2], 0.3 * k);
+	}
+	if (fx.flash > 0 && !still) {
+		const r = 3 + (0.12 - fx.flash) * 70;
+		for (let a = 0; a < TAU; a += 0.15) put(fw[0] + Math.cos(a) * r, fw[1] + Math.sin(a) * r * 0.8, "#ffffff", fx.flash / 0.12);
+		glow(fw[0], fw[1], 22, "#ffffff", fx.flash * 5);
+	}
+	if (!still) for (const p of fx.parts) {
+		if (p.behind) continue;
+		const u = p.age / p.life;
+		if (p.kind === "fire") { put(p.x, p.y, u < 0.2 ? PSY[4] : u < 0.55 ? PSY[3] : PSY[2], 1 - u * 0.6); glow(p.x, p.y, 3, PSY[2], 0.1 * (1 - u)); }
+		else { put(p.x, p.y, "#ffffff", 1 - u); glow(p.x, p.y, 3, PSY[3], 0.3 * (1 - u)); }
+	}
+	if (P.vSign) {
+		const gx = ox + s.hand[0] + 0.5, gy = oy + s.hand[1] - 3.5, g = (t - 2.68) / 0.35;
+		if (g > 0 && g < 1) {
+			const L = Math.round(4 * Math.sin(Math.PI * g));
+			put(gx, gy, "#ffffff");
+			for (let k = 1; k <= L; k++) { const a = 1 - k / (L + 1); put(gx + k, gy, "#ffffff", a); put(gx - k, gy, "#ffffff", a); put(gx, gy + k, "#ffffff", a); put(gx, gy - k, "#ffffff", a); }
+			glow(gx, gy, 8, "#ffffff", 0.8 * Math.sin(Math.PI * g));
+		}
+	}
+}
+
+// ================================================================ presenting
+const stage = document.getElementById("stage"), sctx = stage.getContext("2d");
+const pix = document.createElement("canvas"); pix.width = W; pix.height = H;
+const lgt = document.createElement("canvas"); lgt.width = W; lgt.height = H;
+const pctx = pix.getContext("2d"), lctx = lgt.getContext("2d");
+const IMG = pctx.createImageData(W, H), LIMG = lctx.createImageData(W, H), LIT = new Float32Array(W * H * 3);
+function present(ctx, cw, ch) {
+	const d = IMG.data, L = LIMG.data;
+	for (let i = 0, j = 0; i < W * H * 3; i += 3, j += 4) {
+		d[j] = Math.min(255, d[j] + LIT[i] * 90); d[j + 1] = Math.min(255, d[j + 1] + LIT[i + 1] * 90); d[j + 2] = Math.min(255, d[j + 2] + LIT[i + 2] * 90);
+		L[j] = Math.min(255, LIT[i] * 200); L[j + 1] = Math.min(255, LIT[i + 1] * 200); L[j + 2] = Math.min(255, LIT[i + 2] * 200); L[j + 3] = 255;
+	}
+	pctx.putImageData(IMG, 0, 0); lctx.putImageData(LIMG, 0, 0);
+	ctx.globalCompositeOperation = "source-over";
+	ctx.imageSmoothingEnabled = false; ctx.drawImage(pix, 0, 0, cw, ch);
+	ctx.imageSmoothingEnabled = true; ctx.globalCompositeOperation = "lighter"; ctx.drawImage(lgt, 0, 0, cw, ch);
+	ctx.globalCompositeOperation = "source-over";
+}
+// a sprite on its own small canvas, for the turnaround and the frame grid
+function spriteCanvas(s) {
+	const cv = document.createElement("canvas"); cv.width = SW; cv.height = SH;
+	const c = cv.getContext("2d"), img = c.createImageData(SW, SH);
+	for (let y = 0; y < SH; y++) for (let x = 0; x < SW; x++) {
+		const h = s.px[y * SW + x], j = (y * SW + x) * 4;
+		const [r, g, b] = h ? rgb(h) : y >= GROUND ? [26, 31, 51] : [17, 21, 38];
+		img.data[j] = r; img.data[j + 1] = g; img.data[j + 2] = b; img.data[j + 3] = 255;
+	}
+	c.putImageData(img, 0, 0);
+	return cv;
+}
+function scaled(src, target) {
+	const ctx = target.getContext("2d");
+	ctx.imageSmoothingEnabled = false;
+	ctx.drawImage(src, 0, 0, target.width, target.height);
+}
+const turnEl = document.getElementById("turn"), framesEl = document.getElementById("frames"), stills = [];
+for (let k = 0; k < 8; k++) {
+	const P = poseAt(0.3); P.yaw = k * 45; P.head = 0; P.face = "neutral";
+	const fig = document.createElement("figure"), cv = document.createElement("canvas");
+	cv.setAttribute("aria-label", `Facing ${k * 45} degrees`);
+	fig.append(cv); fig.insertAdjacentHTML("beforeend", `<figcaption>${k * 45}°</figcaption>`);
+	turnEl.appendChild(fig);
+	stills.push({ cv, src: spriteCanvas(renderSprite(P)) });
+}
+for (let f = 9; f < 39; f++) {
+	const t = f / FPS, fig = document.createElement("figure"), cv = document.createElement("canvas");
+	cv.setAttribute("aria-label", `Frame ${f} at ${t.toFixed(2)} seconds`);
+	fig.append(cv); fig.insertAdjacentHTML("beforeend", `<figcaption>${f}</figcaption>`);
+	framesEl.appendChild(fig);
+	stills.push({ cv, src: spriteCanvas(drawingAt(t + 0.001)) });
+}
+
+function resize() {
+	const dpr = Math.min(2, window.devicePixelRatio || 1);
+	const w = Math.max(W, Math.round(stage.clientWidth * dpr)); stage.width = w; stage.height = Math.round((w * 9) / 16);
+	for (const s of stills) { const cw = Math.max(72, Math.round(s.cv.clientWidth * dpr)); s.cv.width = cw; s.cv.height = Math.round((cw * SH) / SW); scaled(s.src, s.cv); }
+}
+window.addEventListener("resize", resize);
+
+let paused = window.matchMedia("(prefers-reduced-motion: reduce)").matches, slow = false, last = 0;
+function frame(now) {
+	const dt = Math.min(0.05, (now - last) / 1000 || 0);
+	last = now;
+	if (!paused) { let left = dt * (slow ? 0.25 : 1); while (left > 0) { const st = Math.min(left, 1 / 120); stepSim(st); left -= st; } }
+	composeFrame(clock, IMG, LIT, false);
+	present(sctx, stage.width, stage.height);
+	requestAnimationFrame(frame);
+}
+const $ = (id) => document.getElementById(id);
+function setPaused(v) { paused = v; if (v) blinking = 0; $("pause").setAttribute("aria-pressed", String(v)); $("pause").firstChild.textContent = v ? "Play" : "Pause"; }
+function toggleSlow() { slow = !slow; $("slow").setAttribute("aria-pressed", String(slow)); }
+function replay() { clock = 0; freeze = 0; fx.parts.length = 0; fx.ghosts.length = 0; }
+$("pause").addEventListener("click", () => setPaused(!paused));
+$("slow").addEventListener("click", toggleSlow);
+$("replay").addEventListener("click", replay);
+window.addEventListener("keydown", (e) => {
+	if (e.target.closest && e.target.closest("button") && e.code === "Space") return;
+	if (e.code === "Space") { e.preventDefault(); setPaused(!paused); }
+	else if (e.code === "KeyS") toggleSlow();
+	else if (e.code === "KeyR") replay();
+});
+setPaused(paused);
+resize();
+requestAnimationFrame(frame);
+</script>
+
+</body>
+</html>

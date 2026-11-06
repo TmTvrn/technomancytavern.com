@@ -1,0 +1,639 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="The heroic style at 48, 64, 80 and 96 pixels tall. Each size up gives her face more pixels, and the face rules use them.">
+<title>Heroic at Four Sizes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: header, expression controls, a 2 x 2 grid of size cards (full figure plus face close-up), then the same four sizes placed on their matching game screens. Dark single look. */
+:root {
+	--bg: #090a10;
+	--panel: #12141c;
+	--line: #242838;
+	--fg: #e8e8f2;
+	--muted: #989cb4;
+	--psy: #4dff6a;
+	--display: "Chakra Petch", "Segoe UI", system-ui, sans-serif;
+	--body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+	--mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+	color-scheme: dark;
+}
+html, body { background: var(--bg); color: var(--fg); }
+body {
+	font-family: var(--body); font-size: 15px; line-height: 1.55;
+	padding-block: 32px 48px;
+	padding-left: max(16px, env(safe-area-inset-left, 0px));
+	padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 1280px; margin: 0 auto; display: grid; gap: 20px; }
+header { display: grid; gap: 8px; max-width: 72ch; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+h1 { font-family: var(--display); font-weight: 600; font-size: clamp(30px, 5vw, 46px); line-height: 1.05; margin: 0; }
+p { margin: 0; color: var(--muted); max-width: 72ch; }
+.controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.controls .sep { width: 1px; height: 28px; background: var(--line); margin: 0 4px; }
+button {
+	font-family: var(--mono); font-size: 13px; color: var(--fg);
+	background: var(--panel); border: 1px solid var(--line); border-radius: 4px;
+	padding: 8px 12px; cursor: pointer;
+}
+button:hover { border-color: var(--muted); }
+button:focus-visible { outline: 2px solid var(--psy); outline-offset: 2px; }
+button[aria-pressed="true"] { border-color: var(--psy); color: var(--psy); }
+kbd { font-family: var(--mono); font-size: 11px; color: var(--muted); margin-left: 6px; }
+.grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+@media (min-width: 700px) { .grid { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 1100px) { .grid { grid-template-columns: 1fr 1fr 1fr 1fr; } }
+h2.section { font-family: var(--display); font-weight: 500; font-size: 26px; margin: 12px 0 0; }
+.mocks { display: grid; grid-template-columns: 1fr; gap: 16px; }
+@media (min-width: 800px) { .mocks { grid-template-columns: 1fr 1fr; } }
+.mocks figure { margin: 0; display: grid; gap: 6px; min-width: 0; }
+.mocks canvas { display: block; width: 100%; max-width: 100%; aspect-ratio: 16 / 9; border-radius: 4px; background: #000; }
+.mocks figcaption { font-size: 13.5px; color: var(--muted); }
+.mocks figcaption strong { color: var(--fg); font-weight: 500; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 14px; display: grid; gap: 10px; min-width: 0; }
+.card h2 { font-family: var(--display); font-weight: 500; font-size: 21px; margin: 0; }
+.card .tag { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+.views { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: start; }
+.views canvas { display: block; width: 100%; max-width: 100%; border-radius: 4px; background: #000; }
+.fig { aspect-ratio: 64 / 56; }
+.face { aspect-ratio: 1; }
+.card p { font-size: 13.5px; }
+</style>
+</head>
+<body>
+<nav style="font:14px/1.2 system-ui,sans-serif;padding:8px 16px;background:#05071a;border-bottom:1px solid #232838"><a href="./" style="color:#3ef2ff;text-decoration:none">&larr; Art studies</a></nav>
+<div class="wrap" id="app">
+	<header>
+		<div class="eyebrow">Save Sparky · character sizes</div>
+		<h1>Heroic at Four Sizes</h1>
+		<p>The heroic style at 48, 64, 80 and 96 pixels tall. Her proportions stay the same; each step up gives her face more pixels, and the face rules use them: real brows, an iris and pupil, a glint, lashes, a nose and lips. Below, each size stands on the game screen it would pair with.</p>
+	</header>
+	<div class="controls" id="controls">
+		<button type="button" data-ex="0">Neutral<kbd>1</kbd></button>
+		<button type="button" data-ex="1">Smile<kbd>2</kbd></button>
+		<button type="button" data-ex="2">Laugh<kbd>3</kbd></button>
+		<button type="button" data-ex="3">Fierce<kbd>4</kbd></button>
+		<button type="button" data-ex="4">Surprised<kbd>5</kbd></button>
+		<button type="button" data-ex="5">Smirk and wink<kbd>6</kbd></button>
+		<span class="sep" aria-hidden="true"></span>
+		<button type="button" id="cycle" aria-pressed="true">Cycle<kbd>C</kbd></button>
+		<button type="button" id="pause" aria-pressed="false">Pause<kbd>Space</kbd></button>
+	</div>
+	<div class="grid" id="grid"></div>
+	<h2 class="section">On a game screen</h2>
+	<p>Each mockup is the whole game screen at its own resolution, shown at the same width. The level is the same size in every one, so the larger her sprite, the smaller her share of the screen gets on the higher resolutions.</p>
+	<div class="mocks" id="mocks"></div>
+</div>
+
+<script>
+"use strict";
+const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+const BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5].map((v) => (v + 0.5) / 16);
+const hash = (x, y) => { let h = (x * 374761393 + y * 668265263) | 0; h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };
+
+// ================================================================ palettes (six steps, dark to light)
+const RAMP = {
+	skin: ["#5a3328", "#8e5442", "#bf7b62", "#dea086", "#f2c3a5", "#fde0cb"],
+	hair: ["#5c421a", "#8a6a2a", "#b8913e", "#ddb85e", "#f1d688", "#fff2c2"],
+	shave: ["#6e5442", "#8e6c55", "#a8846a", "#bf9a7e", "#cfac90", "#dcbda2"],
+	jacket: ["#1e0e33", "#35195a", "#4f2783", "#6c3aa8", "#9364cb", "#bf98ea"],
+	suit: ["#07070d", "#10101a", "#1a1a28", "#272739", "#3a3b52", "#565874"],
+	boot: ["#1a0c2e", "#2e1650", "#462378", "#6234a3", "#8457c4", "#a982dd"],
+};
+const PSY = ["#0e4519", "#1d8a32", "#3fe055", "#9dff9a", "#eaffe4"];
+const IRIS = ["#0b4a22", "#178a40", "#3dd66e", "#a8ffc0"];
+const INK = "#0b0710", SCLERA = "#f4f1f6", LIPS = "#a8405a", MOUTH = "#3a0e1a", TEETH = "#fbf6f2", TONGUE = "#d0556a", BLUSH = "#ff7a8a";
+
+// ================================================================ the six styles
+const STYLES = [
+	{ name: "48 px", T: 48, tag: "head 10 px · eyes 2 × 2", headH: 10, bw: 1, chin: 0.38, steps: [1, 2, 3, 4], outline: "dark", eye: "dot", eyeW: 2, eyeH: 2, mouthW: 2, brows: "emote", blush: false, screen: [320, 180],
+		note: "Today's size. Eyes are two pixels and the mouth is one row, so she can look happy, angry or surprised, but not much in between." },
+	{ name: "64 px", T: 64, tag: "head 13 px · eyes 3 × 3", headH: 13, bw: 1, chin: 0.38, steps: [1, 2, 3, 4], outline: "dark", eye: "hibit", eyeW: 3, eyeH: 3, mouthW: 3, brows: true, blush: true, screen: [480, 270],
+		note: "Eyes get a green iris, a pupil and a glint, brows stay on all the time, and the mouth can curve. The first size where a smirk reads as a smirk." },
+	{ name: "80 px", T: 80, tag: "head 16 px · eyes 4 × 4", headH: 16, bw: 1, chin: 0.38, steps: [0, 1, 2, 3, 4], outline: "dark", eye: "hibit", eyeW: 4, eyeH: 4, mouthW: 4, brows: true, blush: true, dither: true, screen: [640, 360],
+		note: "Lashes and an eyeliner flick, a two-pixel nose, a lower lip, and a laugh with teeth and tongue. Femme fatale and expressive at once." },
+	{ name: "96 px", T: 96, tag: "head 19 px · eyes 5 × 5", headH: 19, bw: 1, chin: 0.38, steps: [0, 1, 2, 3, 4, 5], outline: "dark", eye: "hibit", eyeW: 5, eyeH: 5, mouthW: 5, brows: true, blush: true, dither: true, screen: [640, 360],
+		note: "Close to portrait detail. On a 640 × 360 screen she takes over a quarter of its height, so a bigger screen or a smaller cast would suit this size." },
+];
+for (const st of STYLES) { const k = st.T / 48; st.SW = Math.ceil(64 * k); st.SH = Math.ceil(56 * k); }
+
+// ================================================================ expressions
+const EXPR = [
+	{ name: "neutral", open: 1, mouth: "flat" },
+	{ name: "smile", open: 1, mouth: "smile", blush: 0.35 },
+	{ name: "laugh", open: 0, happy: true, mouth: "laugh", blush: 0.6 },
+	{ name: "fierce", open: 0.75, angry: true, mouth: "grit", glow: true },
+	{ name: "surprised", open: 1.3, browUp: true, mouth: "o" },
+	{ name: "smirk", open: 1, wink: true, mouth: "smirk", blush: 0.3 },
+];
+const state = { ex: 0, cycle: true, paused: false, t: 0, lastSwap: 0, blinkAt: 2, blinking: 0 };
+
+// ================================================================ drawing one style
+function drawStyle(st, t, exI) {
+	const SW = st.SW, SH = st.SH;
+	const ex = EXPR[exI], N = SW * SH;
+	const col = new Array(N).fill(null), part = new Uint8Array(N), litBuf = new Float32Array(N);
+	const glows = [];
+	const breath = Math.sin(t * 2.4) > 0.3 ? 1 : 0;
+	const sway = Math.round(Math.sin(t * 1.6) * 0.8);
+
+	// layout from proportions
+	const kk = st.T / 48, y0 = Math.round(4 * kk), headH = st.headH, B = st.T - headH, bw = st.bw, cx = Math.floor(SW / 2);
+	const chin = y0 + headH - breath;
+	const yS = chin + Math.max(1.2, 0.05 * B), bustY = chin + 0.17 * B, waistY = chin + 0.31 * B;
+	const hipY = y0 + headH + 0.41 * B, crotchY = y0 + headH + 0.48 * B, kneeY = y0 + headH + 0.71 * B, ankleY = y0 + headH + 0.93 * B, sole = y0 + st.T - 0.4;
+	const shW = 0.165 * B * bw, bustW = 0.155 * B * bw, waistW = 0.095 * B * bw, hipW = 0.14 * B * bw;
+	const tcx = (y) => cx + lerp(-0.6, 1, clamp((y - yS) / (hipY - yS)));
+	const hw = (y) => {
+		if (y < yS) return 0;
+		if (y < bustY) return lerp(shW, bustW, (y - yS) / (bustY - yS));
+		if (y < waistY) { const k = (y - bustY) / (waistY - bustY); return lerp(bustW, waistW, k * k * (3 - 2 * k)); }
+		if (y < hipY) { const k = (y - waistY) / (hipY - waistY); return lerp(waistW, hipW, Math.sqrt(k)); }
+		return hipW;
+	};
+	const minR = 0.62, R = (r) => Math.max(minR, r);
+	// head frame
+	const a = headH * 0.43 * (st.headH > 15 ? 1.05 : 1), b = headH / 2, hx = cx + 0.4, hy = y0 + b - breath;
+	// limbs
+	const sLx = tcx(yS) - shW + 0.04 * B, sRx = tcx(yS) + shW - 0.04 * B, sYy = yS + 0.025 * B;
+	const armL = { s: [sLx, sYy], e: [sLx - 0.11 * B * bw, waistY - 0.02 * B], h: [tcx(hipY) - hipW * 0.8, hipY - 0.05 * B] };
+	const armR = { s: [sRx, sYy], e: [sRx + 0.05 * B * bw, waistY + 0.01 * B], h: [sRx + 0.085 * B * bw, hipY + 0.05 * B] };
+	const legR = { h: [tcx(crotchY) + 0.065 * B * bw, crotchY - 0.03 * B], k: [cx + 0.06 * B * bw, kneeY], a: [cx + 0.065 * B * bw, ankleY] };
+	const legL = { h: [tcx(crotchY) - 0.065 * B * bw, crotchY - 0.03 * B], k: [cx - 0.1 * B * bw, kneeY - 0.01 * B], a: [cx - 0.14 * B * bw, ankleY] };
+
+	const segD = (x, y, p, q) => {
+		const dx = q[0] - p[0], dy = q[1] - p[1], tt = clamp(((x - p[0]) * dx + (y - p[1]) * dy) / (dx * dx + dy * dy || 1));
+		const ox = x - p[0] - dx * tt, oy = y - p[1] - dy * tt, l = Math.hypot(dx, dy) || 1;
+		return { d: Math.hypot(ox, oy), t: tt, side: (ox * -dy + oy * dx) / l };
+	};
+	const capLit = (s, r) => 0.62 - 0.42 * clamp(s.side / r, -1, 1) * Math.sign(1);
+
+	// ---- the per-pixel body: returns [material, light 0..1, part id]
+	const sample = (x, y) => {
+		// right arm and burning fist (viewer's right)
+		let s = segD(x, y, armR.e, armR.h);
+		if (Math.hypot(x - armR.h[0], y - armR.h[1]) < R(0.05 * B * bw)) return ["suit", 0.5 + 0.3 * (armR.h[1] - y) / 2, 7];
+		if (s.d < R(0.036 * B * bw)) return s.t < 0.35 ? ["jacket", capLit(s, 1.3), 4] : ["suit", capLit(s, 1.2), 7];
+		s = segD(x, y, armR.s, armR.e);
+		if (s.d < R(0.055 * B * bw)) return ["jacket", capLit(s, 2), 4];
+		// left arm, hand on hip
+		s = segD(x, y, armL.e, armL.h);
+		if (Math.hypot(x - armL.h[0], y - armL.h[1]) < R(0.042 * B * bw)) return ["skin", 0.6, 3];
+		if (s.d < R(0.036 * B * bw)) return s.t < 0.3 ? ["jacket", capLit(s, 1.3) + 0.15, 4] : ["suit", capLit(s, 1.2) + 0.15, 7];
+		s = segD(x, y, armL.s, armL.e);
+		if (s.d < R(0.056 * B * bw)) return ["jacket", capLit(s, 2) + 0.2, 4];
+
+		// head
+		const u = (x - hx) / a, v = (y - hy) / b;
+		const lockEnd = 0.95 + 0.08 * sway;
+		const fringe = u < 0.4 ? -0.55 + (0.4 - u) * 0.72 : -0.55 - (u - 0.4) * 0.55;
+		const inTopVol = (u / 1.12) ** 2 + ((v + 0.06) / 1.1) ** 2 <= 1;
+		const lock = u < -0.6 + 0.12 * Math.max(0, v) && u > -1.3 + 0.12 * Math.max(0, v) && v > -0.5 && v < lockEnd;
+		if ((inTopVol && v < fringe) || lock) {
+			let l = 0.88 - 0.22 * u - 0.42 * (v + 0.4);
+			if (lock) l = 0.55 - 0.25 * (v - 0.2) + 0.2 * (u + 0.95);
+			if (st.hairShine && Math.abs(v - (-0.62 - 0.15 * u)) < 0.09 && u > -0.75 && u < 0.6) l = 1.2;
+			if (st.dither && Math.abs(((u * 4 + v * 1.4) % 1.3 + 1.3) % 1.3 - 0.65) < 0.12) l -= 0.2;
+			return ["hair", l, 1];
+		}
+		const wv = v > 0.15 ? 1 - st.chin * (v - 0.15) / 0.85 : 1;
+		const inFace = v < 1 && (u / wv) ** 2 + v * v <= 1;
+		// pointed ear on the shaved side
+		const ex0 = 0.9, inEar = u > ex0 && v > -0.4 && v < 0.35 && u < ex0 + (0.35 - v) * 0.55 && (u - ex0) < 0.45 && v > -0.4 + (u - ex0) * 0.1;
+		if (inEar && headH >= 9) return ["skin", 0.55 + 0.2 * (0.35 - v), 2];
+		if (inFace) {
+			if (u > 0.62 && v < -0.05) return ["shave", 0.55 - 0.3 * u - 0.2 * v, 2];
+			return ["skin", 0.8 - 0.28 * u - 0.22 * v, 2];
+		}
+		// neck
+		if (y > hy + b * 0.6 && y < yS + 1 && Math.abs(x - (hx + 0.1 * a)) < Math.max(1, 0.24 * a)) return ["skin", 0.42, 3];
+
+		// torso: bust, open cropped jacket, bodysuit
+		if (y >= yS - 0.5 && y < crotchY + 0.6) {
+			const c = tcx(y), w = hw(y), lat = (x - c) / Math.max(1, w);
+			const bustL = ((x - (c - 0.075 * B * bw)) / (0.085 * B * bw)) ** 2 + ((y - bustY) / (0.075 * B)) ** 2 <= 1;
+			const bustR = ((x - (c + 0.075 * B * bw)) / (0.085 * B * bw)) ** 2 + ((y - bustY) / (0.075 * B)) ** 2 <= 1;
+			const crotch = y > hipY && Math.abs(x - c) < w * (1 - (y - hipY) / (crotchY - hipY + 0.6));
+			if ((Math.abs(x - c) < w && y < hipY) || crotch || bustL || bustR) {
+				const jacketBottom = bustY + 0.085 * B;
+				const open = lerp(0.02 * B, 0.1 * B * bw, clamp((y - yS) / (jacketBottom - yS)));
+				if (y < jacketBottom && Math.abs(x - c) > open && !((bustL || bustR) && Math.abs(x - c) < open + 0.06 * B * bw)) return ["jacket", 0.72 - 0.45 * lat, 4];
+				let l = 0.55 - 0.4 * lat;
+				if (bustL || bustR) {
+					const bx = bustL ? c - 0.075 * B * bw : c + 0.075 * B * bw;
+					const by = (y - bustY) / (0.075 * B), bxn = (x - bx) / (0.085 * B * bw);
+					l = 0.7 - 0.35 * bxn - 0.45 * by;
+					if (by > 0.6) l -= 0.25;
+				}
+				if (y > waistY && y < hipY && lat < -0.2) l += 0.15;
+				return ["suit", l, 5];
+			}
+		}
+		// hood bunched around the neck, behind the head
+		if (((x - tcx(yS)) / (shW * 0.75)) ** 2 + ((y - (yS - 0.015 * B)) / Math.max(1.2, 0.05 * B)) ** 2 <= 1) return ["jacket", 0.45 - 0.2 * (x - cx) / shW, 8];
+
+		// legs: knee-high boots, bodysuit above
+		for (const [L, front] of [[legR, true], [legL, false]]) {
+			const foot = [L.a[0] + (front ? 0.045 : -0.05) * B, sole - 0.03 * B];
+			if (((x - foot[0]) / R(0.06 * B)) ** 2 + ((y - foot[1]) / R(0.035 * B)) ** 2 <= 1) return ["boot", 0.5 - 0.3 * (x - foot[0]) / (0.06 * B) - 0.2, 6];
+			const s2 = segD(x, y, L.k, L.a);
+			if (s2.d < R(lerp(0.045, 0.032, s2.t) * B * bw)) return y > kneeY - 0.035 * B ? ["boot", capLit(s2, 1.4) + (front ? 0.05 : -0.1), 6] : ["suit", capLit(s2, 1.4), 5];
+			const s1 = segD(x, y, L.h, L.k);
+			if (s1.d < R(lerp(0.068, 0.046, s1.t) * B * bw)) {
+				let l = capLit(s1, 2.2) + (front ? 0.05 : -0.1);
+				if (st.dither && Math.abs(s1.side / 2.2 + 0.45) < 0.12) l += 0.35;
+				return y > kneeY - 0.035 * B ? ["boot", l, 6] : ["suit", l, 5];
+			}
+		}
+		return null;
+	};
+
+	// ---- raster the body
+	const steps = st.steps, n = steps.length;
+	for (let y = 0; y < SH; y++) for (let x = 0; x < SW; x++) {
+		const r = sample(x + 0.5, y + 0.5);
+		if (!r) continue;
+		const [mat, l0, pid] = r, i = y * SW + x;
+		let l = l0;
+		if (st.dither && pid > 2) l += (BAYER[(y & 3) * 4 + (x & 3)] - 0.5) * 0.22;
+		const q = clamp(Math.floor(clamp(l) * n * 0.999), 0, n - 1);
+		let idx = steps[q];
+		if (mat === "skin" && n <= 3) idx = Math.min(5, idx + 1);
+		col[i] = RAMP[mat][idx]; part[i] = pid; litBuf[i] = l;
+	}
+	// cast shadow under the fringe
+	if (n >= 3) for (let y = 1; y < SH; y++) for (let x = 0; x < SW; x++) {
+		const i = y * SW + x;
+		if (part[i] === 2 && part[i - SW] === 1) { const k = RAMP.skin.indexOf(col[i]); if (k > 0) col[i] = RAMP.skin[k - 1]; }
+	}
+
+	// ---- face (integer pixel stamps so features never fall between pixels)
+	const set = (x, y, c, pid = 9) => { x = Math.round(x); y = Math.round(y); if (x >= 0 && y >= 0 && x < SW && y < SH) { col[y * SW + x] = c; part[y * SW + x] = pid; } };
+	const blend = (x, y, c, k) => { x = Math.round(x); y = Math.round(y); const i = y * SW + x; if (!col[i]) return; const A = rgb(col[i]), B2 = rgb(c); col[i] = hex(A.map((v, j) => v + (B2[j] - v) * k)); };
+	const blink = state.blinking > 0 && !ex.happy;
+	const eyeY = Math.round(hy + b * (st.eye === "anime" ? 0.12 : 0.05));
+	const eyeXs = [Math.round(hx - a * 0.36), Math.round(hx + a * 0.34)];
+	const W = st.eyeW, Hh = st.eyeH;
+	eyeXs.forEach((exX, side) => {
+		const outer = side === 0 ? -1 : 1;              // which way the outer corner points
+		const x0 = exX - Math.floor(W / 2), top = eyeY - Math.floor(Hh / 2);
+		const closed = blink || (ex.wink && side === 1) || ex.open === 0;
+		const inner = (k) => (outer < 0 ? W - 1 - k : k);   // column k counted from the inner corner
+		// brows
+		if (st.brows === true || (st.brows === "emote" && (ex.angry || ex.browUp))) {
+			const by = top - (st.eye === "anime" ? 3 : 2) - (ex.browUp ? 1 : 0);
+			for (let k = 0; k < W; k++) {
+				const col0 = x0 + k;
+				const isInner = outer < 0 ? k === W - 1 : k === 0;
+				let yy = by;
+				if (ex.angry && isInner) yy += 1;
+				if (ex.angry && !isInner && W >= 3 && Math.abs(k - (W - 1) / 2) < 0.6) yy += 0;
+				if (part[Math.round(yy) * SW + col0] === 1) continue;
+				set(col0, yy, st.outline === "ink" ? INK : RAMP.hair[0]);
+			}
+		}
+		if (closed) {
+			if (ex.happy || (ex.wink && side === 1)) {
+				// a happy arc: ^ shape
+				for (let k = 0; k < W + 1; k++) {
+					const xx = outer < 0 ? x0 - 1 + k : x0 + k, mid = Math.abs(k - W / 2) < 0.75;
+					set(xx, top + Math.floor(Hh / 2) + (mid ? -1 : 0), INK);
+				}
+			} else {
+				for (let k = 0; k < W; k++) set(x0 + k, top + Hh - 1, INK);
+				set(outer < 0 ? x0 - 1 : x0 + W, top + Hh - 2, INK);
+			}
+			return;
+		}
+		const tall = Math.max(1, Math.round(Hh * Math.min(1.35, ex.open)));
+		const t0 = top + Hh - tall;
+		if (st.eye === "simple") {
+			for (let yy = 0; yy < tall; yy++) for (let k = 0; k < W; k++) set(x0 + k, t0 + yy, yy === tall - 1 && k === inner(0) ? IRIS[2] : "#1b1020");
+			if (ex.angry) set(x0 + inner(0), t0, col[(t0 - 1) * SW + x0 + inner(0)] || RAMP.skin[3]);
+		} else if (st.eye === "dot") {
+			for (let k = 0; k < W; k++) set(x0 + k, t0, INK);                        // lash line
+			set(outer < 0 ? x0 - 1 : x0 + W, t0, INK);                                // eyeliner wing
+			for (let yy = 1; yy < tall; yy++) { set(x0 + inner(0), t0 + yy, "#140c12"); set(x0 + inner(1), t0 + yy, IRIS[2]); }
+			if (tall === 1) set(x0 + inner(1), t0 + 1, IRIS[2]);
+			if (ex.angry) set(x0 + inner(0), t0, col[(t0 - 1) * SW + x0 + inner(0)] || RAMP.skin[3]);
+			if (ex.open > 1.1) set(x0 + inner(0), t0 - 1, SCLERA);
+		} else if (st.eye === "comic") {
+			for (let yy = 0; yy < tall; yy++) for (let k = 0; k < W; k++) set(x0 + k, t0 + yy, SCLERA);
+			const pupR = ex.open > 1.1 ? 1 : 2;
+			for (let yy = Math.max(0, tall - pupR - 1); yy < tall; yy++) set(x0 + inner(0), t0 + yy, INK);
+			if (ex.open <= 1.1) set(x0 + inner(1), t0 + tall - 1, IRIS[1]);
+			for (let k = 0; k < W; k++) set(x0 + k, t0 - 1, INK);
+			if (ex.angry) { set(x0 + inner(0), t0, INK); set(x0 + inner(1), t0, INK); }
+		} else {
+			// anime and hi-bit: lash, iris with pupil and highlight, white on the outer side
+			for (let yy = 0; yy < tall; yy++) for (let k = 0; k < W; k++) {
+				const outerCol = k === W - 1 - 0 && outer > 0 || k === 0 && outer < 0;
+				const c = outerCol && W >= 3 && yy > 0 ? SCLERA : yy === tall - 1 ? IRIS[3] : yy >= tall - 2 ? IRIS[2] : IRIS[1];
+				set(x0 + k, t0 + yy, c);
+			}
+			// pupil
+			const pc = x0 + inner(W >= 4 ? 1 : 0) + (W >= 4 ? (outer < 0 ? -0 : 0) : 0);
+			const pupH = ex.open > 1.1 ? 1 : Math.max(1, Math.round(tall / 2.5));
+			for (let yy = 0; yy < pupH; yy++) { set(pc, t0 + 1 + yy, "#06150c"); if (W >= 4) set(pc + (outer < 0 ? -1 : 1), t0 + 1 + yy, "#06150c"); }
+			// highlight
+			set(x0 + inner(W >= 4 ? 2 : 1), t0 + 1, "#ffffff");
+			if (W >= 4 && tall >= 5) set(x0 + inner(0), t0 + tall - 2, "#d8ffe4");
+			// lash and wing
+			for (let k = 0; k < W; k++) set(x0 + k, t0, INK);
+			set(outer < 0 ? x0 - 1 : x0 + W, t0, INK);
+			if (W >= 4) set(outer < 0 ? x0 - 2 : x0 + W + 1, t0 - 1, INK);
+			set(outer < 0 ? x0 - 1 : x0 + W, t0 + tall - 1, st.eye === "hibit" ? RAMP.skin[1] : INK);
+			if (ex.angry) for (let k = 0; k < Math.ceil(W / 2); k++) set(x0 + inner(k), t0 + 1, INK);
+			if (ex.angry && W >= 4) set(x0 + inner(0), t0 + 2, INK);
+			if (ex.open > 1.1) for (let k = 0; k < W; k++) set(x0 + k, t0 - 1 + (k === 0 || k === W - 1 ? 1 : 0), INK);
+		}
+		if (ex.glow) glows.push([exX + 0.5, eyeY + 0.5, 4 * kk, PSY[2], 0.55]);
+	});
+	// nose: a single shadow pixel for the realistic styles
+	if (st.eye === "dot" || st.eye === "hibit") set(hx + a * 0.1, hy + b * 0.42, RAMP.skin[2]);
+	if (headH >= 16) { set(hx + a * 0.1, hy + b * 0.3, RAMP.skin[3]); set(hx + a * 0.1 - 1, hy + b * 0.42, RAMP.skin[3]); }
+	if (st.eye === "anime" && headH >= 15) set(hx + a * 0.08, hy + b * 0.42, RAMP.skin[3]);
+	// blush
+	if (st.blush && ex.blush) for (const exX of eyeXs) for (let k = -1; k <= 1; k++) blend(exX + k + (st.headH > 15 ? 0 : 0), eyeY + Math.ceil(Hh / 2) + 1 + (headH > 15 ? 1 : 0), BLUSH, ex.blush);
+	// mouth
+	const mx = Math.round(hx + a * 0.06), my = Math.round(hy + b * (headH > 15 ? 0.6 : 0.62)), mw = st.mouthW, half = Math.floor(mw / 2);
+	const lip = st.outline === "ink" ? INK : headH > 15 ? "#6e2238" : LIPS;
+	if (headH >= 16 && (ex.mouth === "flat" || ex.mouth === "smile" || ex.mouth === "smirk")) for (let k = 1 - half; k < mw - 1 - half; k++) set(mx + k, my + 1, "#c56a7c");
+	if (ex.mouth === "flat") { for (let k = -half; k <= mw - 1 - half; k++) set(mx + k, my, k === -half || k === mw - 1 - half ? (headH > 10 ? lip : RAMP.skin[1]) : lip); }
+	else if (ex.mouth === "smile") {
+		for (let k = -half; k <= mw - 1 - half; k++) set(mx + k, my, lip);
+		set(mx - half - 1, my - 1, lip); set(mx + mw - half, my - 1, lip);
+	} else if (ex.mouth === "smirk") {
+		for (let k = -half; k <= mw - 1 - half; k++) set(mx + k, my, lip);
+		set(mx + mw - half, my - 1, lip);
+		if (mw >= 4) set(mx + mw - half + 1, my - 2, lip);
+	} else if (ex.mouth === "laugh") {
+		const h = headH > 15 ? 4 : headH >= 11 ? 3 : 2;
+		for (let r = 0; r < h; r++) {
+			const w2 = mw + 1 - Math.round((r / h) * (mw - 1));
+			const xs = mx - Math.floor(w2 / 2);
+			for (let k = 0; k < w2; k++) set(xs + k, my + r - 1, r === 0 && headH >= 11 ? TEETH : r === h - 1 && headH > 15 && k > 0 && k < w2 - 1 ? TONGUE : MOUTH);
+		}
+		set(mx - Math.floor((mw + 1) / 2) - 1, my - 2, lip); set(mx + Math.ceil((mw + 1) / 2), my - 2, lip);
+	} else if (ex.mouth === "grit") {
+		const w2 = mw;
+		for (let k = 0; k < w2; k++) { set(mx - half + k, my, headH >= 11 ? TEETH : lip); if (headH >= 11) { set(mx - half + k, my - 1, lip); set(mx - half + k, my + 1, lip); } }
+		if (headH >= 11) { set(mx - half - 1, my + 1, lip); set(mx - half + w2, my + 1, lip); }
+		else { set(mx - half - 1, my + 1, lip); set(mx - half + w2, my + 1, lip); }
+	} else if (ex.mouth === "o") {
+		const r = headH > 15 ? 2 : 1;
+		for (let yy = -r; yy <= r; yy++) for (let xx = -r; xx <= r; xx++) if (xx * xx + yy * yy <= r * r + 0.5) set(mx + xx, my + yy, Math.abs(xx) === r || Math.abs(yy) === r ? lip : MOUTH);
+		if (r === 1) set(mx, my, MOUTH);
+	}
+
+	// ---- flame on the right fist
+	const fx = armR.h[0], fy = armR.h[1];
+	for (let y = Math.floor(fy - 8 * kk); y < fy + 2 * kk; y++) for (let x = Math.floor(fx - 4 * kk); x < fx + 5 * kk; x++) {
+		const i = y * SW + x;
+		if (x < 0 || y < 0 || x >= SW || y >= SH || (col[i] && part[i] !== 7)) continue;
+		const dy = (fy - y) / kk, w = (3.2 - dy * 0.32 + (dy < 0 ? -2 : 0)) * kk;
+		if (Math.abs(x + 0.5 - fx - Math.sin(t * 9 + dy) * 0.6 * kk) > w) continue;
+		if (part[i] === 7 && dy < 1) continue;
+		const n2 = hash(Math.floor(x / kk), Math.floor(y / kk + t * 26));
+		if (n2 < 0.3 + dy * 0.06) continue;
+		col[i] = dy > 5 ? PSY[2] : dy > 2 ? PSY[3] : PSY[4]; part[i] = 10;
+	}
+	glows.push([fx, fy - 2 * kk, 10 * kk, PSY[2], 0.75 + 0.15 * Math.sin(t * 13)]);
+	if (ex.glow) glows.push([cx, 26 * kk, 26 * kk, PSY[2], 0.25]);
+
+	// ---- outlines
+	const out = col.slice();
+	const isBody = (i) => col[i] && part[i] !== 10;
+	const nb = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+	if (st.outline === "dark" || st.outline === "ink" || st.outline === "selout") {
+		for (let y = 0; y < SH; y++) for (let x = 0; x < SW; x++) {
+			const i = y * SW + x;
+			if (col[i]) continue;
+			let touch = null;
+			for (const [dx, dy] of nb) { const X = x + dx, Y = y + dy; if (X >= 0 && Y >= 0 && X < SW && Y < SH && isBody(Y * SW + X)) { touch = Y * SW + X; break; } }
+			if (touch === null) continue;
+			out[i] = st.outline === "selout" ? darker(col[touch], 2) : INK;
+		}
+	}
+	if (st.outline === "ink") {
+		// a second outer line, then ink between parts
+		const pass = out.slice();
+		for (let y = 0; y < SH; y++) for (let x = 0; x < SW; x++) {
+			const i = y * SW + x;
+			if (pass[i]) continue;
+			for (const [dx, dy] of nb) { const X = x + dx, Y = y + dy; if (X >= 0 && Y >= 0 && X < SW && Y < SH && pass[Y * SW + X] === INK && !col[Y * SW + X]) { out[i] = INK; break; } }
+		}
+		for (let y = 0; y < SH - 1; y++) for (let x = 0; x < SW - 1; x++) {
+			const i = y * SW + x;
+			if (!isBody(i) || part[i] <= 2 || part[i] >= 9) continue;
+			const r = i + 1, d = i + SW, ok = (j) => isBody(j) && part[j] > 2 && part[j] < 9 && part[j] !== part[i];
+			if ((ok(r) && part[i] < part[r]) || (ok(d) && part[i] < part[d])) out[i] = INK;
+		}
+	}
+	if (st.outline === "selout") {
+		// inner lines a step darker where parts meet, and a green rim on the side facing the fire
+		for (let y = 0; y < SH - 1; y++) for (let x = 0; x < SW - 1; x++) {
+			const i = y * SW + x;
+			if (!isBody(i) || part[i] === 9) continue;
+			const d = i + SW;
+			if (isBody(d) && part[d] !== part[i] && part[d] !== 9 && part[i] !== 1 && part[d] !== 2) out[d] = darker(col[d], 1);
+		}
+		if (st.rim) for (let y = 0; y < SH; y++) {
+			for (let x = SW - 1; x > 0; x--) {
+				const i = y * SW + x;
+				if (isBody(i) && part[i] !== 9) { if (Math.abs(y - fy) < 16 && part[i] !== 1) out[i] = mix(col[i], PSY[3], 0.55); break; }
+			}
+		}
+	}
+	return { px: out, glows, y0, cx };
+}
+
+// ================================================================ color helpers
+const rgbCache = new Map();
+function rgb(h) { let c = rgbCache.get(h); if (!c) { c = [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)]; rgbCache.set(h, c); } return c; }
+function hex(c) { return "#" + c.map((v) => Math.round(clamp(v, 0, 255)).toString(16).padStart(2, "0")).join(""); }
+function mix(a, b, k) { const A = rgb(a), B = rgb(b); return hex(A.map((v, i) => v + (B[i] - v) * k)); }
+function darker(c, steps) {
+	for (const r of Object.values(RAMP)) { const k = r.indexOf(c); if (k >= 0) return r[Math.max(0, k - steps)]; }
+	return mix(c, "#000000", 0.35 * steps);
+}
+
+// ================================================================ cards
+const grid = document.getElementById("grid");
+const cards = STYLES.map((st) => {
+	const card = document.createElement("article");
+	card.className = "card";
+	card.innerHTML = `<div><h2>${st.name}</h2><div class="tag">${st.tag}</div></div>`;
+	const views = document.createElement("div"); views.className = "views";
+	const fig = document.createElement("canvas"); fig.className = "fig";
+	fig.setAttribute("aria-label", `The heroine ${st.T} pixels tall`);
+	fig.style.aspectRatio = `${st.SW} / ${st.SH}`;
+	const face = document.createElement("canvas"); face.className = "face";
+	face.setAttribute("aria-label", `Close-up of her face at ${st.T} pixels tall`);
+	views.append(fig, face);
+	const p = document.createElement("p"); p.textContent = st.note;
+	card.append(views, p);
+	grid.appendChild(card);
+	const SW = st.SW, SH = st.SH;
+	const spr = document.createElement("canvas"); spr.width = SW; spr.height = SH;
+	const lg = document.createElement("canvas"); lg.width = SW; lg.height = SH;
+	const cut = document.createElement("canvas"); cut.width = SW; cut.height = SH;
+	// the matching game screen
+	const mfig = document.createElement("figure"), mcv = document.createElement("canvas");
+	const [MW, MH] = st.screen;
+	mcv.setAttribute("aria-label", `A ${MW} by ${MH} game screen with the ${st.T} pixel heroine on it`);
+	mfig.append(mcv);
+	mfig.insertAdjacentHTML("beforeend", `<figcaption><strong>${st.T} px on ${MW} × ${MH}</strong> · ${1080 / MH}× at 1080p · she is ${Math.round((st.T / MH) * 100)}% of the screen's height</figcaption>`);
+	document.getElementById("mocks").appendChild(mfig);
+	const scr = document.createElement("canvas"); scr.width = MW; scr.height = MH;
+	return { st, fig, face, fctx: fig.getContext("2d"), facectx: face.getContext("2d"), spr, sctx: spr.getContext("2d"), lg, lctx: lg.getContext("2d"), cut, cutctx: cut.getContext("2d"), mcv, mctx: mcv.getContext("2d"), scr, scrctx: scr.getContext("2d"), bgImg: null };
+});
+
+function resize() {
+	const dpr = Math.min(2, window.devicePixelRatio || 1);
+	for (const c of cards) {
+		const w = Math.max(64, Math.round(c.fig.clientWidth * dpr)); c.fig.width = w; c.fig.height = Math.round((w * c.st.SH) / c.st.SW);
+		const mw = Math.max(160, Math.round(c.mcv.clientWidth * dpr)); c.mcv.width = mw; c.mcv.height = Math.round((mw * 9) / 16);
+		const fw = Math.max(64, Math.round(c.face.clientWidth * dpr)); c.face.width = c.face.height = fw;
+	}
+}
+window.addEventListener("resize", () => { resize(); render(); });
+
+function render() {
+	for (const c of cards) {
+		const st = c.st, SW = st.SW, SH = st.SH, { px, glows, y0 } = drawStyle(st, state.t, state.ex), floorY = y0 + st.T;
+		const bg = rgb(st.bg || "#151827"), bg2 = rgb(st.bg ? "#232840" : "#1c2033");
+		const img = c.sctx.createImageData(SW, SH), li = c.lctx.createImageData(SW, SH), ci = c.cutctx.createImageData(SW, SH);
+		for (let y = 0; y < SH; y++) for (let x = 0; x < SW; x++) {
+			const i = y * SW + x, j = i * 4, h = px[i];
+			let r, g, b2;
+			if (h) [r, g, b2] = rgb(h);
+			else { const k = y >= floorY ? bg2 : bg; [r, g, b2] = k; }
+			img.data[j] = r; img.data[j + 1] = g; img.data[j + 2] = b2; img.data[j + 3] = 255;
+			if (h) { ci.data[j] = r; ci.data[j + 1] = g; ci.data[j + 2] = b2; ci.data[j + 3] = 255; }
+		}
+		// floor shadow
+		for (let x = Math.round(SW * 0.34); x < Math.round(SW * 0.67); x++) { const j = (floorY * SW + x) * 4; img.data[j] *= 0.6; img.data[j + 1] *= 0.6; img.data[j + 2] *= 0.6; }
+		const L = new Float32Array(SW * SH * 3);
+		for (const [gx, gy, r, colr, k] of glows) {
+			const C = rgb(colr);
+			for (let y = Math.max(0, Math.floor(gy - r)); y <= Math.min(SH - 1, Math.ceil(gy + r)); y++)
+				for (let x = Math.max(0, Math.floor(gx - r)); x <= Math.min(SW - 1, Math.ceil(gx + r)); x++) {
+					const d = Math.hypot(x + 0.5 - gx, y + 0.5 - gy) / r;
+					if (d >= 1) continue;
+					const f = (1 - d) * (1 - d) * k, i = (y * SW + x) * 3;
+					L[i] += C[0] * f; L[i + 1] += C[1] * f; L[i + 2] += C[2] * f;
+				}
+		}
+		for (let i = 0; i < SW * SH; i++) {
+			li.data[i * 4] = Math.min(255, L[i * 3]); li.data[i * 4 + 1] = Math.min(255, L[i * 3 + 1]); li.data[i * 4 + 2] = Math.min(255, L[i * 3 + 2]); li.data[i * 4 + 3] = 255;
+		}
+		c.sctx.putImageData(img, 0, 0);
+		c.lctx.putImageData(li, 0, 0);
+		c.cutctx.putImageData(ci, 0, 0);
+		const paint = (ctx, sx, sy, sw, sh, w, h) => {
+			ctx.globalCompositeOperation = "source-over";
+			ctx.imageSmoothingEnabled = false;
+			ctx.drawImage(c.spr, sx, sy, sw, sh, 0, 0, w, h);
+			ctx.imageSmoothingEnabled = true;
+			ctx.globalCompositeOperation = "lighter";
+			ctx.drawImage(c.lg, sx, sy, sw, sh, 0, 0, w, h);
+			ctx.globalCompositeOperation = "source-over";
+		};
+		paint(c.fctx, 0, 0, SW, SH, c.fig.width, c.fig.height);
+		// face close-up: a square around the head
+		const size = Math.round(st.headH * 1.45 + 5), fx0 = Math.round(Math.floor(SW / 2) + 0.4 - size / 2), fy0 = Math.max(0, Math.round(y0 + st.headH / 2 - size / 2 + 0.5));
+		paint(c.facectx, fx0, fy0, size, size, c.face.width, c.face.height);
+		drawScreen(c, y0);
+	}
+}
+
+// ================================================================ game screen mockups (the level is the same size on every screen)
+const SKYS = ["#0b0d18", "#0e1120", "#121629", "#171c33", "#1c223d"];
+function buildBackdrop(MW, MH) {
+	const img = new ImageData(MW, MH), u = MW / 320, gy = Math.round(MH * 0.84);
+	const put = (x, y, h) => { if (x < 0 || y < 0 || x >= MW || y >= MH) return; const [r, g, b] = rgb(h), j = (y * MW + x) * 4; img.data[j] = r; img.data[j + 1] = g; img.data[j + 2] = b; img.data[j + 3] = 255; };
+	for (let y = 0; y < MH; y++) for (let x = 0; x < MW; x++) {
+		if (y >= gy) { put(x, y, y === gy ? "#4a5578" : y - gy < 3 * u ? "#2b3350" : "#1d2238"); continue; }
+		put(x, y, SKYS[clamp(Math.floor((y / gy) * (SKYS.length - 1) + BAYER[(y & 3) * 4 + (x & 3)]), 0, SKYS.length - 1)]);
+	}
+	// a distant peak
+	for (let x = 0; x < MW; x++) {
+		const wx = x / u, top = 120 - 46 * Math.max(0, 1 - Math.abs((wx - 230) / 70)) - 18 * Math.max(0, 1 - Math.abs((wx - 120) / 50));
+		for (let y = Math.round(top * u); y < gy; y++) put(x, y, y < (top + 8) * u && top < 100 ? "#56658c" : "#20263d");
+	}
+	// two platforms
+	for (const [px0, py, w] of [[150, 104, 56], [236, 74, 48]]) {
+		for (let y = Math.round(py * u); y < Math.round((py + 6) * u); y++) for (let x = Math.round(px0 * u); x < Math.round((px0 + w) * u); x++) put(x, y, y === Math.round(py * u) ? "#7a87b0" : "#343d5c");
+	}
+	// three skulls of the game's minion size (16 px at 320 wide), hovering
+	for (const [sx, sy] of [[178, 80], [262, 52], [292, 120]]) {
+		const r = 7 * u, cxs = sx * u, cys = sy * u;
+		for (let y = Math.floor(cys - r - 1); y <= cys + r * 1.1; y++) for (let x = Math.floor(cxs - r - 1); x <= cxs + r + 1; x++) {
+			const dx = (x + 0.5 - cxs) / r, dy = (y + 0.5 - cys) / r;
+			const inS = dx * dx + dy * dy < 1 || (Math.abs(dx) < 0.55 && dy > 0 && dy < 1.15);
+			const eye = (Math.hypot(dx + 0.38, dy - 0.05) < 0.27) || (Math.hypot(dx - 0.38, dy - 0.05) < 0.27);
+			if (inS) put(x, y, eye ? "#5cffb0" : dy < -0.3 && dx < 0 ? "#dcefd6" : "#87a48b");
+		}
+	}
+	return { img, gy };
+}
+function drawScreen(c, y0) {
+	const st = c.st, [MW, MH] = st.screen;
+	if (!c.bgImg) c.bgImg = buildBackdrop(MW, MH);
+	const ctx = c.scrctx;
+	ctx.putImageData(c.bgImg.img, 0, 0);
+	const px = Math.round(MW * 0.22 - st.SW / 2), py = c.bgImg.gy - (y0 + st.T);
+	ctx.drawImage(c.cut, px, py);
+	const m = c.mctx, W = c.mcv.width, H = c.mcv.height, k = W / MW;
+	m.globalCompositeOperation = "source-over";
+	m.imageSmoothingEnabled = false;
+	m.drawImage(c.scr, 0, 0, W, H);
+	m.imageSmoothingEnabled = true;
+	m.globalCompositeOperation = "lighter";
+	m.drawImage(c.lg, px * k, py * k, st.SW * k, st.SH * k);
+	m.globalCompositeOperation = "source-over";
+}
+
+// ================================================================ loop and controls
+const exButtons = [...document.querySelectorAll("[data-ex]")];
+function setEx(i) { state.ex = i; exButtons.forEach((b, k) => b.setAttribute("aria-pressed", String(k === i))); }
+let last = 0;
+function frame(now) {
+	const dt = Math.min(0.05, (now - last) / 1000 || 0);
+	last = now;
+	if (!state.paused) {
+		state.t += dt;
+		if (state.cycle && state.t - state.lastSwap > 2.2) { state.lastSwap = state.t; setEx((state.ex + 1) % EXPR.length); }
+		state.blinkAt -= dt;
+		if (state.blinking > 0) state.blinking -= dt;
+		if (state.blinkAt <= 0) { state.blinking = 0.12; state.blinkAt = 2.5 + Math.random() * 2; }
+	}
+	render();
+	requestAnimationFrame(frame);
+}
+exButtons.forEach((b, i) => b.addEventListener("click", () => { setEx(i); setCycle(false); }));
+function setCycle(v) { state.cycle = v; document.getElementById("cycle").setAttribute("aria-pressed", String(v)); state.lastSwap = state.t; }
+function setPaused(v) { state.paused = v; if (v) state.blinking = 0; const b = document.getElementById("pause"); b.setAttribute("aria-pressed", String(v)); b.firstChild.textContent = v ? "Play" : "Pause"; }
+document.getElementById("cycle").addEventListener("click", () => setCycle(!state.cycle));
+document.getElementById("pause").addEventListener("click", () => setPaused(!state.paused));
+window.addEventListener("keydown", (e) => {
+	if (e.target.closest && e.target.closest("button") && e.code === "Space") return;
+	if (e.code === "Space") { e.preventDefault(); setPaused(!state.paused); }
+	else if (e.code === "KeyC") setCycle(!state.cycle);
+	else if (/^Digit[1-6]$/.test(e.code)) { setEx(Number(e.code.slice(5)) - 1); setCycle(false); }
+});
+if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) setPaused(true);
+setEx(0);
+resize();
+requestAnimationFrame(frame);
+</script>
+
+</body>
+</html>

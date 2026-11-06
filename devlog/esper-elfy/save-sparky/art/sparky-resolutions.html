@@ -1,0 +1,580 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="One simulation, drawn four times. Sparky hops through the blizzard with squash and stretch while corrupted skulls circle him.">
+<title>Sparky at Four Resolutions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: header and controls, then a 2 x 2 grid of the same scene at four internal resolutions, then short notes. Dark, single look on purpose: it matches the blizzard. */
+:root {
+	--bg: #0b0f17;
+	--panel: #111725;
+	--line: #222b3e;
+	--fg: #dfe7f5;
+	--muted: #8b97ae;
+	--cyan: #3fe3ff;
+	--display: "Chakra Petch", "Segoe UI", system-ui, sans-serif;
+	--body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+	--mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+	color-scheme: dark;
+}
+html, body { background: var(--bg); color: var(--fg); }
+body {
+	font-family: var(--body); font-size: 15px; line-height: 1.55;
+	padding-block: 32px 48px;
+	padding-left: max(16px, env(safe-area-inset-left, 0px));
+	padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 1360px; margin: 0 auto; display: grid; gap: 24px; }
+header { display: grid; gap: 8px; max-width: 70ch; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+h1 { font-family: var(--display); font-weight: 600; font-size: clamp(30px, 5vw, 46px); line-height: 1.05; margin: 0; text-wrap: balance; }
+header p { margin: 0; color: var(--muted); }
+.controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+button {
+	font-family: var(--mono); font-size: 13px; color: var(--fg);
+	background: var(--panel); border: 1px solid var(--line); border-radius: 4px;
+	padding: 8px 14px; cursor: pointer;
+}
+button:hover { border-color: var(--muted); }
+button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+button[aria-pressed="true"] { border-color: var(--cyan); color: var(--cyan); }
+kbd { font-family: var(--mono); font-size: 11px; color: var(--muted); margin-left: 6px; }
+.grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+@media (min-width: 900px) { .grid { grid-template-columns: 1fr 1fr; } }
+figure { margin: 0; display: grid; gap: 8px; min-width: 0; align-content: start; }
+.label { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; }
+.label h2 { font-family: var(--display); font-weight: 500; font-size: 22px; margin: 0; font-variant-numeric: tabular-nums; }
+.label span { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+canvas { display: block; width: 100%; max-width: 100%; aspect-ratio: 16 / 9; border: 1px solid var(--line); background: #000; }
+.gray canvas { filter: grayscale(1); }
+ul { margin: 0; padding-left: 18px; color: var(--muted); display: grid; gap: 4px; max-width: 72ch; }
+li strong { color: var(--fg); font-weight: 500; }
+</style>
+</head>
+<body>
+<nav style="font:14px/1.2 system-ui,sans-serif;padding:8px 16px;background:#05071a;border-bottom:1px solid #232838"><a href="./" style="color:#3ef2ff;text-decoration:none">&larr; Art studies</a></nav>
+<div class="wrap" id="app">
+	<header>
+		<div class="eyebrow">Save Sparky · fidelity test</div>
+		<h1>Sparky at Four Resolutions</h1>
+		<p>One simulation, drawn four times. Sparky hops through the blizzard with squash and stretch while corrupted skulls circle him. Every shape is math, so each resolution draws the same scene with as much detail as its pixels allow.</p>
+	</header>
+
+	<div class="controls">
+		<button id="pause" type="button" aria-pressed="false">Pause<kbd>Space</kbd></button>
+		<button id="slow" type="button" aria-pressed="false">Slow motion ¼×<kbd>S</kbd></button>
+		<button id="gray" type="button" aria-pressed="false">Grayscale<kbd>G</kbd></button>
+	</div>
+
+	<div class="grid" id="grid"></div>
+
+	<ul>
+		<li><strong>The motion is identical in all four.</strong> Anticipation crouch, stretch on takeoff, a hang at the top, squash on landing with a springy overshoot, and an ear and tail that lag behind.</li>
+		<li><strong>Watch what drops out at low resolution:</strong> the skulls' teeth and the glint in Sparky's eye are thinner than one pixel at the small sizes, so they only appear in the larger views. At 160 the skulls are blobs with eye sockets.</li>
+		<li><strong>Outlines stay one pixel at every size,</strong> so they look bold at 160 and fine at 640.</li>
+		<li><strong>Slow motion shows the squash steps.</strong> At 160 the squash snaps between a few sizes. At 640 it is nearly smooth.</li>
+	</ul>
+</div>
+
+<script>
+"use strict";
+const TAU = Math.PI * 2, BW = 320, BH = 180, FLOOR = 150;
+const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+function rng(seed) {
+	return () => {
+		seed = (seed + 0x6d2b79f5) | 0;
+		let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+		t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+		return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+	};
+}
+const BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5].map((v) => (v + 0.5) / 16);
+const bayer = (x, y) => BAYER[(y & 3) * 4 + (x & 3)];
+
+// ================================================================ simulation (world units: 320 x 180)
+const R = rng(5);
+const LAYERS = [
+	{ n: 150, spd: [90, 130], len: [2, 4], drop: [6, 16], w: 0.5 },
+	{ n: 80, spd: [140, 190], len: [5, 8], drop: [10, 24], w: 0.8 },
+	{ n: 24, spd: [220, 280], len: [10, 16], drop: [16, 30], w: 1.3 },
+];
+const sim = { t: 0, flakes: [], puffs: [], bits: [] };
+LAYERS.forEach((L, li) => {
+	for (let i = 0; i < L.n; i++) sim.flakes.push({
+		L: li, x: R() * 360 - 20, y: R() * 145,
+		spd: L.spd[0] + R() * (L.spd[1] - L.spd[0]), len: L.len[0] + R() * (L.len[1] - L.len[0]),
+		drop: L.drop[0] + R() * (L.drop[1] - L.drop[0]), ph: R() * TAU, keep: R(),
+	});
+});
+const gust = (x) => clamp(0.5 + 0.5 * Math.sin(TAU * (x / 380 - sim.t / 3.2)), 0, 1);
+
+const DS = 1.5, SS = 1.35, G = 520, HOP_H = 46, V0 = Math.sqrt(2 * G * HOP_H);
+const dog = {
+	x: 140, y: FLOOR, vx: 0, vy: 0, face: 1, phase: "idle", tp: 0, hops: 0, air: 0,
+	sx: 1, sy: 1, vsx: 0, vsy: 0, ear: 0.15, earV: 0, tail: -1.1, tailV: 0, lean: 0,
+};
+
+function spring(val, vel, target, k, c, dt) {
+	vel += (k * (target - val) - c * vel) * dt;
+	return [val + vel * dt, vel];
+}
+
+function update(dt) {
+	const s = sim, d = dog;
+	s.t += dt;
+	for (const f of s.flakes) {
+		const g = gust(f.x);
+		f.x += f.spd * (0.5 + 0.8 * g) * dt;
+		f.y += (f.drop + 6 * Math.sin(s.t * 2 + f.ph)) * dt;
+		if (f.x > 340 || f.y > FLOOR - 2) { f.x = -20 - R() * 30; f.y = R() * 145; }
+	}
+
+	// the hop cycle: idle, crouch, air, land; turn around after three hops
+	d.tp += dt;
+	let tsx = 1, tsy = 1, k = 260, c = 11;
+	if (d.phase === "idle") {
+		tsy = 1 + 0.025 * Math.sin(s.t * 6); tsx = 2 - tsy;
+		if (d.tp > 0.38) { d.phase = "crouch"; d.tp = 0; }
+	} else if (d.phase === "crouch") {
+		tsx = 1.18; tsy = 0.76; k = 500;
+		if (d.tp > 0.16) {
+			d.phase = "air"; d.tp = 0; d.vy = -V0;
+			d.vx = (30 / ((2 * V0) / G)) * d.face;
+			d.sx = 0.8; d.sy = 1.28; d.vsx = d.vsy = 0;
+			for (let i = 0; i < 5; i++) s.bits.push({ x: d.x + (R() - 0.5) * 10, y: FLOOR - 1, vx: (R() - 0.5) * 50 - d.face * 20, vy: -(30 + R() * 50), life: 0.4 + R() * 0.3, age: 0 });
+		}
+	} else if (d.phase === "air") {
+		d.vy += G * dt; d.y += d.vy * dt; d.x += d.vx * dt;
+		d.air = clamp(d.tp / ((2 * V0) / G));
+		const sp = Math.abs(d.vy) / V0;
+		tsy = 1 + 0.2 * sp; tsx = 1 - 0.13 * sp; k = 900; c = 30;
+		if (d.y >= FLOOR) {
+			d.y = FLOOR; d.phase = "land"; d.tp = 0; d.vx = 0;
+			d.sx = 1.34; d.sy = 0.68; d.vsx = d.vsy = 0;
+			d.earV += 9; d.tailV -= 7;
+			for (let i = 0; i < 7; i++) {
+				const side = i % 2 ? 1 : -1;
+				s.puffs.push({ x: d.x + side * (4 + R() * 6), y: FLOOR - 1, vx: side * (18 + R() * 26), vy: -(5 + R() * 10), r: 1.6 + R() * 1.6, life: 0.6 + R() * 0.5, age: 0 });
+			}
+			for (let i = 0; i < 6; i++) s.bits.push({ x: d.x + (R() - 0.5) * 14, y: FLOOR - 1, vx: (R() - 0.5) * 80, vy: -(40 + R() * 60), life: 0.4 + R() * 0.3, age: 0 });
+		}
+	} else if (d.phase === "land") {
+		if (d.tp > 0.3) {
+			d.hops++;
+			if (d.hops % 3 === 0) { d.face *= -1; d.sx = 0.9; d.sy = 1.08; }
+			d.phase = "idle"; d.tp = 0;
+		}
+	}
+	[d.sx, d.vsx] = spring(d.sx, d.vsx, tsx, k, c, dt);
+	[d.sy, d.vsy] = spring(d.sy, d.vsy, tsy, k, c, dt);
+
+	// ear and tail lag behind the body's vertical motion
+	const vyT = d.phase === "air" ? d.vy : 0;
+	const wag = d.phase === "idle" ? 0.45 * Math.sin(s.t * 15) : 0;
+	[d.ear, d.earV] = spring(d.ear, d.earV, 0.15 + clamp(-vyT * 0.004, -0.6, 0.9), 140, 7, dt);
+	[d.tail, d.tailV] = spring(d.tail, d.tailV, -1.1 + wag + clamp(vyT * 0.003, -0.7, 0.7), 160, 8, dt);
+	d.lean += ((d.phase === "air" ? d.vy * 0.0011 * d.face : 0) - d.lean) * Math.min(1, dt * 12);
+
+	for (const p of s.puffs) { p.vx *= Math.exp(-dt * 3); p.x += (p.vx + 18 * gust(p.x)) * dt; p.y += p.vy * dt; p.r += 4 * dt; p.age += dt; }
+	for (const b of s.bits) { b.vy += 400 * dt; b.x += b.vx * dt; b.y += b.vy * dt; if (b.y > FLOOR) b.age = b.life; b.age += dt; }
+	s.puffs = s.puffs.filter((p) => p.age < p.life);
+	s.bits = s.bits.filter((b) => b.age < b.life);
+}
+
+// ================================================================ skulls on a tilted orbit around the dog
+const ORB = { rx: 36, ry: 9, tilt: -0.12, n: 5, period: 3.4 };
+function skullAt(i, t) {
+	const a = (TAU * t) / ORB.period + (i * TAU) / ORB.n, ex = Math.cos(a) * ORB.rx, ey = Math.sin(a) * ORB.ry;
+	const cx = dog.x, cy = dog.y - 11 * DS * dog.sy;
+	return {
+		x: cx + ex * Math.cos(ORB.tilt) - ey * Math.sin(ORB.tilt),
+		y: cy + ex * Math.sin(ORB.tilt) + ey * Math.cos(ORB.tilt) + Math.sin(t * 3.7 + i * 1.7) * 1.5,
+		z: Math.sin(a),
+	};
+}
+
+// ================================================================ painter
+const hexCache = new Map();
+function hx(h) {
+	let c = hexCache.get(h);
+	if (!c) { c = [parseInt(h.slice(1, 3), 16) / 255, parseInt(h.slice(3, 5), 16) / 255, parseInt(h.slice(5, 7), 16) / 255]; hexCache.set(h, c); }
+	return c;
+}
+class Painter {
+	constructor(w, h) {
+		this.w = w; this.h = h; this.f = w / BW;
+		this.col = new Float32Array(w * h * 3); this.lit = new Float32Array(w * h * 3);
+		this.cv = document.createElement("canvas"); this.cv.width = w; this.cv.height = h;
+		this.lcv = document.createElement("canvas"); this.lcv.width = w; this.lcv.height = h;
+		this.cx = this.cv.getContext("2d"); this.lcx = this.lcv.getContext("2d");
+		this.img = this.cx.createImageData(w, h); this.limg = this.lcx.createImageData(w, h);
+		this.buf = new Int32Array(0);
+	}
+	put(x, y, h, a = 1) {
+		x = Math.floor(x); y = Math.floor(y);
+		if (x < 0 || y < 0 || x >= this.w || y >= this.h || a <= 0) return;
+		const c = hx(h), i = (y * this.w + x) * 3, col = this.col;
+		col[i] += (c[0] - col[i]) * a; col[i + 1] += (c[1] - col[i + 1]) * a; col[i + 2] += (c[2] - col[i + 2]) * a;
+	}
+	light(x, y, h, k) {
+		if (x < 0 || y < 0 || x >= this.w || y >= this.h) return;
+		const c = hx(h), i = (y * this.w + x) * 3;
+		this.lit[i] += c[0] * k; this.lit[i + 1] += c[1] * k; this.lit[i + 2] += c[2] * k;
+	}
+	// world-unit helpers: positions and radii in the 320 x 180 world, scaled to this painter
+	wglow(x, y, r, h, k) {
+		const f = this.f; x *= f; y *= f; r = Math.max(1.5, r * f);
+		if (k <= 0.004) return;
+		for (let py = Math.max(0, Math.floor(y - r)); py <= Math.min(this.h - 1, Math.ceil(y + r)); py++)
+			for (let px = Math.max(0, Math.floor(x - r)); px <= Math.min(this.w - 1, Math.ceil(x + r)); px++) {
+				const d = Math.hypot(px + 0.5 - x, py + 0.5 - y) / r;
+				if (d < 1) this.light(px, py, h, (1 - d) * (1 - d) * k);
+			}
+	}
+	wdisc(x, y, r, h, a = 1) {
+		const f = this.f; x *= f; y *= f; r = Math.max(0.5, r * f);
+		for (let py = Math.floor(y - r); py <= Math.ceil(y + r); py++)
+			for (let px = Math.floor(x - r); px <= Math.ceil(x + r); px++)
+				if (Math.hypot(px + 0.5 - x, py + 0.5 - y) <= r) this.put(px, py, h, a);
+	}
+	wline(x0, y0, x1, y1, h, a = 1, width = 0) {
+		const f = this.f; x0 *= f; y0 *= f; x1 *= f; y1 *= f;
+		const n = Math.max(1, Math.ceil(Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0)))), w = Math.max(1, Math.round(width * f));
+		for (let i = 0; i <= n; i++) {
+			const x = x0 + ((x1 - x0) * i) / n, y = y0 + ((y1 - y0) * i) / n;
+			for (let k = 0; k < w; k++) this.put(x, y + k - (w >> 1), h, a);
+		}
+	}
+	// a shape shaded per pixel: fn(worldX, worldY, px, py) returns a color or null; empty pixels next to
+	// filled ones become a one-pixel outline
+	shape(wx0, wy0, wx1, wy1, fn, outline) {
+		const f = this.f, x0 = Math.max(0, Math.floor(wx0 * f) - 1), y0 = Math.max(0, Math.floor(wy0 * f) - 1);
+		const x1 = Math.min(this.w - 1, Math.ceil(wx1 * f) + 1), y1 = Math.min(this.h - 1, Math.ceil(wy1 * f) + 1);
+		const bw = x1 - x0 + 1, bh = y1 - y0 + 1;
+		if (bw <= 0 || bh <= 0) return;
+		const cols = new Array(bw * bh);
+		for (let py = 0; py < bh; py++) for (let px = 0; px < bw; px++)
+			cols[py * bw + px] = fn((x0 + px + 0.5) / f, (y0 + py + 0.5) / f, x0 + px, y0 + py);
+		for (let py = 0; py < bh; py++) for (let px = 0; px < bw; px++) {
+			const c = cols[py * bw + px];
+			if (c) { this.put(x0 + px, y0 + py, c); continue; }
+			if (!outline) continue;
+			const n = (px > 0 && cols[py * bw + px - 1]) || (px < bw - 1 && cols[py * bw + px + 1]) || (py > 0 && cols[(py - 1) * bw + px]) || (py < bh - 1 && cols[(py + 1) * bw + px]);
+			if (n) this.put(x0 + px, y0 + py, outline);
+		}
+	}
+	compose() {
+		const N = this.w * this.h, col = this.col, lit = this.lit, d = this.img.data, l = this.limg.data;
+		for (let i = 0, j = 0; i < N * 3; i += 3, j += 4) {
+			d[j] = clamp(col[i] + lit[i] * 0.5) * 255; d[j + 1] = clamp(col[i + 1] + lit[i + 1] * 0.5) * 255; d[j + 2] = clamp(col[i + 2] + lit[i + 2] * 0.5) * 255; d[j + 3] = 255;
+			l[j] = clamp(lit[i] * 0.9) * 255; l[j + 1] = clamp(lit[i + 1] * 0.9) * 255; l[j + 2] = clamp(lit[i + 2] * 0.9) * 255; l[j + 3] = 255;
+		}
+		this.cx.putImageData(this.img, 0, 0);
+		this.lcx.putImageData(this.limg, 0, 0);
+	}
+	blit(ctx, cw, ch) {
+		ctx.setTransform(1, 0, 0, 1, 0, 0);
+		ctx.globalCompositeOperation = "source-over";
+		ctx.imageSmoothingEnabled = false;
+		ctx.drawImage(this.cv, 0, 0, cw, ch);
+		ctx.imageSmoothingEnabled = true;
+		ctx.globalCompositeOperation = "lighter";
+		ctx.drawImage(this.lcv, 0, 0, cw, ch);
+		ctx.globalCompositeOperation = "source-over";
+	}
+}
+
+// ================================================================ noise for sheets and spindrift
+const NW = 64, NH = 32, nz = new Float32Array(NW * NH);
+{ const r = rng(11); for (let i = 0; i < nz.length; i++) nz[i] = r(); }
+function vnoise(x, y) {
+	const xi = Math.floor(x), yi = Math.floor(y), fx = x - xi, fy = y - yi;
+	const sx = fx * fx * (3 - 2 * fx), sy = fy * fy * (3 - 2 * fy);
+	const x0 = xi & 63, x1 = (xi + 1) & 63, r0 = (yi & 31) * NW, r1 = ((yi + 1) & 31) * NW;
+	const a = nz[r0 + x0], b = nz[r0 + x1], c = nz[r1 + x0], d = nz[r1 + x1];
+	const top = a + (b - a) * sx, bot = c + (d - c) * sx;
+	return top + (bot - top) * sy;
+}
+
+// ================================================================ scene
+const SKY = ["#121827", "#151c2e", "#192136", "#1e273f", "#232d48", "#283452"];
+const SNOW = ["#3b4a68", "#5f7398", "#97abcd", "#d4e1f5", "#ffffff"];
+const LAYER_COLS = [[0, 1, 2], [1, 2, 3], [1, 3, 4]];
+const ridge = (x) => 122 - 34 * Math.max(0, 1 - Math.abs((x - 92) / 62)) - 24 * Math.max(0, 1 - Math.abs((x - 238) / 54)) - 2.5 * Math.sin(x * 0.21) - 1.5 * Math.sin(x * 0.53 + 1);
+const crest = (x) => FLOOR - 1.6 - 1.1 * Math.sin(x * 0.13) - 0.6 * Math.sin(x * 0.31 + 1);
+
+function drawScene(p) {
+	const s = sim, f = p.f, W = p.w, H = p.h;
+	p.lit.fill(0);
+	// the sky, the peak and the grid never move: paint them once per resolution and copy them in
+	if (!p.bg) { drawBackdrop(p); p.bg = p.col.slice(); }
+	p.col.set(p.bg);
+
+	// sheets of blown snow (noise in world space, so every resolution shows the same gusts)
+	const sheet = hx("#8fa3c6"), col = p.col, k = SF / f;
+	for (let y = 0; y < Math.floor(140 * f); y++) {
+		const row = Math.min(SHEET_H - 1, Math.floor((y + 0.5) * k)) * SHEET_W;
+		for (let x = 0; x < W; x++) {
+			const d = sheetD[row + Math.min(SHEET_W - 1, Math.floor((x + 0.5) * k))];
+			if (d > 0.07) {
+				const a = d > 0.24 ? 0.22 : 0.1, i = (y * W + x) * 3;
+				col[i] += (sheet[0] - col[i]) * a; col[i + 1] += (sheet[1] - col[i + 1]) * a; col[i + 2] += (sheet[2] - col[i + 2]) * a;
+				if (d > 0.24) p.light(x, y, "#97abcd", 0.025);
+			}
+		}
+	}
+	drawWeather(p);
+}
+
+// the sheets' density, sampled once a frame on the finest grid and shared by every view
+const SF = 2, SHEET_W = BW * SF, SHEET_H = 140 * SF, sheetD = new Float32Array(SHEET_W * SHEET_H);
+let sheetT = -1;
+function computeSheets() {
+	if (sheetT === sim.t) return;
+	sheetT = sim.t;
+	const shift = sim.t * 70;
+	for (let y = 0; y < SHEET_H; y++) {
+		const wy = (y + 0.5) / SF, wob = 0.6 * Math.sin(wy * 0.09 + sim.t);
+		for (let x = 0; x < SHEET_W; x++) {
+			const wx = (x + 0.5) / SF;
+			const n = 0.75 * vnoise((wx - shift) / 48, wy / 2.6 + wob) + 0.25 * vnoise((wx - shift * 1.3) / 16, wy / 1.5 + 7);
+			sheetD[y * SHEET_W + x] = (n - 0.62) * 2.4 * (0.25 + gust(wx));
+		}
+	}
+}
+
+function drawBackdrop(p) {
+	const f = p.f, W = p.w, H = p.h, col = p.col;
+	// sky: bands blended with an ordered dither (finer at higher resolution)
+	for (let y = 0; y < H; y++) {
+		const v = clamp(y / f / FLOOR);
+		for (let x = 0; x < W; x++) {
+			const c = hx(SKY[clamp(Math.floor(v * (SKY.length - 1) + bayer(x, y)), 0, SKY.length - 1)]), i = (y * W + x) * 3;
+			col[i] = c[0]; col[i + 1] = c[1]; col[i + 2] = c[2];
+		}
+	}
+
+	// the peak in the distance: rock with a snowcap, lit on the left slopes
+	for (let x = 0; x < W; x++) {
+		const wx = (x + 0.5) / f, top = ridge(wx), lit = (wx < 92 && wx > 30) || (wx < 238 && wx > 184);
+		for (let y = Math.floor(top * f); y < Math.ceil(FLOOR * f); y++) {
+			const wy = (y + 0.5) / f;
+			if (wy < top) continue;
+			const cap = wy < 102 + 3 * Math.sin(wx * 0.37) + 2 * Math.sin(wx * 1.1);
+			const sunny = lit && wy < 121;
+			p.put(x, y, cap ? (sunny ? "#a9bad8" : "#6d7ea3") : sunny ? "#34405f" : "#262f49");
+		}
+	}
+
+	// dotted grid
+	const step = Math.max(1, Math.round(f));
+	for (let gx = 0; gx <= BW; gx += 16) for (let y = 0; y < FLOOR * f; y += 2 * step) p.put(gx * f, y, "#2c3852");
+	for (let gy = 16; gy < FLOOR; gy += 16) for (let x = 0; x < W; x += 2 * step) p.put(x, gy * f, "#2c3852");
+}
+
+function drawWeather(p) {
+	const s = sim, f = p.f, W = p.w, H = p.h;
+	// snow streaks at three depths
+	for (const fl of s.flakes) {
+		const g = gust(fl.x), vx = fl.spd * (0.5 + 0.8 * g), l = Math.hypot(vx, fl.drop), ux = vx / l, uy = fl.drop / l;
+		const L = fl.len * (0.7 + 0.6 * g), [c0, c1, c2] = LAYER_COLS[fl.L].map((i) => SNOW[i]), w = LAYERS[fl.L].w;
+		if (fl.L === 0 && fl.keep > 0.4 + 0.7 * g) continue;
+		p.wline(fl.x - ux * L, fl.y - uy * L, fl.x - ux * L * 0.45, fl.y - uy * L * 0.45, c0, 0.7, w * 0.8);
+		p.wline(fl.x - ux * L * 0.45, fl.y - uy * L * 0.45, fl.x - ux, fl.y - uy, c1, 1, w);
+		p.wdisc(fl.x, fl.y, Math.max(0.3, w * 0.45), fl.L === 2 && g > 0.6 ? "#ffffff" : c2);
+		if (fl.L === 2) p.wglow(fl.x, fl.y, 4, "#97abcd", 0.08 + 0.1 * g);
+	}
+
+	// ground: drift crest, packed snow below, spindrift above
+	for (let x = 0; x < W; x++) {
+		const wx = (x + 0.5) / f, top = crest(wx), g = gust(wx);
+		for (let y = Math.floor((top - 9) * f); y < H; y++) {
+			const wy = (y + 0.5) / f, d = wy - top;
+			if (d >= 0) {
+				const c = d < 0.9 ? "#ffffff" : d < 2.2 ? "#c6d4ec" : d < 5 ? "#8ea3c6" : d < 14 ? "#5f7398" : "#3b4a68";
+				p.put(x, y, c);
+				if (d < 0.9) p.light(x, y, "#d4e1f5", 0.05);
+			} else {
+				const n = vnoise((wx - s.t * 130) / 5, wy / 1.6 + 40), sd = (n - 0.52) * 3 * (0.4 + g) * (1 + d / 9);
+				if (sd > 0.06) p.put(x, y, "#d4e1f5", sd > 0.3 ? 0.45 : 0.2);
+			}
+		}
+	}
+
+	// skulls behind, then Sparky, then skulls in front
+	const order = Array.from({ length: ORB.n }, (_, i) => [i, skullAt(i, s.t)]).sort((a, b) => a[1].z - b[1].z);
+	for (const [i, sk] of order) if (sk.z < 0) drawSkull(p, i, sk);
+	for (const pf of s.puffs) {
+		const a = 1 - pf.age / pf.life;
+		p.wdisc(pf.x, pf.y, pf.r * 1.3, "#7f91b4", 0.4 * a);
+		p.wdisc(pf.x, pf.y - pf.r * 0.35, pf.r * 0.6, "#c6d4ec", 0.45 * a);
+	}
+	drawDog(p);
+	for (const b of s.bits) p.wdisc(b.x, b.y, 0.5, "#ffffff", 1 - b.age / b.life);
+	for (const [i, sk] of order) if (sk.z >= 0) drawSkull(p, i, sk);
+	p.compose();
+}
+
+// ================================================================ Sparky, drawn per pixel from simple shapes
+const FUR = ["#5d6d90", "#9fb0cf", "#d9e3f3", "#ffffff"];
+const SADDLE = ["#232b40", "#36405c", "#4f5c7c", "#6f7d9e"];
+const OUT = "#0e1322";
+function inEll(x, y, cx, cy, rx, ry) { const nx = (x - cx) / rx, ny = (y - cy) / ry; return nx * nx + ny * ny <= 1; }
+function inRotEll(x, y, cx, cy, rx, ry, a) {
+	const c = Math.cos(a), s = Math.sin(a), dx = x - cx, dy = y - cy;
+	return inEll(dx * c + dy * s, -dx * s + dy * c, 0, 0, rx, ry);
+}
+function segDist(x, y, x0, y0, x1, y1) {
+	const dx = x1 - x0, dy = y1 - y0, t = clamp(((x - x0) * dx + (y - y0) * dy) / (dx * dx + dy * dy || 1));
+	return Math.hypot(x - (x0 + dx * t), y - (y0 + dy * t));
+}
+// light from the upper left (of the screen): pick a ramp step from a surface direction
+function shadeStep(nx, ny, face, px, py) {
+	const l = -0.55 * nx * face - 0.83 * ny + (bayer(px, py) - 0.5) * 0.18;
+	return l > 0.6 ? 3 : l > 0.05 ? 2 : l > -0.5 ? 1 : 0;
+}
+
+function drawDog(p) {
+	const d = dog, face = d.face, ca = Math.cos(-d.lean), sa = Math.sin(-d.lean);
+	// leg pose: straight on the ground, reaching at takeoff and landing, tucked at the top of the hop
+	const air = d.phase === "air", tuck = air ? Math.sin(Math.PI * d.air) : 0;
+	const fxo = air ? 3 - 1.8 * tuck : 0, fyo = air ? -1.2 - 2.6 * tuck : 0;
+	const bxo = air ? -3 + 1.4 * tuck : 0, byo = air ? -1 - 2.2 * tuck : 0;
+	const legs = [
+		[3.6, -7, 3.6 + fxo, -0.6 + fyo, true], [-6.4, -7, -6.4 + bxo, -0.6 + byo, true],
+		[5.2, -7, 5.2 + fxo, -0.6 + fyo, false], [-4.8, -7, -4.8 + bxo, -0.6 + byo, false],
+	];
+	const tailA = d.tail, t0x = -7.6, t0y = -12, t1x = t0x + Math.cos(Math.PI + tailA) * 4.2, t1y = t0y + Math.sin(Math.PI + tailA) * 4.2;
+	const t2x = t1x + Math.cos(Math.PI + tailA + 0.9) * 3.6, t2y = t1y + Math.sin(Math.PI + tailA + 0.9) * 3.6;
+
+	p.shape(d.x - 30 * DS, d.y - 34 * DS, d.x + 30 * DS, d.y + 2, (wx, wy, px, py) => {
+		// world to Sparky's local space: feet at the origin, facing +x, squash and stretch undone
+		let X = wx - d.x, Y = wy - d.y;
+		const rx = X * ca - Y * sa, ry = X * sa + Y * ca;
+		X = (rx / d.sx / DS) * face; Y = ry / d.sy / DS;
+		if (X < -16 || X > 18 || Y < -26 || Y > 0.5) return null;
+
+		// front to back: eye, nose, collar, ear, head, snout, near legs, body, tail, far legs
+		if (inEll(X, Y, 10.1, -17.2, 0.95, 1.05)) return inEll(X, Y, 9.75, -17.55, 0.38, 0.38) ? "#ffffff" : "#0b1020";
+		if (inEll(X, Y, 15.4, -15.5, 1, 0.85)) return "#0b1020";
+		if (inRotEll(X, Y, 6.8, -20.6, 1.7, 3.4, -0.25 - d.ear)) {
+			const tip = Y < -22.2;
+			return tip ? SADDLE[0] : SADDLE[shadeStep(-0.6, -0.4, face, px, py) > 1 ? 2 : 1];
+		}
+		const head = inEll(X, Y, 8.6, -16.4, 4.7, 4.5), snout = inEll(X, Y, 12.6, -15, 3.3, 2.2);
+		if (head || snout) {
+			const cx = snout && !head ? 12.6 : 8.6, cy = snout && !head ? -15 : -16.4;
+			const st = shadeStep((X - cx) / 4.6, (Y - cy) / 4.4, face, px, py);
+			const cap = Y < -18 + (X - 8.6) * 0.1 && X < 11 && !(inEll(X, Y, 10.1, -17.6, 1.9, 1.5));
+			return cap ? SADDLE[st] : FUR[st];
+		}
+		const collar = Math.abs(X - 5.4 - (Y + 12) * 0.28) < 0.95 && Y > -15 && Y < -8.4 && inEll(X, Y, 4.8, -11.6, 4.4, 5);
+		if (collar) return Y < -12 ? "#bff6ff" : "#3fe3ff";
+		for (const [hx0, hy0, fx, fy, far] of legs) {
+			if (far) continue;
+			if (segDist(X, Y, hx0, hy0, fx, fy) < 1.45) return FUR[Y < -3 ? 1 : 2];
+		}
+		const neck = inEll(X, Y, 4.8, -11.6, 4.2, 4.6), body = inEll(X, Y, -0.6, -10, 8.8, 4.9);
+		if (neck || body) {
+			const st = shadeStep((X + 0.6) / 8.8, (Y + 10) / 4.9, face, px, py);
+			const saddle = Y < -11.3 - 0.18 * X && X < 4.5;
+			return saddle ? SADDLE[st] : FUR[st];
+		}
+		const td = Math.min(segDist(X, Y, t0x, t0y, t1x, t1y), segDist(X, Y, t1x, t1y, t2x, t2y));
+		if (td < 1.7) return segDist(X, Y, t1x, t1y, t2x, t2y) < 1.1 && td < 1.1 ? FUR[3] : SADDLE[2];
+		for (const [hx0, hy0, fx, fy, far] of legs) {
+			if (!far) continue;
+			if (segDist(X, Y, hx0, hy0, fx, fy) < 1.35) return SADDLE[2];
+		}
+		return null;
+	}, OUT);
+	// the collar hums with psychic light
+	p.wglow(d.x + 5 * DS * face, d.y - 11.5 * DS * d.sy, 9, "#3fe3ff", 0.3);
+}
+
+// ================================================================ skulls, drawn per pixel
+const BONE = ["#1f2c28", "#3f5a51", "#7da396", "#c4e3d4", "#f0fff7"];
+function drawSkull(p, i, sk) {
+	const t = sim.t, far = sk.z < 0, sh = far ? 1 : 0, depth = 0.55 + 0.45 * (sk.z + 1) / 2;
+	// ghost smoke trailing along the orbit
+	for (let k = 7; k >= 1; k--) {
+		const q = skullAt(i, t - k * 0.05), age = k / 7;
+		p.wdisc(q.x, q.y - age * 6 + 2, (1.6 + age * 2.6) * SS, age < 0.4 ? "#5cc4a0" : age < 0.7 ? "#2f8a72" : "#1d5c50", (1 - age) * 0.45 * depth);
+	}
+	const flick = 0.5 + 0.5 * Math.sin(t * 9 + i * 2.1);
+	p.shape(sk.x - 6 * SS, sk.y - 7 * SS, sk.x + 6 * SS, sk.y + 6 * SS, (wx, wy, px, py) => {
+		const X = (wx - sk.x) / SS, Y = (wy - sk.y) / SS;
+		const cran = inEll(X, Y, 0, -1, 4.2, 4), jaw = Math.abs(X) < 2.7 && Y > 1.2 && Y < 4.3 && !(Math.abs(X) > 2 && Y > 3.6);
+		if (!cran && !jaw) return null;
+		if (inEll(X, Y, -1.65, -0.2, 1.25, 1.35) || inEll(X, Y, 1.65, -0.2, 1.25, 1.35)) {
+			const glowEye = inEll(X, Y, -1.5, 0, 0.5, 0.5) || inEll(X, Y, 1.5, 0, 0.5, 0.5);
+			return glowEye ? (far ? "#5cc4a0" : flick > 0.7 ? "#ffffff" : "#b8ffe0") : "#081210";
+		}
+		if (Math.abs(X) < 0.55 - (Y - 1) * 0.2 && Y > 1 && Y < 2.3) return "#081210";
+		if (jaw && Y > 2.6 && (Math.abs(X) < 0.2 || Math.abs(Math.abs(X) - 1.35) < 0.2)) return "#081210";
+		const st = shadeStep(X / 4.2, (Y + 1) / 4, 1, px, py) + 1 - sh;
+		return BONE[clamp(st, 0, 4)];
+	}, "#06100d");
+	for (const ex of [-1.5, 1.5]) p.wglow(sk.x + ex * SS, sk.y, 6, "#5cffb0", (far ? 0.18 : 0.45) * (0.6 + 0.4 * flick) * depth);
+	p.wglow(sk.x, sk.y, 10, "#2f8a72", 0.15 * depth);
+}
+
+// ================================================================ views and loop
+const SIZES = [[160, 90], [320, 180], [480, 270], [640, 360]];
+const grid = document.getElementById("grid");
+const views = SIZES.map(([w, h]) => {
+	const fig = document.createElement("figure");
+	const dogPx = Math.round(23 * DS * (w / BW));
+	fig.innerHTML = `<div class="label"><h2>${w} × ${h}</h2><span>${BW * 6 / w} px per pixel at 1080p · Sparky ≈ ${dogPx} px tall</span></div>`;
+	const cv = document.createElement("canvas");
+	cv.setAttribute("aria-label", `The blizzard scene with Sparky and orbiting skulls, drawn at ${w} by ${h}`);
+	fig.appendChild(cv);
+	grid.appendChild(fig);
+	return { p: new Painter(w, h), cv, ctx: cv.getContext("2d") };
+});
+function resize() {
+	const dpr = Math.min(2, window.devicePixelRatio || 1);
+	for (const v of views) {
+		const w = Math.max(320, Math.round(v.cv.clientWidth * dpr));
+		v.cv.width = w; v.cv.height = Math.round((w * 9) / 16);
+	}
+}
+window.addEventListener("resize", () => { resize(); render(); });
+function render() { computeSheets(); for (const v of views) { drawScene(v.p); v.p.blit(v.ctx, v.cv.width, v.cv.height); } }
+
+let paused = window.matchMedia("(prefers-reduced-motion: reduce)").matches, slow = false, last = 0;
+function frame(now) {
+	const dt = Math.min(0.05, (now - last) / 1000 || 0);
+	last = now;
+	if (!paused) { let left = dt * (slow ? 0.25 : 1); while (left > 0) { const st = Math.min(left, 1 / 120); update(st); left -= st; } }
+	render();
+	requestAnimationFrame(frame);
+}
+
+const $ = (id) => document.getElementById(id), app = $("app"), pauseBtn = $("pause"), slowBtn = $("slow"), grayBtn = $("gray");
+function setPaused(v) { paused = v; pauseBtn.setAttribute("aria-pressed", String(v)); pauseBtn.firstChild.textContent = v ? "Play" : "Pause"; }
+function toggleSlow() { slow = !slow; slowBtn.setAttribute("aria-pressed", String(slow)); }
+function toggleGray() { const on = !app.classList.contains("gray"); app.classList.toggle("gray", on); grayBtn.setAttribute("aria-pressed", String(on)); }
+pauseBtn.addEventListener("click", () => setPaused(!paused));
+slowBtn.addEventListener("click", toggleSlow);
+grayBtn.addEventListener("click", toggleGray);
+window.addEventListener("keydown", (e) => {
+	if (e.target.closest && e.target.closest("button") && e.code === "Space") return;
+	if (e.code === "Space") { e.preventDefault(); setPaused(!paused); }
+	else if (e.code === "KeyS") toggleSlow();
+	else if (e.code === "KeyG") toggleGray();
+});
+
+for (let i = 0; i < 120 * 1.15; i++) update(1 / 120);
+setPaused(paused);
+resize();
+requestAnimationFrame(frame);
+</script>
+
+</body>
+</html>

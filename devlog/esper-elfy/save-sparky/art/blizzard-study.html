@@ -1,0 +1,652 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="One snowstorm in the arena, run by a single simulation and drawn two ways. Same flakes, same gusts, same boss shot, frame for frame. Only the drawing changes.">
+<title>Blizzard Study</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a short header, one control strip, then the two renders side by side (stacked on narrow screens), each with its notes underneath. */
+:root {
+	--bg: #0b0f17;
+	--panel: #111725;
+	--line: #222b3e;
+	--fg: #dfe7f5;
+	--muted: #8b97ae;
+	--cyan: #3fe3ff;
+	--red: #ff2d55;
+	--display: "Chakra Petch", "Segoe UI", system-ui, sans-serif;
+	--body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+	--mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+	color-scheme: dark;
+}
+html, body { background: var(--bg); color: var(--fg); }
+body {
+	font-family: var(--body);
+	font-size: 15px;
+	line-height: 1.55;
+	padding-block: 32px 48px;
+	padding-left: max(16px, env(safe-area-inset-left, 0px));
+	padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 1360px; margin: 0 auto; display: grid; gap: 24px; }
+header { display: grid; gap: 8px; max-width: 68ch; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+h1 { font-family: var(--display); font-weight: 600; font-size: clamp(30px, 5vw, 46px); line-height: 1.05; margin: 0; text-wrap: balance; }
+header p { margin: 0; color: var(--muted); }
+.controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+button {
+	font-family: var(--mono); font-size: 13px; color: var(--fg);
+	background: var(--panel); border: 1px solid var(--line); border-radius: 4px;
+	padding: 8px 14px; cursor: pointer;
+}
+button:hover { border-color: var(--muted); }
+button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+button[aria-pressed="true"] { border-color: var(--cyan); color: var(--cyan); }
+kbd { font-family: var(--mono); font-size: 11px; color: var(--muted); margin-left: 6px; }
+.hint { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.views { display: grid; grid-template-columns: 1fr; gap: 24px; }
+@media (min-width: 1000px) { .views { grid-template-columns: 1fr 1fr; } }
+figure { margin: 0; display: grid; gap: 12px; min-width: 0; align-content: start; }
+.label { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; }
+.label h2 { font-family: var(--display); font-weight: 500; font-size: 22px; margin: 0; }
+.label span { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+canvas { display: block; width: 100%; max-width: 100%; aspect-ratio: 16 / 9; border: 1px solid var(--line); background: #000; }
+.gray canvas { filter: grayscale(1); }
+ul { margin: 0; padding-left: 18px; color: var(--muted); display: grid; gap: 4px; max-width: 64ch; }
+li strong { color: var(--fg); font-weight: 500; }
+footer { color: var(--muted); font-size: 13px; max-width: 72ch; border-top: 1px solid var(--line); padding-top: 16px; }
+</style>
+</head>
+<body>
+<nav style="font:14px/1.2 system-ui,sans-serif;padding:8px 16px;background:#05071a;border-bottom:1px solid #232838"><a href="./" style="color:#3ef2ff;text-decoration:none">&larr; Art studies</a></nav>
+<div class="wrap" id="app">
+	<header>
+		<div class="eyebrow">Square Off · art direction</div>
+		<h1>Blizzard Study</h1>
+		<p>One snowstorm in the arena, run by a single simulation and drawn two ways. Same flakes, same gusts, same boss shot, frame for frame. Only the drawing changes.</p>
+	</header>
+
+	<div class="controls">
+		<button id="pause" type="button" aria-pressed="false">Pause<kbd>Space</kbd></button>
+		<button id="gust" type="button">Big gust<kbd>W</kbd></button>
+		<button id="gray" type="button" aria-pressed="false">Grayscale<kbd>G</kbd></button>
+		<span class="hint">Grayscale is the game's own value check: the fight must still read without color.</span>
+	</div>
+
+	<div class="views">
+		<figure>
+			<div class="label"><h2>Present style</h2><span>screen resolution · smooth shapes · glow</span></div>
+			<canvas id="present" aria-label="The arena in a blizzard, drawn in the game's current smooth vector style"></canvas>
+			<ul>
+				<li><strong>Drawn at screen resolution</strong> with smooth, anti-aliased shapes.</li>
+				<li><strong>Glow</strong> comes from soft halos on the hero, the boss and the shot.</li>
+				<li><strong>Snow</strong> is thin streaks at three depths, kept dimmer than anything that matters.</li>
+				<li><strong>Impacts</strong> are a white pop, sparks and a ring, gone in about a third of a second.</li>
+			</ul>
+		</figure>
+		<figure>
+			<div class="label"><h2>Hybrid</h2><span>320 × 180 pixels · hard color steps · smooth light on top</span></div>
+			<canvas id="hybrid" aria-label="The same blizzard drawn as low-resolution pixel art with a smooth light layer on top"></canvas>
+			<ul>
+				<li><strong>Color is drawn at 320 × 180</strong> and scaled up with sharp pixels. Light is a separate layer, scaled up smooth, so the glow from the game survives.</li>
+				<li><strong>Every surface uses hard steps</strong> of one color ramp, lit from the upper left.</li>
+				<li><strong>Snow has dark tails and bright heads.</strong> Gusts bunch it into sheets and blow spindrift off the drifts.</li>
+				<li><strong>Impacts play in phases:</strong> a white frame, sparks that bounce, a light that flares and fades, then smoke and embers that linger.</li>
+			</ul>
+		</figure>
+	</div>
+
+	<footer>The hybrid borrows methods from pixelfx (MIT): layered streaks, gust waves, ramps and phased impacts. The drawing code on this page is written from scratch, so the look can go into a CC0 release as our own.</footer>
+</div>
+
+<script>
+"use strict";
+const W = 320, H = 180, TAU = Math.PI * 2;
+const FLOOR = 150, PIT = 172, PIT_L = 120, PIT_R = 200, PLAT_Y = 112, PLAT_L = 130, PLAT_R = 190;
+const groundY = (x) => (x >= PIT_L && x < PIT_R ? PIT : FLOOR);
+const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+
+function rng(seed) {
+	return () => {
+		seed = (seed + 0x6d2b79f5) | 0;
+		let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+		t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+		return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+	};
+}
+
+// ---------------------------------------------------------------- shared simulation (world units = hybrid pixels)
+const R = rng(7);
+const LAYERS = [
+	{ n: 170, spd: [90, 130], len: [2, 4], drop: [6, 16] },
+	{ n: 90, spd: [140, 190], len: [5, 8], drop: [10, 24] },
+	{ n: 26, spd: [220, 280], len: [10, 16], drop: [16, 30] },
+];
+const sim = {
+	t: 0, boost: 0, tele: 0, nextShot: 1.6,
+	flakes: [], shots: [], sparks: [], embers: [], smoke: [], dust: [], impacts: [],
+	player: { x: 72, y: FLOOR, vx: 0, vy: 0, sx: 1, sy: 1, air: false, timer: 0.8 },
+	boss: { x: 252, y: 64 },
+};
+LAYERS.forEach((L, li) => {
+	for (let i = 0; i < L.n; i++) {
+		sim.flakes.push({
+			L: li, x: R() * 360 - 20, y: R() * 170,
+			spd: L.spd[0] + R() * (L.spd[1] - L.spd[0]),
+			len: L.len[0] + R() * (L.len[1] - L.len[0]),
+			drop: L.drop[0] + R() * (L.drop[1] - L.drop[0]),
+			ph: R() * TAU,
+		});
+	}
+});
+
+// waves of wind rolling left to right, plus the "Big gust" boost
+const gust = (x) => clamp(0.5 + 0.5 * Math.sin(TAU * (x / 380 - sim.t / 3.2)) + sim.boost, 0, 1.4);
+
+function impact(x, y) {
+	sim.impacts.push({ x, y, age: 0 });
+	for (let i = 0; i < 14; i++) {
+		const a = -Math.PI / 2 + (R() - 0.5) * 2.4, sp = 80 + R() * 180;
+		sim.sparks.push({ x, y: y - 1, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: 0.25 + R() * 0.45, age: 0 });
+	}
+	for (let i = 0; i < 7; i++)
+		sim.embers.push({ x: x + (R() - 0.5) * 10, y: y - 2, vx: (R() - 0.5) * 12, vy: -(10 + R() * 22), life: 1 + R() * 1.3, age: 0, ph: R() * TAU });
+	for (let i = 0; i < 5; i++)
+		sim.smoke.push({ x: x + (R() - 0.5) * 10, y: y - 3, vx: (R() - 0.5) * 14, vy: -(6 + R() * 10), r: 2 + R() * 2, life: 0.9 + R() * 0.9, age: 0 });
+}
+
+function update(dt) {
+	const s = sim;
+	s.t += dt;
+	s.boost = Math.max(0, s.boost - dt * 0.45);
+
+	for (const f of s.flakes) {
+		const g = gust(f.x);
+		f.x += f.spd * (0.5 + 0.8 * g) * dt;
+		f.y += (f.drop + 6 * Math.sin(s.t * 2 + f.ph)) * dt;
+		if (f.x > 340 || f.y > groundY(f.x) - 1) { f.x = -20 - R() * 30; f.y = R() * 168; }
+	}
+
+	// the hero hops into the wind; the wind shoves them back while airborne
+	const p = s.player;
+	let tx = 1, ty = 1;
+	if (!p.air) {
+		p.timer -= dt;
+		if (p.timer < 0.14) { tx = 1.25; ty = 0.78; }
+		if (p.timer <= 0) { p.air = true; p.vy = -125; p.vx = -20; p.sx = 0.78; p.sy = 1.3; }
+	} else {
+		p.vy += 420 * dt;
+		p.y += p.vy * dt;
+		p.x += (p.vx + 34 * gust(p.x)) * dt;
+		const k = clamp(Math.abs(p.vy) / 125);
+		tx = 1 - 0.2 * k; ty = 1 + 0.28 * k;
+		if (p.y >= FLOOR) {
+			p.y = FLOOR; p.air = false; p.timer = 1.3; p.sx = 1.35; p.sy = 0.7;
+			for (let i = 0; i < 6; i++) {
+				const side = i % 2 ? 1 : -1;
+				s.dust.push({ x: p.x + side * 5, y: FLOOR - 1, vx: side * (14 + R() * 20) + 10, vy: -(4 + R() * 8), r: 1.5 + R() * 1.5, life: 0.45 + R() * 0.3, age: 0 });
+			}
+		}
+	}
+	p.x = clamp(p.x, 40, 105);
+	p.sx += (tx - p.sx) * Math.min(1, dt * 14);
+	p.sy += (ty - p.sy) * Math.min(1, dt * 14);
+
+	const b = s.boss;
+	b.y = 64 + 6 * Math.sin(s.t * 1.3);
+	b.x = 252 + 4 * Math.sin(s.t * 0.7);
+
+	// telegraph (an outline), then the shot (a filled circle)
+	s.nextShot -= dt;
+	s.tele = s.nextShot < 0.55 ? 1 - s.nextShot / 0.55 : 0;
+	if (s.nextShot <= 0) {
+		s.nextShot = 2.8;
+		const mx = b.x - 16, my = b.y, dx = p.x - mx, dy = p.y - 6 - my, l = Math.hypot(dx, dy) || 1;
+		s.shots.push({ x: mx, y: my, vx: (dx / l) * 95, vy: (dy / l) * 95, trail: [] });
+	}
+	for (let i = s.shots.length - 1; i >= 0; i--) {
+		const sh = s.shots[i];
+		sh.vx += 30 * (gust(sh.x) - 0.3) * dt;
+		sh.vy += 10 * dt;
+		sh.x += sh.vx * dt; sh.y += sh.vy * dt;
+		sh.trail.push({ x: sh.x, y: sh.y });
+		if (sh.trail.length > 12) sh.trail.shift();
+		const hitHero = Math.hypot(sh.x - p.x, sh.y - (p.y - 6)) < 9;
+		if (sh.y >= groundY(sh.x) - 3 || hitHero || sh.x < -10) {
+			if (sh.x > -10) impact(sh.x, hitHero ? sh.y : groundY(sh.x));
+			s.shots.splice(i, 1);
+		}
+	}
+
+	for (const k of s.sparks) {
+		k.vy += 520 * dt; k.vx += 20 * gust(k.x) * dt;
+		k.x += k.vx * dt; k.y += k.vy * dt;
+		if (k.y > groundY(k.x)) { k.y = groundY(k.x); k.vy *= -0.35; k.vx *= 0.6; }
+		k.age += dt;
+	}
+	for (const e of s.embers) { e.vx += 25 * gust(e.x) * dt; e.x += e.vx * dt; e.y += e.vy * dt; e.age += dt; }
+	for (const m of s.smoke) { m.x += (m.vx + 20 * gust(m.x)) * dt; m.y += m.vy * dt; m.r += 6 * dt; m.age += dt; }
+	for (const d of s.dust) { d.vx *= Math.exp(-dt * 4); d.x += d.vx * dt; d.y += d.vy * dt; d.r += 5 * dt; d.age += dt; }
+	for (const im of s.impacts) im.age += dt;
+	for (const key of ["sparks", "embers", "smoke", "dust"]) s[key] = s[key].filter((o) => o.age < o.life);
+	s.impacts = s.impacts.filter((o) => o.age < 1.2);
+}
+
+// ---------------------------------------------------------------- present style: smooth vector at screen resolution
+function drawPresent(ctx, cw, ch) {
+	const s = sim, k = cw / W;
+	ctx.setTransform(k, 0, 0, k, 0, 0);
+	ctx.globalCompositeOperation = "source-over";
+	ctx.shadowBlur = 0;
+	ctx.fillStyle = "#1d2536";
+	ctx.fillRect(0, 0, W, H);
+
+	// warp grid: vertical lines sway with the gusts
+	ctx.lineWidth = 0.35;
+	ctx.strokeStyle = "rgba(98, 117, 150, 0.32)";
+	ctx.beginPath();
+	for (let x = 0; x <= W; x += 16) {
+		const g = gust(x);
+		for (let y = 0; y <= H; y += 6) {
+			const xx = x + 1.6 * (g - 0.5) * Math.sin(y * 0.05 + s.t * 1.7);
+			y === 0 ? ctx.moveTo(xx, y) : ctx.lineTo(xx, y);
+		}
+	}
+	for (let y = 0; y <= H; y += 16) { ctx.moveTo(0, y); ctx.lineTo(W, y); }
+	ctx.stroke();
+
+	// whiteout haze: soft bands riding the wind
+	for (let i = 0; i < 6; i++) {
+		const cx = ((i * 97 + s.t * 70) % 520) - 100, cy = 24 + i * 22, g = gust(cx);
+		ctx.save();
+		ctx.translate(cx, cy);
+		ctx.scale(1, 0.08);
+		const gr = ctx.createRadialGradient(0, 0, 0, 0, 0, 90);
+		gr.addColorStop(0, `rgba(200, 215, 240, ${0.12 * (0.3 + g)})`);
+		gr.addColorStop(1, "rgba(200, 215, 240, 0)");
+		ctx.fillStyle = gr;
+		ctx.beginPath(); ctx.arc(0, 0, 90, 0, TAU); ctx.fill();
+		ctx.restore();
+	}
+
+	// snow
+	const alpha = [0.3, 0.5, 0.72], width = [0.55, 0.8, 1.2];
+	ctx.lineCap = "round";
+	for (const f of s.flakes) {
+		const g = gust(f.x), vx = f.spd * (0.5 + 0.8 * g), l = Math.hypot(vx, f.drop), L = f.len * (0.7 + 0.6 * g);
+		ctx.strokeStyle = `rgba(207, 220, 242, ${alpha[f.L]})`;
+		ctx.lineWidth = width[f.L];
+		ctx.beginPath();
+		ctx.moveTo(f.x - (vx / l) * L, f.y - (f.drop / l) * L);
+		ctx.lineTo(f.x, f.y);
+		ctx.stroke();
+	}
+
+	// arena
+	ctx.fillStyle = "#33405a";
+	ctx.strokeStyle = "#5b6d90";
+	ctx.lineWidth = 0.8;
+	for (const [x0, x1, y0] of [[0, PIT_L, FLOOR], [PIT_R, W, FLOOR], [PIT_L, PIT_R, PIT]]) {
+		ctx.fillRect(x0, y0, x1 - x0, H - y0);
+		ctx.strokeRect(x0 + 0.4, y0 + 0.4, x1 - x0 - 0.8, H - y0);
+	}
+	// spikes: triangles are hazards
+	for (let x = PIT_L + 2; x < PIT_R - 2; x += 8) {
+		ctx.beginPath();
+		ctx.moveTo(x, PIT); ctx.lineTo(x + 4, PIT - 10); ctx.lineTo(x + 8, PIT); ctx.closePath();
+		ctx.fillStyle = "#7a2540"; ctx.fill();
+		ctx.strokeStyle = "#c04a6a"; ctx.lineWidth = 0.5; ctx.stroke();
+	}
+	// one-way platform
+	ctx.strokeStyle = "rgba(169, 189, 227, 0.5)";
+	ctx.lineWidth = 0.4;
+	ctx.beginPath();
+	for (let x = PLAT_L + 1; x < PLAT_R; x += 2.5) { ctx.moveTo(x, PLAT_Y); ctx.lineTo(x, PLAT_Y + 3); }
+	ctx.stroke();
+	ctx.strokeStyle = "#a9bde3"; ctx.lineWidth = 1.2;
+	ctx.beginPath(); ctx.moveTo(PLAT_L, PLAT_Y); ctx.lineTo(PLAT_R, PLAT_Y); ctx.stroke();
+
+	// snow caps
+	ctx.shadowColor = "rgba(190, 210, 255, 0.55)";
+	ctx.shadowBlur = 6 * k;
+	ctx.fillStyle = "#d9e4f7";
+	for (const [x0, x1, y0] of [[0, PIT_L, FLOOR], [PIT_R, W, FLOOR], [PLAT_L, PLAT_R, PLAT_Y]]) {
+		ctx.beginPath();
+		ctx.moveTo(x0, y0 + 0.6);
+		for (let x = x0; x <= x1; x += 2) ctx.lineTo(x, y0 - 1.3 - 1.1 * Math.sin(x * 0.13) - 0.6 * Math.sin(x * 0.31 + 1));
+		ctx.lineTo(x1, y0 + 0.6);
+		ctx.closePath();
+		ctx.fill();
+	}
+	ctx.shadowBlur = 0;
+
+	// dust
+	for (const d of s.dust) {
+		ctx.fillStyle = `rgba(141, 156, 186, ${0.45 * (1 - d.age / d.life)})`;
+		ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, TAU); ctx.fill();
+	}
+
+	// boss: a warm square, the telegraph an outline
+	const b = s.boss;
+	ctx.save();
+	ctx.translate(b.x, b.y);
+	ctx.shadowColor = "rgba(255, 45, 85, 0.6)";
+	ctx.shadowBlur = 14 * k;
+	ctx.fillStyle = "#e8325a";
+	ctx.fillRect(-13, -13, 26, 26);
+	ctx.shadowBlur = 0;
+	ctx.fillStyle = "#0a0d13";
+	ctx.fillRect(-9, -6, 5, 5);
+	ctx.restore();
+	if (s.tele > 0) {
+		ctx.strokeStyle = `rgba(255, 106, 61, ${s.tele})`;
+		ctx.lineWidth = 0.9;
+		ctx.beginPath(); ctx.arc(b.x - 16, b.y, 3 + 10 * (1 - s.tele), 0, TAU); ctx.stroke();
+	}
+
+	// hero: cyan square with squash and stretch, feet anchored
+	const p = s.player;
+	ctx.save();
+	ctx.translate(p.x, p.y);
+	ctx.scale(p.sx, p.sy);
+	ctx.shadowColor = "rgba(63, 227, 255, 0.75)";
+	ctx.shadowBlur = 14 * k;
+	ctx.fillStyle = "#54e8ff";
+	ctx.fillRect(-6, -12, 12, 12);
+	ctx.shadowBlur = 0;
+	ctx.fillStyle = "#0a0d13";
+	ctx.fillRect(-4, -9, 3, 3);
+	ctx.restore();
+
+	// shots: filled circles are projectiles
+	for (const sh of s.shots) {
+		ctx.shadowColor = "rgba(255, 106, 61, 0.9)";
+		ctx.shadowBlur = 12 * k;
+		ctx.fillStyle = "#ffb08a";
+		ctx.beginPath(); ctx.arc(sh.x, sh.y, 3.2, 0, TAU); ctx.fill();
+		ctx.shadowBlur = 0;
+		ctx.fillStyle = "#ffffff";
+		ctx.beginPath(); ctx.arc(sh.x, sh.y, 1.4, 0, TAU); ctx.fill();
+	}
+
+	// impacts: pop, ring, sparks (the current toolkit has no lingering phase)
+	for (const im of s.impacts) {
+		if (im.age < 0.08) {
+			ctx.fillStyle = "#ffffff";
+			ctx.beginPath(); ctx.arc(im.x, im.y - 2, 2 + 7 * (1 - im.age / 0.08), 0, TAU); ctx.fill();
+		}
+		if (im.age < 0.3) {
+			ctx.strokeStyle = `rgba(255, 106, 61, ${1 - im.age / 0.3})`;
+			ctx.lineWidth = 1;
+			ctx.beginPath(); ctx.arc(im.x, im.y - 2, 4 + 40 * im.age, 0, TAU); ctx.stroke();
+		}
+	}
+	ctx.lineWidth = 0.9;
+	for (const sp of s.sparks) {
+		if (sp.age > 0.35) continue;
+		ctx.strokeStyle = `rgba(255, 176, 138, ${1 - sp.age / 0.35})`;
+		ctx.beginPath(); ctx.moveTo(sp.x - sp.vx * 0.025, sp.y - sp.vy * 0.025); ctx.lineTo(sp.x, sp.y); ctx.stroke();
+	}
+}
+
+// ---------------------------------------------------------------- hybrid: a tiny software painter at 320 x 180
+const N = W * H;
+const col = new Float32Array(N * 3), lit = new Float32Array(N * 3);
+const hexCache = new Map();
+function hx(h) {
+	let c = hexCache.get(h);
+	if (!c) { c = [parseInt(h.slice(1, 3), 16) / 255, parseInt(h.slice(3, 5), 16) / 255, parseInt(h.slice(5, 7), 16) / 255]; hexCache.set(h, c); }
+	return c;
+}
+function put(x, y, h, a = 1) {
+	x = Math.floor(x); y = Math.floor(y);
+	if (x < 0 || y < 0 || x >= W || y >= H || a <= 0) return;
+	const c = hx(h), i = (y * W + x) * 3;
+	col[i] += (c[0] - col[i]) * a; col[i + 1] += (c[1] - col[i + 1]) * a; col[i + 2] += (c[2] - col[i + 2]) * a;
+}
+function light(x, y, h, k) {
+	if (x < 0 || y < 0 || x >= W || y >= H) return;
+	const c = hx(h), i = (y * W + x) * 3;
+	lit[i] += c[0] * k; lit[i + 1] += c[1] * k; lit[i + 2] += c[2] * k;
+}
+function glow(x, y, r, h, k) {
+	if (k <= 0.004) return;
+	for (let py = Math.max(0, Math.floor(y - r)); py <= Math.min(H - 1, Math.ceil(y + r)); py++)
+		for (let px = Math.max(0, Math.floor(x - r)); px <= Math.min(W - 1, Math.ceil(x + r)); px++) {
+			const d = Math.hypot(px + 0.5 - x, py + 0.5 - y) / r;
+			if (d < 1) light(px, py, h, (1 - d) * (1 - d) * k);
+		}
+}
+function disc(x, y, r, h, a) {
+	for (let py = Math.floor(y - r); py <= Math.ceil(y + r); py++)
+		for (let px = Math.floor(x - r); px <= Math.ceil(x + r); px++)
+			if (Math.hypot(px + 0.5 - x, py + 0.5 - y) <= r) put(px, py, h, a);
+}
+function line(x0, y0, x1, y1, h, a = 1) {
+	const n = Math.max(1, Math.ceil(Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0))));
+	for (let i = 0; i <= n; i++) put(x0 + ((x1 - x0) * i) / n, y0 + ((y1 - y0) * i) / n, h, a);
+}
+
+// tiling value noise for sheets and spindrift
+const NW = 64, NH = 32, nz = new Float32Array(NW * NH);
+{ const r = rng(11); for (let i = 0; i < nz.length; i++) nz[i] = r(); }
+function vnoise(x, y) {
+	const xi = Math.floor(x), yi = Math.floor(y), fx = x - xi, fy = y - yi;
+	const sx = fx * fx * (3 - 2 * fx), sy = fy * fy * (3 - 2 * fy);
+	const g = (a, b) => nz[(((b % NH) + NH) % NH) * NW + (((a % NW) + NW) % NW)];
+	const top = g(xi, yi) + (g(xi + 1, yi) - g(xi, yi)) * sx, bot = g(xi, yi + 1) + (g(xi + 1, yi + 1) - g(xi, yi + 1)) * sx;
+	return top + (bot - top) * sy;
+}
+
+const SKY = ["#141a29", "#171e30", "#1b2337", "#20293f", "#252f48"];
+const SNOW = ["#3b4a68", "#5f7398", "#97abcd", "#d4e1f5", "#ffffff"];
+const LAYER_COLS = [[0, 1, 2], [1, 2, 3], [1, 3, 4]];
+const crest = (x, top) => top - 1 - Math.round(1.1 * Math.sin(x * 0.13) + 0.6 * Math.sin(x * 0.31 + 1) + 0.6);
+
+const pixCanvas = document.createElement("canvas"), lightCanvas = document.createElement("canvas");
+pixCanvas.width = lightCanvas.width = W; pixCanvas.height = lightCanvas.height = H;
+const pctx = pixCanvas.getContext("2d"), lctx = lightCanvas.getContext("2d");
+const pimg = pctx.createImageData(W, H), limg = lctx.createImageData(W, H);
+
+function drawHybrid(ctx, cw, ch) {
+	const s = sim;
+	lit.fill(0);
+
+	// sky in hard steps, with the arena grid dotted into it
+	for (let y = 0; y < H; y++) {
+		const c = hx(SKY[Math.min(SKY.length - 1, Math.floor(y / 36))]);
+		for (let x = 0; x < W; x++) { const i = (y * W + x) * 3; col[i] = c[0]; col[i + 1] = c[1]; col[i + 2] = c[2]; }
+	}
+	for (let x = 0; x <= W; x += 16) {
+		const g = gust(x);
+		for (let y = 0; y < FLOOR; y += 2) put(x + Math.round(1.6 * (g - 0.5) * Math.sin(y * 0.05 + s.t * 1.7)), y, "#2c3852");
+	}
+	for (let y = 16; y < FLOOR; y += 16) for (let x = 0; x < W; x += 2) put(x, y, "#2c3852");
+
+	// sheets of blown snow: noise, thresholded into two alpha steps, thick in a gust
+	const shift = s.t * 70;
+	for (let y = 4; y < 140; y++) {
+		const wob = 0.6 * Math.sin(y * 0.09 + s.t);
+		for (let x = 0; x < W; x++) {
+			const g = gust(x), n = 0.75 * vnoise((x - shift) / 48, y / 2.6 + wob) + 0.25 * vnoise((x - shift * 1.3) / 16, y / 1.5 + 7);
+			const d = (n - 0.62) * 2.4 * (0.25 + g);
+			if (d > 0.07) {
+				put(x, y, "#8fa3c6", d > 0.24 ? 0.22 : 0.1);
+				if (d > 0.24) light(x, y, "#97abcd", 0.025);
+			}
+		}
+	}
+
+	// snow at three depths: dark tail, body, bright head (white only for the near layer in a gust)
+	for (const f of s.flakes) {
+		const g = gust(f.x), vx = f.spd * (0.5 + 0.8 * g), l = Math.hypot(vx, f.drop), ux = vx / l, uy = f.drop / l;
+		const L = f.len * (0.7 + 0.6 * g), [c0, c1, c2] = LAYER_COLS[f.L].map((i) => SNOW[i]);
+		if (f.L === 0 && ((f.ph * 1000) % 1) > 0.4 + 0.7 * g) continue; // far snow thins out between gusts
+		line(f.x - ux * L, f.y - uy * L, f.x - ux * L * 0.45, f.y - uy * L * 0.45, c0, 0.7);
+		line(f.x - ux * L * 0.45, f.y - uy * L * 0.45, f.x - ux, f.y - uy, c1);
+		put(f.x, f.y, f.L === 2 && g > 0.6 ? "#ffffff" : c2);
+		if (f.L === 2) glow(f.x, f.y, 4, "#97abcd", 0.08 + 0.1 * g);
+	}
+
+	// arena blocks with drifts, spindrift streaming off the crests
+	for (const [x0, x1, top] of [[0, PIT_L, FLOOR], [PIT_R, W, FLOOR], [PIT_L, PIT_R, PIT]]) {
+		for (let y = top; y < H; y++) for (let x = x0; x < x1; x++) put(x, y, (y - top) % 10 === 9 ? "#232d43" : "#28334b");
+		for (let x = x0; x < x1; x++) put(x, top, "#4d5f82");
+		for (let y = top; y < H; y++) { put(x0, y, "#3a4866"); put(x1 - 1, y, "#222b3f"); }
+		if (top === PIT) continue;
+		for (let x = x0; x < x1; x++) {
+			const c = crest(x, top), g = gust(x);
+			put(x, c, "#ffffff"); light(x, c, "#d4e1f5", 0.05);
+			for (let y = c + 1; y <= top + 1; y++) put(x, y, y - c === 1 ? "#c6d4ec" : "#8ea3c6");
+			for (let y = c - 9; y < c; y++) {
+				const n = vnoise((x - s.t * 130) / 5, y / 1.6 + 40), d = (n - 0.52) * 3 * (0.4 + g) * (1 - (c - y) / 9);
+				if (d > 0.06) put(x, y, "#d4e1f5", d > 0.3 ? 0.45 : 0.2);
+			}
+		}
+	}
+
+	// spikes: lit left face, shadowed right face, hot tip
+	for (let x = PIT_L + 2; x < PIT_R - 2; x += 8) {
+		for (let r = 0; r <= 10; r++) {
+			const half = Math.round((4 * r) / 10), y = PIT - 10 + r, cx = x + 4;
+			for (let xx = cx - half; xx <= cx + half; xx++) put(xx, y, r === 0 ? "#ff8fb0" : xx <= cx ? "#b4446a" : "#6e1a2c");
+		}
+	}
+
+	// one-way platform and its drift
+	for (let x = PLAT_L; x < PLAT_R; x++) {
+		put(x, PLAT_Y, "#a9bde3"); put(x, PLAT_Y + 1, "#51628a");
+		if (x % 3 === 0) { put(x, PLAT_Y + 2, "#51628a", 0.6); put(x, PLAT_Y + 3, "#51628a", 0.3); }
+		const c = PLAT_Y - 1 - Math.round(0.6 + 0.6 * Math.sin(x * 0.2));
+		put(x, c, "#ffffff");
+		for (let y = c + 1; y < PLAT_Y; y++) put(x, y, "#c6d4ec");
+	}
+
+	// dust and smoke: translucent puffs with a lit cap
+	for (const d of s.dust) {
+		const a = 1 - d.age / d.life;
+		disc(d.x, d.y, d.r, "#55637f", 0.4 * a);
+		disc(d.x, d.y - d.r * 0.35, d.r * 0.6, "#8a99b8", 0.35 * a);
+	}
+	for (const m of s.smoke) {
+		const a = 1 - m.age / m.life;
+		disc(m.x, m.y, m.r, "#4a5672", 0.45 * a);
+		disc(m.x, m.y - m.r * 0.4, m.r * 0.6, "#7d8bab", 0.4 * a);
+	}
+
+	// boss: warm ramp, lit upper-left
+	const b = s.boss, bx = Math.round(b.x - 12), by = Math.round(b.y - 12);
+	for (let y = 0; y < 24; y++) for (let x = 0; x < 24; x++)
+		put(bx + x, by + y, y === 0 ? "#ff8aa3" : x === 0 ? "#ff5577" : y === 23 || x === 23 ? "#7a1530" : "#d42b50");
+	for (let y = 0; y < 4; y++) for (let x = 0; x < 4; x++) put(bx + 3 + x, by + 7 + y, "#0a0d13");
+	put(bx + 3, by + 7, "#ffffff", 0.6);
+	glow(b.x, b.y, 30, "#ff2d55", 0.18);
+	if (s.tele > 0) {
+		const r = 3 + 10 * (1 - s.tele);
+		for (let a = 0; a < TAU; a += 0.45) put(b.x - 16 + Math.cos(a + s.t * 4) * r, b.y + Math.sin(a + s.t * 4) * r, "#ff6a3d", s.tele);
+		glow(b.x - 16, b.y, 10, "#ff6a3d", 0.25 * s.tele);
+	}
+
+	// hero: cyan ramp, squash in whole pixels, feet anchored
+	const p = s.player, w = Math.round(12 * p.sx), h = Math.round(12 * p.sy), px0 = Math.round(p.x - w / 2), py0 = Math.round(p.y - h);
+	for (let y = 0; y < h; y++) for (let x = 0; x < w; x++)
+		put(px0 + x, py0 + y, y === 0 ? "#c4f7ff" : x === 0 ? "#7eeaff" : y === h - 1 || x === w - 1 ? "#1386ad" : "#2bc4e4");
+	for (let y = 0; y < 2; y++) for (let x = 0; x < 2; x++) put(px0 + 2 + x, py0 + Math.round(3 * p.sy) + y, "#0a0d13");
+	glow(p.x, p.y - h / 2, 20, "#3fe3ff", 0.28);
+
+	// shots with a fading trail
+	for (const sh of s.shots) {
+		sh.trail.forEach((q, i) => put(q.x, q.y, "#ff6a3d", (i / sh.trail.length) * 0.7));
+		disc(sh.x, sh.y, 3.2, "#ff6a3d", 1);
+		disc(sh.x, sh.y, 2, "#ffb08a", 1);
+		put(sh.x, sh.y, "#ffffff");
+		glow(sh.x, sh.y, 16, "#ff6a3d", 0.55);
+	}
+
+	// impacts in phases: white frame, light flare, bouncing sparks, embers that hang in the air
+	for (const im of s.impacts) {
+		if (im.age < 0.067) { disc(im.x, im.y - 2, 7, "#ffffff", 1); glow(im.x, im.y - 2, 30, "#ffffff", 0.9); }
+		glow(im.x, im.y - 4, 34, "#ff8a4a", 0.8 * (1 - im.age / 1.2) ** 2);
+	}
+	for (const sp of s.sparks) {
+		const a = 1 - sp.age / sp.life;
+		line(sp.x - sp.vx * 0.03, sp.y - sp.vy * 0.03, sp.x, sp.y, "#ff8a2a", a);
+		put(sp.x, sp.y, "#fff3c4", a);
+		glow(sp.x, sp.y, 3, "#ffb060", 0.25 * a);
+	}
+	for (const e of s.embers) {
+		const a = (1 - e.age / e.life) * (0.6 + 0.4 * Math.sin(s.t * 12 + e.ph));
+		put(e.x, e.y, "#ffb060", a);
+		light(Math.floor(e.x), Math.floor(e.y), "#ff8a2a", 0.3 * a);
+	}
+
+	// compose: crisp pixels for color, a smooth upscale for light
+	const pd = pimg.data, ld = limg.data;
+	for (let i = 0, j = 0; i < N * 3; i += 3, j += 4) {
+		pd[j] = clamp(col[i] + lit[i] * 0.5) * 255; pd[j + 1] = clamp(col[i + 1] + lit[i + 1] * 0.5) * 255; pd[j + 2] = clamp(col[i + 2] + lit[i + 2] * 0.5) * 255; pd[j + 3] = 255;
+		ld[j] = clamp(lit[i] * 0.9) * 255; ld[j + 1] = clamp(lit[i + 1] * 0.9) * 255; ld[j + 2] = clamp(lit[i + 2] * 0.9) * 255; ld[j + 3] = 255;
+	}
+	pctx.putImageData(pimg, 0, 0);
+	lctx.putImageData(limg, 0, 0);
+	ctx.setTransform(1, 0, 0, 1, 0, 0);
+	ctx.globalCompositeOperation = "source-over";
+	ctx.imageSmoothingEnabled = false;
+	ctx.drawImage(pixCanvas, 0, 0, cw, ch);
+	ctx.imageSmoothingEnabled = true;
+	ctx.globalCompositeOperation = "lighter";
+	ctx.drawImage(lightCanvas, 0, 0, cw, ch);
+	ctx.globalCompositeOperation = "source-over";
+}
+
+// ---------------------------------------------------------------- loop and controls
+const views = [
+	{ el: document.getElementById("present"), draw: drawPresent },
+	{ el: document.getElementById("hybrid"), draw: drawHybrid },
+];
+for (const v of views) v.ctx = v.el.getContext("2d");
+function resize() {
+	const dpr = Math.min(2, window.devicePixelRatio || 1);
+	for (const v of views) {
+		const w = Math.max(320, Math.round(v.el.clientWidth * dpr));
+		v.el.width = w; v.el.height = Math.round((w * 9) / 16);
+	}
+}
+window.addEventListener("resize", () => { resize(); render(); });
+
+let paused = window.matchMedia("(prefers-reduced-motion: reduce)").matches, last = 0;
+function render() { for (const v of views) v.draw(v.ctx, v.el.width, v.el.height); }
+function frame(now) {
+	const dt = Math.min(0.05, (now - last) / 1000 || 0);
+	last = now;
+	if (!paused) { let left = dt; while (left > 0) { const step = Math.min(left, 1 / 120); update(step); left -= step; } }
+	render();
+	requestAnimationFrame(frame);
+}
+
+const pauseBtn = document.getElementById("pause"), grayBtn = document.getElementById("gray"), app = document.getElementById("app");
+function setPaused(v) { paused = v; pauseBtn.setAttribute("aria-pressed", String(v)); pauseBtn.firstChild.textContent = v ? "Play" : "Pause"; }
+function toggleGray() { const on = !app.classList.contains("gray"); app.classList.toggle("gray", on); grayBtn.setAttribute("aria-pressed", String(on)); }
+function bigGust() { sim.boost = 0.9; }
+pauseBtn.addEventListener("click", () => setPaused(!paused));
+grayBtn.addEventListener("click", toggleGray);
+document.getElementById("gust").addEventListener("click", bigGust);
+window.addEventListener("keydown", (e) => {
+	if (e.target.closest && e.target.closest("button") && e.code === "Space") return;
+	if (e.code === "Space") { e.preventDefault(); setPaused(!paused); }
+	else if (e.code === "KeyG") toggleGray();
+	else if (e.code === "KeyW") bigGust();
+});
+
+// warm the storm up so the first frame is already mid-blizzard with a shot in flight
+for (let i = 0; i < 120 * 2.2; i++) update(1 / 120);
+setPaused(paused);
+resize();
+requestAnimationFrame(frame);
+</script>
+
+</body>
+</html>
