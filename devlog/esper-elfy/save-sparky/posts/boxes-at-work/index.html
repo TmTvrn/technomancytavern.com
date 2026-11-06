@@ -4,21 +4,29 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Boxes at Work · Esper Elfy: Save Sparky devlog</title>
-<meta name="description" content="Squash and stretch, wall slides, spikes and coyote time, recorded from the boxes-only build of Esper Elfy: Save Sparky, including the time I mistook a double jump for coyote time.">
+<meta name="description" content="Squash and stretch, wall slides, spikes and coyote time, and the time a double jump fooled me.">
 <meta name="theme-color" content="#05071a">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/devlog/assets/devlog.css">
+<meta property="og:title" content="Boxes at Work · Esper Elfy: Save Sparky devlog">
+<meta property="og:description" content="Squash and stretch, wall slides, spikes and coyote time, and the time a double jump fooled me.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://technomancytavern.com/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Chakra+Petch:wght@600;700&family=JetBrains+Mono:wght@500&family=Press+Start+2P&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
 </head>
 <body>
-<div class="wrap">
-  <p class="crumbs"><a href="/">Technomancy Tavern</a> / <a href="/devlog/">devlog</a> / <a href="/devlog/esper-elfy/">esper elfy</a> / <a href="/devlog/esper-elfy/save-sparky/">save sparky</a> / posts</p>
-  <header>
-    <p class="kicker">◆ SAVE SPARKY · POST 2 ◆</p>
-    <h1>Boxes at Work</h1>
-    <p class="meta">What a cyan square can do before anyone gives it a face.</p>
-  </header>
-  <article>
-    <p>Before Elfy had art, the player was a glowing cyan square, and the whole game feel lived in it. These clips are recorded from the boxes-only build (commit <code>0f62800</code>), with scripted input so every run is the same. Numbers come from the source and from a log of the player's position every physics tick.</p>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-head"><div class="wrap">
+  <a class="brand" href="/"><i></i><span>TECHNOMANCY TAVERN</span></a>
+  <nav class="nav" aria-label="Main"><a href="/games/">Games</a><a href="/devlog/" aria-current="page">Devlog</a><a href="/devlog/esper-elfy/save-sparky/art/">Art studies</a></nav>
+</div></header>
+<main id="main">
+<nav class="crumbs wrap" aria-label="Breadcrumb"><a href="/">Tavern</a><span>/</span><a href="/devlog/">Devlog</a><span>/</span><a href="/devlog/esper-elfy/save-sparky/">Esper Elfy: Save Sparky</a><span>/</span>Post 02</nav>
+<div class="wrap"><header class="post-head" style="--accent:#ffd36b"><p class="eyebrow">Esper Elfy: Save Sparky &middot; Post 02 &middot; Game feel</p>
+<h1>Boxes at Work</h1><p class="sub">What a cyan square can do before anyone gives it a face.</p></header>
+<article>
+<p>Before Elfy had art, the player was a glowing cyan square, and the whole game feel lived in it. These clips are recorded from the boxes-only build (commit <code>0f62800</code>), with scripted input so every run is the same. Numbers come from the source and from a log of the player's position every physics tick.</p>
 
     <h2>Squash and stretch</h2>
     <p>Every jump calls <code>visual.punch(Vector2(0.76, 1.26))</code>: the square's visual gets narrower and taller for a moment, then springs back. The collision box never changes; only what you see does. That is the whole trick, and it is why a square with no face can still feel springy.</p>
@@ -43,8 +51,17 @@
     <p>Lesson for the devlog, and for anything you record: check the numbers, then the clip. A clip that merely looks right can still be showing something else.</p>
 
     <p class="meta">Recorded with Godot's movie mode and encoded with ffmpeg at 960 px wide. The input scripts and the debug patch are in the game repository under <code>docs/devlog/capture/</code>.</p>
-  </article>
-  <p class="foot">© 2026 Technomancy Tavern · contact@tmtvrn.com</p>
-</div>
+</article>
+<nav class="pager" aria-label="More posts"><a class="prev" href="/devlog/esper-elfy/save-sparky/posts/from-squares-to-elfy/"><small>&larr; Previous</small><b>From Squares to Elfy</b></a><a class="next" href="/devlog/esper-elfy/save-sparky/posts/outline-first/"><small>Next &rarr;</small><b>Outline First, Then Real</b></a></nav></div>
+</main>
+<footer class="site-foot"><div class="wrap">
+  <div class="foot-grid">
+    <div><h4>Technomancy Tavern</h4><p>An indie game studio where code is the spellbook and AI is the familiar.</p></div>
+    <div><h4>Play</h4><ul><li><a href="/games/">Games</a></li><li><a href="/devlog/esper-elfy/save-sparky/">Save Sparky workbench</a></li></ul></div>
+    <div><h4>Read</h4><ul><li><a href="/devlog/">Devlog</a></li><li><a href="/devlog/esper-elfy/save-sparky/art/">Art studies</a></li><li><a href="/devlog/esper-elfy/save-sparky/#realms">Realms atlas</a></li></ul></div>
+    <div><h4>Find us</h4><ul><li><a href="https://x.com/TmTvrn" rel="noopener">@TmTvrn on X</a></li><li><a href="https://github.com/TmTvrn" rel="noopener">GitHub</a></li><li><a href="mailto:contact@tmtvrn.com">contact@tmtvrn.com</a></li></ul></div>
+  </div>
+  <p class="fine">&copy; 2026 Technomancy Tavern. Code, drawings and words in the devlog are CC0: copy them, ship them.</p>
+</div></footer>
 </body>
 </html>

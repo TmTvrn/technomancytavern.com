@@ -1,0 +1,37 @@
+<p>Every fight in this game starts with a lie of omission. The boss winds up, the room goes quiet, and for a few tenths of a second nothing happens. That gap is not lag. It is the warning, and it is the most important thing we draw.</p>
+
+    <h2>The rule</h2>
+    <p>In Esper Elfy <b>an outline is a warning and a fill is real</b>. If you can see the dashed edge of a thing, it is about to be there. If it is filled, it is already there. That was a rule from the first box (see post 1), and it has outlived every art style since.</p>
+
+    <h2>Three kinds of warning</h2>
+    <ol>
+      <li><b>A mark where it will land.</b> A dashed ellipse, a ring, a circle on the floor.</li>
+      <li><b>A lane.</b> A dashed line at the height a shot will fly. Head height means crouch; foot height means jump.</li>
+      <li><b>The attack itself, as an outline.</b> Zip Zephyr blinks, and a dashed edge of her whole body appears where she is about to be. That one needs a function that draws the attack, notes which pixels changed, undoes it, and then paints only the edge:</li>
+    </ol>
+    <pre><code>// a warning outline of a whole figure: only the edge of whatever drawFn paints, dashed
+function outlineOf(drawFn, c, a) {
+	const sav = col.slice(); drawFn(); const mask = new Uint8Array(N);
+	for (let p = 0, i = 0; p &lt; N; p++, i += 3) if (col[i] !== sav[i] || col[i + 1] !== sav[i + 1] || col[i + 2] !== sav[i + 2]) mask[p] = 1;
+	col.set(sav);
+	for (let p = 0; p &lt; N; p++) { if (!mask[p]) continue; const x = p % W; if ((x &gt; 0 &amp;&amp; !mask[p - 1]) || (x &lt; W - 1 &amp;&amp; !mask[p + 1]) || !mask[p - W] || !mask[p + W]) put(x, Math.floor(p / W), c, a); }
+}</code></pre>
+    <p class="meta">From <code>kits/anime.js</code>. <code>drawFn</code> is whatever draws the attack for real, so the warning can never drift out of sync with the thing it warns about.</p>
+
+    <h2>The flicker and the flash</h2>
+    <p>A still outline reads as decoration. A flickering one reads as alarm. About 60 of the 69 fight files use the same blink: on most of the time, off just often enough to notice (<code>Math.sin(t * 30) &gt; -0.2</code>). For lane warnings, the dashes also turn white in the last tenth of a second before the hit. White means now.</p>
+
+    <h2>The cheerleader who spells doom</h2>
+    <p>Pom-Pom Pyra's cheer is the cleanest example in the game. She shouts GIMME A G, and a giant letter G is outlined on the floor where you are standing. A moment later it falls on that spot, burning. The warning and the attack are the same shape, and the only difference is whether it is outlined or filled. In code, the whole difference is one branch in <code>bigLetter</code>:</p>
+    <pre><code>if (mode === &quot;warn&quot;) { if ((edgeX || edgeY) &amp;&amp; ((px + py) &amp; 1) === 0) put(px, py, &quot;#ffffff&quot;, on ? 0.9 : 0.35); continue; }</code></pre>
+    <p>In <code>"warn"</code> mode a pixel is drawn only if it sits on an edge and on a checkerboard, flickering. Any other mode fills the letter with fire. The timing lives in the caller:</p>
+    <pre><code>if (t &gt; at - 0.6 &amp;&amp; t &lt; at) { bigLetter(ch, lx, ly, s, t, &quot;warn&quot;); const k = (t - (at - 0.35)) / 0.35; if (k &gt; 0) bigLetter(ch, lx, lerp(-40, ly, k * k), s, t, &quot;fire&quot;); }</code></pre>
+    <p>The outline appears 0.6 seconds before the letter lands, and the burning letter starts falling 0.35 seconds before it lands. Six tenths of a second is the warning; the last third of it you can watch the danger arrive.</p>
+
+    <div class="demo">
+      <iframe src="../../realms/rooftop.html#h-pyra" title="Live Pom-Pom Pyra demo" loading="lazy"></iframe>
+      <p>Live demo: Pom-Pom Pyra, running in your browser. Click it, then press <b>S</b> for quarter speed and watch the first letter.</p>
+    </div>
+
+    <h2>Try it</h2>
+    <p>Slow the demo down and count the flickers before the first letter lands. Then in <code>realms/10-rooftop/fights/pyra.js</code> change <code>at - 0.6</code> to <code>at - 0.2</code> and rebuild. That is how fast "hard" turns into "unfair", and the gap between those two numbers is where most of our balancing happened.</p>

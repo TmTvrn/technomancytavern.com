@@ -4,21 +4,29 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Outline First, Then Real · Esper Elfy: Save Sparky devlog</title>
-<meta name="description" content="How Esper Elfy: Save Sparky warns you before it hurts you: an outline is a warning, a fill is real. With the real code and a live cheerleader.">
+<meta name="description" content="How the game warns you before it hurts you, with real code and a live cheerleader made of fire.">
 <meta name="theme-color" content="#05071a">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/devlog/assets/devlog.css">
+<meta property="og:title" content="Outline First, Then Real · Esper Elfy: Save Sparky devlog">
+<meta property="og:description" content="How the game warns you before it hurts you, with real code and a live cheerleader made of fire.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://technomancytavern.com/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Chakra+Petch:wght@600;700&family=JetBrains+Mono:wght@500&family=Press+Start+2P&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
 </head>
 <body>
-<div class="wrap">
-  <p class="crumbs"><a href="/">Technomancy Tavern</a> / <a href="/devlog/">devlog</a> / <a href="/devlog/esper-elfy/">esper elfy</a> / <a href="/devlog/esper-elfy/save-sparky/">save sparky</a> / posts</p>
-  <header>
-    <p class="kicker">&#9670; SAVE SPARKY &middot; POST 3 &#9670;</p>
-    <h1>Outline First, Then Real</h1>
-    <p class="meta">How to warn someone you are about to hurt them, with a cheerleader made of fire.</p>
-  </header>
-  <article>
-    <p>Every fight in this game starts with a lie of omission. The boss winds up, the room goes quiet, and for a few tenths of a second nothing happens. That gap is not lag. It is the warning, and it is the most important thing we draw.</p>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-head"><div class="wrap">
+  <a class="brand" href="/"><i></i><span>TECHNOMANCY TAVERN</span></a>
+  <nav class="nav" aria-label="Main"><a href="/games/">Games</a><a href="/devlog/" aria-current="page">Devlog</a><a href="/devlog/esper-elfy/save-sparky/art/">Art studies</a></nav>
+</div></header>
+<main id="main">
+<nav class="crumbs wrap" aria-label="Breadcrumb"><a href="/">Tavern</a><span>/</span><a href="/devlog/">Devlog</a><span>/</span><a href="/devlog/esper-elfy/save-sparky/">Esper Elfy: Save Sparky</a><span>/</span>Post 03</nav>
+<div class="wrap"><header class="post-head" style="--accent:#ffd36b"><p class="eyebrow">Esper Elfy: Save Sparky &middot; Post 03 &middot; Design</p>
+<h1>Outline First, Then Real</h1><p class="sub">How to warn someone you are about to hurt them, with a cheerleader made of fire.</p></header>
+<article>
+<p>Every fight in this game starts with a lie of omission. The boss winds up, the room goes quiet, and for a few tenths of a second nothing happens. That gap is not lag. It is the warning, and it is the most important thing we draw.</p>
 
     <h2>The rule</h2>
     <p>In Esper Elfy <b>an outline is a warning and a fill is real</b>. If you can see the dashed edge of a thing, it is about to be there. If it is filled, it is already there. That was a rule from the first box (see post 1), and it has outlived every art style since.</p>
@@ -55,8 +63,17 @@ function outlineOf(drawFn, c, a) {
 
     <h2>Try it</h2>
     <p>Slow the demo down and count the flickers before the first letter lands. Then in <code>realms/10-rooftop/fights/pyra.js</code> change <code>at - 0.6</code> to <code>at - 0.2</code> and rebuild. That is how fast "hard" turns into "unfair", and the gap between those two numbers is where most of our balancing happened.</p>
-  </article>
-  <p class="foot">&copy; 2026 Technomancy Tavern &middot; contact@tmtvrn.com</p>
-</div>
+</article>
+<nav class="pager" aria-label="More posts"><a class="prev" href="/devlog/esper-elfy/save-sparky/posts/boxes-at-work/"><small>&larr; Previous</small><b>Boxes at Work</b></a></nav></div>
+</main>
+<footer class="site-foot"><div class="wrap">
+  <div class="foot-grid">
+    <div><h4>Technomancy Tavern</h4><p>An indie game studio where code is the spellbook and AI is the familiar.</p></div>
+    <div><h4>Play</h4><ul><li><a href="/games/">Games</a></li><li><a href="/devlog/esper-elfy/save-sparky/">Save Sparky workbench</a></li></ul></div>
+    <div><h4>Read</h4><ul><li><a href="/devlog/">Devlog</a></li><li><a href="/devlog/esper-elfy/save-sparky/art/">Art studies</a></li><li><a href="/devlog/esper-elfy/save-sparky/#realms">Realms atlas</a></li></ul></div>
+    <div><h4>Find us</h4><ul><li><a href="https://x.com/TmTvrn" rel="noopener">@TmTvrn on X</a></li><li><a href="https://github.com/TmTvrn" rel="noopener">GitHub</a></li><li><a href="mailto:contact@tmtvrn.com">contact@tmtvrn.com</a></li></ul></div>
+  </div>
+  <p class="fine">&copy; 2026 Technomancy Tavern. Code, drawings and words in the devlog are CC0: copy them, ship them.</p>
+</div></footer>
 </body>
 </html>
