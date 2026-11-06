@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>From Squares to Elfy · Esper Elfy: Save Sparky devlog</title>
+<meta name="description" content="The same scripted boss fight recorded from three builds of Esper Elfy: Save Sparky: plain cyan squares, the same squares on a pixel grid, and Elfy.">
+<meta name="theme-color" content="#05071a">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/devlog/assets/devlog.css">
+</head>
+<body>
+<div class="wrap">
+  <p class="crumbs"><a href="/">Technomancy Tavern</a> / <a href="/devlog/">devlog</a> / <a href="/devlog/esper-elfy/">esper elfy</a> / <a href="/devlog/esper-elfy/save-sparky/">save sparky</a> / posts</p>
+  <header>
+    <p class="kicker">◆ SAVE SPARKY · POST 1 ◆</p>
+    <h1>From Squares to Elfy</h1>
+    <p class="meta">One scripted fight, recorded from three different builds of the game.</p>
+  </header>
+  <article>
+    <p>Esper Elfy: Save Sparky began, on October 21, as "a strictly-2D neon boss fight" where everything was a rectangle. You were a square. The boss was a square. The bullets were circles, the spikes were triangles, and an outline meant "this will hurt soon." It is a surprisingly good way to design a fight: if it reads as boxes, it reads.</p>
+    <p>Below is the same scripted fight, run with identical input and the same starting position, from three builds of the game. Same room, same spikes, same warning on screen. Only the art changes.</p>
+
+    <div class="clips">
+      <figure class="clip">
+        <video src="0f62800.mp4" poster="0f62800.jpg" controls loop muted playsinline preload="none"></video>
+        <figcaption><b>1. Boxes.</b> Clean vector shapes with glow. Commit <code>0f62800</code>, Oct 26.</figcaption>
+      </figure>
+      <figure class="clip">
+        <video src="3abc50e.mp4" poster="3abc50e.jpg" controls loop muted playsinline preload="none"></video>
+        <figcaption><b>2. Pixels.</b> The same boxes on a 960×540 pixel grid. Commit <code>3abc50e</code>, Oct 31.</figcaption>
+      </figure>
+      <figure class="clip">
+        <video src="72fd7d7.mp4" poster="72fd7d7.jpg" controls loop muted playsinline preload="none"></video>
+        <figcaption><b>3. Elfy.</b> The player square becomes a character. Commit <code>72fd7d7</code>, Oct 31.</figcaption>
+      </figure>
+    </div>
+
+    <h2>What stayed the same</h2>
+    <p>Look at the red outlined square in each clip. It is a warning: an outline means "not yet," and a filled shape means "now." That rule came from the first build and never changed, which is why swapping the art didn't break the fight. The attack still reads, whether you are a cyan square or a person.</p>
+
+    <h2>What the pixel pass actually did</h2>
+    <p>If you pause the first two clips side by side, they look nearly identical. That is the point. The change was under the hood: the game now draws to a fixed 960×540 grid, scales it up with sharp pixels, and adds the glow back at full resolution. Everything afterward, including characters baked from code, builds on that grid.</p>
+
+    <h2>Then, Elfy</h2>
+    <p>Five minutes later in the history, the player square was replaced by Elfy, drawn from code and baked into a sprite sheet. Her health pips went from cyan to green, because in this game green means Elfy and nothing else does.</p>
+
+    <p class="meta">All three clips were recorded from the real game with Godot's movie mode and encoded with ffmpeg, each at 960 pixels wide. Next up: the boxes at work, squash and stretch, wall slides, coyote time and spikes.</p>
+  </article>
+  <p class="foot">© 2026 Technomancy Tavern · contact@tmtvrn.com</p>
+</div>
+</body>
+</html>
