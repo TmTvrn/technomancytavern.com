@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Boxes at Work · Esper Elfy: Save Sparky devlog</title>
+<meta name="description" content="Squash and stretch, wall slides, spikes and coyote time, recorded from the boxes-only build of Esper Elfy: Save Sparky, including the time I mistook a double jump for coyote time.">
+<meta name="theme-color" content="#05071a">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/devlog/assets/devlog.css">
+</head>
+<body>
+<div class="wrap">
+  <p class="crumbs"><a href="/">Technomancy Tavern</a> / <a href="/devlog/">devlog</a> / <a href="/devlog/esper-elfy/">esper elfy</a> / <a href="/devlog/esper-elfy/save-sparky/">save sparky</a> / posts</p>
+  <header>
+    <p class="kicker">◆ SAVE SPARKY · POST 2 ◆</p>
+    <h1>Boxes at Work</h1>
+    <p class="meta">What a cyan square can do before anyone gives it a face.</p>
+  </header>
+  <article>
+    <p>Before Elfy had art, the player was a glowing cyan square, and the whole game feel lived in it. These clips are recorded from the boxes-only build (commit <code>0f62800</code>), with scripted input so every run is the same. Numbers come from the source and from a log of the player's position every physics tick.</p>
+
+    <h2>Squash and stretch</h2>
+    <p>Every jump calls <code>visual.punch(Vector2(0.76, 1.26))</code>: the square's visual gets narrower and taller for a moment, then springs back. The collision box never changes; only what you see does. That is the whole trick, and it is why a square with no face can still feel springy.</p>
+    <figure class="clip"><video src="squash.mp4" poster="squash.jpg" controls loop muted playsinline preload="none"></video><figcaption><b>A short hop, a full jump, a run.</b> Run speed 350 px/s; jump height 225 px.</figcaption></figure>
+
+    <h2>Wall slide and wall kick</h2>
+    <p>Hold toward a wall in the air and the fall slows to a slide at 150 px/s. Press jump and you kick off it. The log shows the slide speed holding at exactly that number.</p>
+    <figure class="clip"><video src="wall.mp4" poster="wall.jpg" controls loop muted playsinline preload="none"></video><figcaption><b>Up the left wall, slide, kick off.</b></figcaption></figure>
+
+    <h2>Spikes</h2>
+    <p>Spikes are solid like a floor, but touching the points costs a point of health and bounces you away. In the log, health drops from 5 to 4 at the moment of contact and the bounce launches the square over the pit.</p>
+    <figure class="clip"><video src="spikes.mp4" poster="spikes.jpg" controls loop muted playsinline preload="none"></video><figcaption><b>Walk into the spikes.</b> Health 5 → 4, one angled bounce.</figcaption></figure>
+
+    <h2>Coyote time (and the time I got it wrong)</h2>
+    <p>Coyote time is a short grace period after you walk off a ledge during which a jump still counts as a ground jump. Here it is 0.1 seconds.</p>
+    <p>My first recording of this looked right and was wrong. I pressed jump just after the square left the ledge and it jumped, so I called it coyote time. Then the question came up: is that just the double jump? It was. The log showed the double jump counter dropping from 1 to 0 at that moment, and the jump was the small air jump, not the full one. My press had landed on the exact tick the window closed.</p>
+    <p>So I redid it properly: the double jump is switched off for these two runs, and the log confirms the result before I record anything.</p>
+    <div class="clips">
+      <figure class="clip"><video src="coyote-yes.mp4" poster="coyote-yes.jpg" controls loop muted playsinline preload="none"></video><figcaption><b>Jump 0.03 s after leaving the ledge.</b> A full jump (about 230 px) up onto the platform above.</figcaption></figure>
+      <figure class="clip"><video src="coyote-no.mp4" poster="coyote-no.jpg" controls loop muted playsinline preload="none"></video><figcaption><b>Jump about 0.18 s late.</b> The window has closed. Nothing happens and the square falls to the floor.</figcaption></figure>
+    </div>
+    <p>Lesson for the devlog, and for anything you record: check the numbers, then the clip. A clip that merely looks right can still be showing something else.</p>
+
+    <p class="meta">Recorded with Godot's movie mode and encoded with ffmpeg at 960 px wide. The input scripts and the debug patch are in the game repository under <code>docs/devlog/capture/</code>.</p>
+  </article>
+  <p class="foot">© 2026 Technomancy Tavern · contact@tmtvrn.com</p>
+</div>
+</body>
+</html>
