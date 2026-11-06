@@ -1,0 +1,1118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="A perspective-camera level with a spider on the ceiling: the one we threw out, kept for the lessons.">
+<meta property="og:title" content="The Silk Spire · Square Off devlog (study)">
+<meta property="og:description" content="A perspective-camera level with a spider on the ceiling: the one we threw out, kept for the lessons.">
+<meta property="og:type" content="website">
+<title>The Silk Spire · Square Off devlog (study)</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: a game-screen page. Global controls under the title, then one study per enemy: a wide stage at the game's
+   own pixel scale, its readout, then its key-pose sheet beside short notes. Deliberately single-theme (the dark
+   arena), every color set explicitly. */
+:root {
+	--bg: #0a0c13;
+	--panel: #11151f;
+	--line: #232a3c;
+	--ink: #e2e7f2;
+	--muted: #8d96ad;
+	--ember: #b8aee0;
+	--ember-soft: #eeecfa;
+	--display: "Chakra Petch", "Trebuchet MS", sans-serif;
+	--body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+	--mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+	color-scheme: dark;
+}
+html { background: var(--bg); }
+body { background: var(--bg); color: var(--ink); font: 16px/1.55 var(--body); }
+.wrap { max-width: 1120px; margin: 0 auto; padding-block: 32px 56px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 28px; }
+header { display: grid; gap: 6px; }
+.eyebrow { font: 500 12px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ember-soft); }
+h1 { font: 700 clamp(30px, 5vw, 46px)/1.05 var(--display); letter-spacing: 0.01em; margin: 0; text-wrap: balance; }
+h2 { font: 700 20px/1.2 var(--display); margin: 0 0 8px; letter-spacing: 0.02em; }
+h2.name { font-size: clamp(24px, 3.6vw, 32px); margin: 0; text-wrap: balance; }
+.study { display: grid; gap: 14px; border-top: 1px solid var(--line); padding-top: 28px; }
+.wrap { gap: 40px; }
+.lede { color: var(--muted); max-width: 68ch; margin: 0; }
+.stage { position: relative; border: 1px solid var(--line); background: #000; }
+.stage canvas { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; max-width: 100%; }
+.controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+button { font: 500 14px/1 var(--mono); color: var(--ink); background: var(--panel); border: 1px solid var(--line); padding: 10px 14px; cursor: pointer; }
+button:hover { border-color: var(--ember); }
+button:focus-visible { outline: 2px solid var(--ember); outline-offset: 2px; }
+button[aria-pressed="true"] { border-color: var(--ember); color: var(--ember-soft); }
+kbd { font: 500 11px/1 var(--mono); color: var(--muted); border: 1px solid var(--line); padding: 2px 5px; margin-left: 6px; }
+.readout { font: 500 13px/1.3 var(--mono); color: var(--muted); margin-left: auto; font-variant-numeric: tabular-nums; }
+.lower { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 28px; align-items: start; }
+.sheet { border: 1px solid var(--line); background: var(--panel); padding: 14px; display: grid; gap: 10px; }
+.sheet canvas { width: 100%; height: auto; max-width: 100%; image-rendering: pixelated; display: block; }
+.caption { font: 500 12px/1.4 var(--mono); color: var(--muted); }
+.notes { display: grid; gap: 22px; min-width: 0; }
+.notes p, .notes li { color: #c4cbdb; margin: 0; }
+.notes ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
+.notes strong { color: var(--ink); }
+footer { font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 16px; }
+footer a { color: var(--ember-soft); }
+@media (max-width: 760px) { .lower { grid-template-columns: minmax(0, 1fr); } .readout { margin-left: 0; width: 100%; } }
+</style>
+
+</head>
+<body>
+<div class="wrap">
+	<header>
+		<div class="eyebrow">Square Off devlog · study · level study · a realm of the climb</div>
+		<h1>The Silk Spire</h1>
+		<p class="lede">A level, not a diorama: one realm of the climb, with its one boss. Elfy arrives from below, up the steps from the bridge she came by. She meets Nana Nightloom, a knitting granny spider who walks the floor, the walls and the ceiling. She wins, the web over the hatch unravels, and she climbs out to the terrace, where the realm's gate is its checkpoint and the next realm hangs above her, lit gold. The game is still a flat 2D plane (the inset). The world around it is built in depth all the way out: a colonnade you see straight through, floating stairs and islands, towers, a city of spires in the fog, a sea of cloud far below. Everything is drawn by code.</p>
+		<div class="controls">
+			<button id="pause" type="button" aria-pressed="false">Pause<kbd>Space</kbd></button>
+			<button id="slow" type="button" aria-pressed="false">Slow motion<kbd>S</kbd></button>
+			<button id="replay" type="button">Replay<kbd>R</kbd></button>
+			<button id="track" type="button" aria-pressed="true">Track view<kbd>T</kbd></button>
+		</div>
+	</header>
+	<section class="study" aria-labelledby="h-spire">
+		<h2 class="name" id="h-spire">Nana Nightloom's chamber</h2>
+		<div class="stage"><canvas id="stage-spire" width="1280" height="720" aria-label="Elfy climbs up a series of floating steps inside an open stone spire at night, a long bridge behind her running off into the fog, and comes up through a hole into a chamber framed by pillars, with a colonnade of tall arches behind it opening onto towers, floating stairs and islands and a city of spires; a granny spider in a lace bonnet and spectacles knits upside down on the chamber's ceiling, drops on a thread, runs a lap of the whole room along the floor, up the wall, across the ceiling and down the other wall, drops twice onto Elfy's spot, spits web onto the floor, then runs another lap trailing silk, snags in her own thread and dangles in a cocoon while Elfy jumps and hits her; she comes apart in silk, the web over the ceiling hatch unravels, light pours down, and Elfy jumps up to the terrace where a gate lights up as the checkpoint, a golden island floating high above"></canvas></div>
+		<div class="controls"><span class="readout" id="readout-spire">idle</span></div>
+		<div class="notes">
+			<ul>
+				<li><strong>The camera trick.</strong> Instead of lowering the camera to see the ceiling, the camera's eye rides at Elfy's height with a gentle perspective. Anything above her eye shows its underside, so the ceiling Nana walks on is always in view while Elfy is below it. Anything below shows its top, so the floor she stands on, and the steps she came up, read as surfaces. Nothing tilts, and her controls never change.</li>
+				<li><strong>The plane is 1:1.</strong> The camera's distance equals its focal length, so the play plane renders at exactly one world unit per pixel. Elfy, Nana, the platforms' front edges and every warning are crisp, unscaled pixel art. Only things in front of or behind the plane grow or shrink.</li>
+				<li><strong>Walls and ceilings in 2D.</strong> In the inset, the chamber is a box of lines: floor, two walls, a ceiling with the hatch, two ledges. Nana is a red square that walks all of them; her lap is one path round the box. On screen she is drawn in her own frame (her surface below her), then turned onto the floor, a wall or the ceiling.</li>
+				<li><strong>No void.</strong> The spire is open: a colonnade behind the chamber, and below it a bare framework of pillars, beams and hanging lanterns, so the world shows through. Around it, at every depth: two towers and a bridge, flights of floating stairs, small islands with lit houses, a city of spires, an aqueduct, a cloud sea. Fog thickens with distance, so it fades instead of ending, and everything slides past at its own rate as the camera rises.</li>
+				<li><strong>Where you came from, where you are going.</strong> At the start the camera is low: the terrace, the long bridge off into the fog, the bathhouse far down it (the last realm), and the chamber's underside above. At the end it rises past the terrace to the gate, the checkpoint, and the next realm's golden island overhead.</li>
+				<li><strong>One enemy, once.</strong> A realm has its boss; when she is beaten, its top opens (here, the web over the hatch unravels), and the gate at the top is the save point. An enemy you left unbeaten could follow you up through that hatch into the next realm, so two fights overlap.</li>
+			</ul>
+		</div>
+	</section>
+	<footer>A study for Square Off. All drawing and code here are new. Elfy is the game's own sprite.</footer>
+</div>
+<script>
+"use strict";
+const W = 640, H = 360, TAU = Math.PI * 2, N = W * H;
+const FEET = 172; // feet line: the middle of the snow's top surface
+const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+const lerp = (a, b, k) => a + (b - a) * k;
+const smooth = (a, b, x) => { const k = clamp((x - a) / (b - a)); return k * k * (3 - 2 * k); };
+const BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5].map((v) => (v + 0.5) / 16);
+const bayer = (x, y) => BAYER[(y & 3) * 4 + (x & 3)];
+function hash(a, b) { let h = (a * 374761393 + b * 668265263) | 0; h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296; }
+function noise1(x, seed = 0) { const i = Math.floor(x), f = x - i, s = f * f * (3 - 2 * f); return lerp(hash(i, seed), hash(i + 1, seed), s); }
+function rng(seed) { return () => { seed = (seed + 0x6d2b79f5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+const hexCache = new Map();
+function hx(h) { let c = hexCache.get(h); if (!c) { c = [parseInt(h.slice(1, 3), 16) / 255, parseInt(h.slice(3, 5), 16) / 255, parseInt(h.slice(5, 7), 16) / 255]; hexCache.set(h, c); } return c; }
+
+// ---------------------------------------------------------------- palette (the game's roles and ramps)
+const SKY = ["#121827", "#151c2e", "#192136", "#1e273f", "#232d48"];
+const PEAK = ["#232c44", "#2c3753", "#55637f", "#7d8db0"];
+const SNOW = ["#3b4a68", "#5f7398", "#97abcd", "#d4e1f5", "#ffffff"];
+const STONE = ["#11141d", "#181c28", "#1f2433", "#272d3f"];
+const WET = ["#1b2030", "#252c40", "#36405a"];
+const CLOTH = ["#2a0710", "#4c0d1b", "#7c1428", "#b0223d"];
+const LEATHER = ["#170d0b", "#2b1913", "#45291d"];
+const BRASS = ["#4a2c10", "#86561c", "#c88d34", "#f3cd73"];
+const WOOD = ["#24140a", "#3f2512", "#62391c"];
+const FIRE = ["#fffbe6", "#ffe46e", "#ffb22f", "#ff7420", "#e0391a", "#8c1a12"];
+const OUTLINE = "#07060b";
+
+// ---------------------------------------------------------------- the painter: a color grid and a light grid
+const col = new Float32Array(N * 3), lit = new Float32Array(N * 3), base = new Float32Array(N * 3);
+let OX = 0, OY = 0; // screen shake, in whole pixels
+function putRGB(x, y, c, a = 1) {
+	x = Math.floor(x + OX); y = Math.floor(y + OY);
+	if (x < 0 || y < 0 || x >= W || y >= H || a <= 0) return;
+	if (ZT !== null && ZB[y * W + x] > ZT) return;
+	const i = (y * W + x) * 3;
+	col[i] += (c[0] - col[i]) * a; col[i + 1] += (c[1] - col[i + 1]) * a; col[i + 2] += (c[2] - col[i + 2]) * a;
+}
+const put = (x, y, h, a = 1) => putRGB(x, y, hx(h), a);
+function light(x, y, h, k) {
+	x = Math.floor(x + OX); y = Math.floor(y + OY);
+	if (x < 0 || y < 0 || x >= W || y >= H) return;
+	const c = hx(h), i = (y * W + x) * 3;
+	lit[i] += c[0] * k; lit[i + 1] += c[1] * k; lit[i + 2] += c[2] * k;
+}
+function glow(x, y, r, h, k) {
+	if (k <= 0.004 || r <= 0) return;
+	x += OX; y += OY;
+	const c = hx(h);
+	for (let py = Math.max(0, Math.floor(y - r)); py <= Math.min(H - 1, Math.ceil(y + r)); py++)
+		for (let px = Math.max(0, Math.floor(x - r)); px <= Math.min(W - 1, Math.ceil(x + r)); px++) {
+			const d = Math.hypot(px + 0.5 - x, py + 0.5 - y) / r;
+			if (d < 1) { const f = (1 - d) * (1 - d) * k, i = (py * W + px) * 3; lit[i] += c[0] * f; lit[i + 1] += c[1] * f; lit[i + 2] += c[2] * f; }
+		}
+}
+function disc(x, y, r, h, a = 1) {
+	for (let py = Math.floor(y - r); py <= Math.ceil(y + r); py++)
+		for (let px = Math.floor(x - r); px <= Math.ceil(x + r); px++)
+			if (Math.hypot(px + 0.5 - x, py + 0.5 - y) <= r) put(px, py, h, a);
+}
+function line(x0, y0, x1, y1, h, a = 1) {
+	const n = Math.max(1, Math.ceil(Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0))));
+	for (let i = 0; i <= n; i++) put(x0 + ((x1 - x0) * i) / n, y0 + ((y1 - y0) * i) / n, h, a);
+}
+
+// ---------------------------------------------------------------- the backdrop (sky, peaks, floor), built once
+function buildBase() {
+	const set = (x, y, h) => { const c = hx(h), i = (y * W + x) * 3; base[i] = c[0]; base[i + 1] = c[1]; base[i + 2] = c[2]; };
+	for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) set(x, y, SKY[clamp(Math.floor((y / 190) * 4 + bayer(x, y) - 0.2), 0, 4)]);
+	const ridge = (x, k) => FEET - 58 - k * 4 - 34 * Math.max(0, Math.sin(x * 0.012 + k * 2.3)) ** 2 - 8 * Math.sin(x * 0.041 + k) - 3 * Math.sin(x * 0.11 + k * 3) + k * 18;
+	for (const k of [0, 1]) for (let x = 0; x < W; x++) {
+		const top = Math.round(ridge(x, k)), slope = ridge(x + 1, k) - ridge(x - 1, k);
+		for (let y = top; y < FEET; y++) {
+			const dep = y - top, lit2 = slope > 0.2; // slopes that face the light on the left
+			const cap = dep < 2 + 3 * Math.max(0, Math.sin(x * 0.05 + k * 4)) + (bayer(x, y) < 0.5 ? 1 : 0);
+			const c2 = k === 0 ? (cap ? PEAK[1] : PEAK[0]) : cap ? (lit2 ? PEAK[3] : PEAK[2]) : lit2 && dep < 5 + bayer(x, y) * 4 ? PEAK[2] : PEAK[1];
+			set(x, y, c2);
+		}
+	}
+	// the floor: the snow's top surface (seen from just above), its bright lip, then the stone face in blocks
+	for (let x = 0; x < W; x++) {
+		const bump = Math.round(1.2 * Math.sin(x * 0.13) + 0.7 * Math.sin(x * 0.31 + 1));
+		for (let y = FEET - 7 + bump; y < H; y++) {
+			const d = y - FEET;
+			let c;
+			if (d < -4) c = SNOW[1]; else if (d < -1) c = SNOW[2]; else if (d < 3) c = SNOW[3]; else if (d < 4) c = SNOW[4];
+			else if (d < 6) c = SNOW[2];
+			else {
+				const row = Math.floor((d - 6) / 12), bx = (x + (row % 2) * 13) % 26, by = (d - 6) % 12;
+				c = bx === 0 || by === 0 ? STONE[0] : by === 1 || bx === 1 ? STONE[3] : STONE[1 + ((hash(Math.floor((x + (row % 2) * 13) / 26), row) * 2) | 0)];
+			}
+			if (d === -7 + bump && (x & 1)) c = SNOW[0];
+			set(x, y, c);
+		}
+	}
+}
+
+const COOL = ["#2c3550", "#3e4a68"];
+// ---------------------------------------------------------------- Elfy, the game's own sprite (embedded)
+const ELFY = { fw: 64, fh: 76, cols: 8, ox: 32, oy: 72, anims: {"idle": {"start": 0, "count": 6, "fps": 6, "loop": true}, "jump": {"start": 17, "count": 2, "fps": 10, "loop": true}, "apex": {"start": 19, "count": 2, "fps": 10, "loop": true}, "fall": {"start": 21, "count": 2, "fps": 10, "loop": true}, "land": {"start": 23, "count": 1, "fps": 10, "loop": false}, "run": {"start": 7, "count": 10, "fps": 16, "loop": true}, "hurt": {"start": 57, "count": 1, "fps": 10, "loop": false}, "crouch": {"start": 53, "count": 4, "fps": 6, "loop": true}, "crouch_down": {"start": 52, "count": 1, "fps": 24, "loop": false}, "wall_grab": {"start": 35, "count": 1, "fps": 12, "loop": false}, "wall": {"start": 36, "count": 3, "fps": 10, "loop": true}, "wall_kick": {"start": 39, "count": 1, "fps": 12, "loop": false}, "air_flip": {"start": 40, "count": 8, "fps": 24, "loop": false}, "dash": {"start": 26, "count": 2, "fps": 12, "loop": true}, "air_jump": {"start": 24, "count": 2, "fps": 12, "loop": false}, "strike_side": {"start": 28, "count": 3, "fps": 30, "loop": false}}, data: null };
+{
+	const img = new Image();
+	img.onload = () => { const c = document.createElement("canvas"); c.width = img.width; c.height = img.height; const x = c.getContext("2d"); x.drawImage(img, 0, 0); ELFY.data = x.getImageData(0, 0, img.width, img.height); ELFY.w = img.width; };
+	img.src = "data:image/png;base64,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";
+}
+function drawElfy(name, time, fx, fy, flash = 0, flip = false) {
+	if (!ELFY.data) return;
+	const a = ELFY.anims[name], f = a.start + (a.loop ? Math.floor(time * a.fps) % a.count : Math.min(a.count - 1, Math.floor(time * a.fps)));
+	const sx0 = (f % ELFY.cols) * ELFY.fw, sy0 = Math.floor(f / ELFY.cols) * ELFY.fh, d = ELFY.data.data;
+	for (let y = 0; y < ELFY.fh; y++) for (let x = 0; x < ELFY.fw; x++) {
+		const i = ((sy0 + y) * ELFY.w + sx0 + x) * 4;
+		if (d[i + 3] < 128) continue;
+		const X = flip ? fx + ELFY.ox - x - 1 : fx - ELFY.ox + x; // flip: she faces left
+		putRGB(X, fy - ELFY.oy + y, [d[i] / 255, d[i + 1] / 255, d[i + 2] / 255]);
+		if (flash > 0) put(X, fy - ELFY.oy + y, "#ffffff", flash);
+	}
+	glow(fx + (flip ? -8 : 8), fy - 24, 14, "#4dff6a", 0.12);
+}
+
+// ================================================================ more enemies: shared tools
+// A part painter for creature sprites (the knight's, generalized): limbs, shells and custom fills land in a
+// cell with a depth per part; then nearer parts darken the pixels behind their edges, the cold rim catches
+// the far left edges, and a dark outline goes outside.
+function makeRig(KW, KH, KX0, KY0, lv) {
+	const l = Math.hypot(...lv), Lv = lv.map((a) => a / l), n = KW * KH;
+	const ramp = new Array(n).fill(null), idx = new Int8Array(n), pid = new Int8Array(n).fill(-1), emit = new Uint8Array(n), cool = new Uint8Array(n);
+	let P = 0;
+	const R = { KW, KH, KX0, KY0, geo: {} };
+	R.shade = (nx, ny) => { const nz = Math.sqrt(Math.max(0, 1 - nx * nx - ny * ny)); return clamp((nx * Lv[0] + ny * Lv[1] + nz * Lv[2] + 0.2) / 1.2); };
+	R.part = (p) => { P = p; };
+	R.plot = (x, y, r, i, e = 0, cl = 0) => {
+		x = Math.floor(x + KX0); y = Math.floor(y + KY0);
+		if (x < 0 || y < 0 || x >= KW || y >= KH) return;
+		const j = y * KW + x;
+		ramp[j] = r; idx[j] = clamp(i, 0, r.length - 1); pid[j] = P; emit[j] = e; cool[j] = cl;
+	};
+	R.level = (lum, r, x, y) => Math.floor(lum * r.length + (bayer(x + 64, y + 64) - 0.5) * 0.3);
+	R.scan = (x0, y0, x1, y1, fn) => { for (let y = Math.floor(y0); y <= Math.ceil(y1); y++) for (let x = Math.floor(x0); x <= Math.ceil(x1); x++) fn(x, y, x + 0.5, y + 0.5); };
+	R.capsule = (a, b, r0, r1, rp, bias = 0, extra) => {
+		const dx = b[0] - a[0], dy = b[1] - a[1], ll = Math.hypot(dx, dy) || 1, px = -dy / ll, py = dx / ll, RR = Math.max(r0, r1);
+		R.scan(Math.min(a[0], b[0]) - RR, Math.min(a[1], b[1]) - RR, Math.max(a[0], b[0]) + RR, Math.max(a[1], b[1]) + RR, (x, y, cx, cy) => {
+			const t = clamp(((cx - a[0]) * dx + (cy - a[1]) * dy) / (ll * ll)), qx = a[0] + dx * t, qy = a[1] + dy * t, r = lerp(r0, r1, t);
+			if (Math.hypot(cx - qx, cy - qy) > r) return;
+			const s = ((cx - qx) * px + (cy - qy) * py) / r;
+			let i = R.level(clamp(R.shade(px * s, py * s) + bias), rp, x, y);
+			if (extra) { i = extra(x, y, t, s, i); if (i === null) return; }
+			if (Array.isArray(i)) R.plot(x, y, i[0], i[1], i[2] || 0);
+			else R.plot(x, y, rp, i, 0, px * s < -0.72 ? 1 : 0);
+		});
+	};
+	R.ellipse = (cx0, cy0, rx, ry, rp, bias = 0, extra) => {
+		R.scan(cx0 - rx, cy0 - ry, cx0 + rx, cy0 + ry, (x, y, cx, cy) => {
+			const nx = (cx - cx0) / rx, ny = (cy - cy0) / ry;
+			if (nx * nx + ny * ny > 1) return;
+			let i = R.level(clamp(R.shade(nx * 0.92, ny * 0.92) + bias), rp, x, y);
+			if (extra) { i = extra(x, y, nx, ny, i); if (i === null) return; }
+			if (Array.isArray(i)) R.plot(x, y, i[0], i[1], i[2] || 0);
+			else R.plot(x, y, rp, i, 0, nx < -0.78 ? 1 : 0);
+		});
+	};
+	R.finish = () => {
+		const px = new Array(n).fill(null), em = new Uint8Array(n), emR = new Array(n).fill(null);
+		for (let y = 0; y < KH; y++) for (let x = 0; x < KW; x++) {
+			const j = y * KW + x;
+			if (!ramp[j]) continue;
+			let i = idx[j];
+			if (!emit[j]) for (const [ax, ay] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+				const xx = x + ax, yy = y + ay;
+				if (xx < 0 || yy < 0 || xx >= KW || yy >= KH) continue;
+				if (pid[yy * KW + xx] > pid[j] + 1) { i = Math.max(0, i - 2); break; }
+			}
+			px[j] = cool[j] && x > 0 && !ramp[j - 1] ? COOL[1] : ramp[j][i];
+			em[j] = emit[j];
+			if (emit[j]) emR[j] = ramp[j];
+		}
+		for (let y = 0; y < KH; y++) for (let x = 0; x < KW; x++) {
+			const j = y * KW + x;
+			if (ramp[j]) continue;
+			if ((x > 0 && ramp[j - 1]) || (x < KW - 1 && ramp[j + 1]) || (y > 0 && ramp[j - KW]) || (y < KH - 1 && ramp[j + KW])) px[j] = OUTLINE;
+		}
+		return { KW, KH, KX0, KY0, px, em, emR, geo: R.geo };
+	};
+	return R;
+}
+// two-bone reach (shoulder to hand), elbow bending down
+function ik2(s0, h, L1, L2) {
+	let dx = h[0] - s0[0], dy = h[1] - s0[1], D = Math.hypot(dx, dy);
+	if (D > L1 + L2 - 0.5) { const k = (L1 + L2 - 0.5) / D; h = [s0[0] + dx * k, s0[1] + dy * k]; dx *= k; dy *= k; D = L1 + L2 - 0.5; }
+	const A = Math.acos(clamp((L1 * L1 + D * D - L2 * L2) / (2 * L1 * D), -1, 1)), b0 = Math.atan2(dy, dx);
+	const e1 = [s0[0] + Math.cos(b0 + A) * L1, s0[1] + Math.sin(b0 + A) * L1], e2 = [s0[0] + Math.cos(b0 - A) * L1, s0[1] + Math.sin(b0 - A) * L1];
+	return [e1[1] > e2[1] ? e1 : e2, h];
+}
+// Stamps a sprite facing left at (fx, fy). Its emissive pixels flicker live; flash whites the silhouette.
+function stampSprite(S, fx, fy, t, flash = 0, lk = 0.15) {
+	for (let y = 0; y < S.KH; y++) for (let x = 0; x < S.KW; x++) {
+		const j = y * S.KW + x, c = S.px[j];
+		if (!c) continue;
+		const X = fx - (x - S.KX0) - 1, Y = fy + (y - S.KY0), e = S.em[j];
+		if (!e) put(X, Y, c);
+		else {
+			const r = S.emR[j], fi = r.indexOf(c);
+			const nn = noise1(t * 7 + Y * 0.55, X * 13 + 7) * 0.65 + noise1(t * 17 + Y * 1.3, X * 5 + 3) * 0.35;
+			const i = clamp(fi + (nn > 0.68 ? -1 : nn < 0.3 ? 1 : 0), e === 2 ? 0 : 1, r.length - 1);
+			put(X, Y, r[i]);
+			light(X, Y, r[Math.min(2, r.length - 1)], lk * (e === 2 ? 3 : 1));
+		}
+		if (flash > 0) put(X, Y, "#ffffff", flash);
+	}
+}
+const gpt = (fx, fy, p) => [fx - p[0] - 1, fy + p[1]]; // a sprite point on the stage (mirrored)
+
+// juice: screen shake and hit-stop, per stage
+const makeJuice = () => ({ sa: 0, st: 0, sT: 1, stop: 0 });
+function kick(J, amp, time = 0.2, stop = 0) { if (amp >= J.sa * (J.st / J.sT)) { J.sa = amp; J.st = time; J.sT = time; } J.stop = Math.max(J.stop, stop); }
+function juiceStep(J, dt) { J.st = Math.max(0, J.st - dt); if (J.stop > 0) { J.stop -= dt; return true; } return false; }
+function juiceShake(J, t) { const k = J.st / J.sT; OX = Math.round(Math.sin(t * 97) * J.sa * k); OY = Math.round(Math.cos(t * 71) * J.sa * 0.7 * k); }
+
+// particles and rings
+function stepParts(list, dt) {
+	for (const p of list) {
+		p.age += dt;
+		if (p.pull) { const dx = p.pull[0] - p.x, dy = p.pull[1] - p.y; p.vx += dx * p.pk * dt; p.vy += dy * p.pk * dt; p.vx *= Math.exp(-dt * 2.5); p.vy *= Math.exp(-dt * 2.5); if (Math.hypot(dx, dy) < 2.5) p.life = p.age; }
+		if (p.g) p.vy += p.g * dt;
+		if (p.drag) { p.vx *= Math.exp(-p.drag * dt); p.vy *= Math.exp(-p.drag * dt); }
+		if (p.flut) p.vx += Math.sin(p.age * 9 + p.ph) * p.flut * dt;
+		if (p.spin !== undefined) { // drawn into a funnel: around, in and up
+			p.ang += p.spin * dt; p.rad = Math.max(1, p.rad - p.inward * dt); p.y += p.vy * dt;
+			p.x = p.cx + Math.cos(p.ang) * p.rad;
+		} else { p.x += p.vx * dt; p.y += p.vy * dt; }
+		if (p.grow) p.r += p.grow * dt;
+		if (p.floor && p.y > FEET) { p.y = FEET; p.vy *= -0.3; p.vx *= 0.6; }
+	}
+	return list.filter((p) => p.age < p.life);
+}
+function drawParts(list, t) {
+	for (const p of list) {
+		const a = 1 - p.age / p.life;
+		if (p.k === "spark") { line(p.x - p.vx * 0.022, p.y - p.vy * 0.022, p.x, p.y, p.pal[2], a); put(p.x, p.y, p.pal[0], a); light(p.x, p.y, p.pal[1], 0.35 * a); }
+		else if (p.k === "ember") { const f = a * (0.6 + 0.4 * Math.sin(t * 22 + p.ph)); put(p.x, p.y, f > 0.55 ? p.pal[1] : p.pal[3], f); light(p.x, p.y, p.pal[2], 0.3 * f); }
+		else if (p.k === "puff") {
+			const u = p.age / p.life;
+			disc(p.x, p.y, p.r, p.pal[Math.min(p.pal.length - 1, 1 + Math.floor(u * (p.pal.length - 1)))], 0.8 * a);
+			if (u < 0.45) disc(p.x - p.r * 0.2, p.y - p.r * 0.3, p.r * 0.5, p.pal[0], (0.45 - u) * 1.8);
+			glow(p.x, p.y, p.r * 2 + 2, p.pal[2], 0.1 * a);
+		}
+		else if (p.k === "smoke") disc(p.x, p.y, p.r, p.c, p.a0 * a);
+		else if (p.k === "bit") { put(p.x, p.y, p.c); if (p.c2 && ((p.age * 14) | 0) % 2) put(p.x + 1, p.y, p.c2); }
+		else if (p.k === "glint") { if (Math.sin(t * 14 + p.ph) > 0.1) { put(p.x, p.y, p.c, a); light(p.x, p.y, p.c, 0.25 * a); } }
+	}
+}
+function stepRings(list, dt) { for (const r of list) r.age += dt; return list.filter((r) => r.age < r.life); }
+function drawRings(list) {
+	for (const r of list) {
+		const u = r.age / r.life, RR = lerp(r.r0, r.r1, 1 - (1 - u) ** 3), ry = r.flat ? RR * r.flat : RR;
+		for (let a = 0; a < TAU; a += 0.7 / Math.max(RR, 4)) {
+			const x = r.x + Math.cos(a) * RR, y = r.y + Math.sin(a) * ry;
+			put(x, y, u < 0.35 ? r.pal[0] : r.pal[1], 1 - u);
+			if (r.thick && u < 0.5) put(x, y + 1, r.pal[1], (1 - u) * 0.6);
+		}
+		if (r.lit) glow(r.x, r.y, RR * 0.8, r.pal[1], r.lit * (1 - u));
+	}
+}
+const flashDisc = (x, y, r, k) => { disc(x, y, r, "#ffffff", k); glow(x, y, r * 5, "#ffffff", 0.7 * k); };
+
+// melted snow, as the Brazier Knight's ring leaves it: per column, how far the drift has gone to wet stone
+const makeMelt = () => new Float32Array(W);
+function meltAt(M, x, r, k) {
+	for (let i = Math.floor(x - r); i <= Math.ceil(x + r); i++) {
+		if (i < 0 || i >= W) continue;
+		const f = 1 - Math.abs(i + 0.5 - x) / r;
+		if (f > 0) M[i] = Math.min(1, M[i] + k * Math.min(1, f * 1.6));
+	}
+}
+// a hit melts a patch at once and throws up steam
+function meltBurst(M, parts, x, r) {
+	meltAt(M, x, r, 1);
+	for (let n = 0; n < 3 + r / 6; n++) parts.push({ k: "smoke", x: x + (Math.random() - 0.5) * r * 1.4, y: FEET - 2, vx: 6 + (Math.random() - 0.5) * 10, vy: -12 - Math.random() * 12, r: 1.5 + Math.random() * 1.5, grow: 4, life: 1 + Math.random() * 0.8, age: 0, c: Math.random() < 0.5 ? "#8a99b8" : "#c6d4ec", a0: 0.3 });
+}
+// steam rising off ground that is still melting
+const steamAt = (parts, x) => parts.push({ k: "smoke", x, y: FEET - 2, vx: 6 + (Math.random() - 0.5) * 8, vy: -10 - Math.random() * 10, r: 1.2 + Math.random(), grow: 3.5, life: 0.9 + Math.random() * 0.6, age: 0, c: Math.random() < 0.5 ? "#8a99b8" : "#c6d4ec", a0: 0.25 });
+function drawMelt(M, fade) {
+	for (let x = 0; x < W; x++) {
+		const m = M[x] * fade;
+		if (m < 0.02) continue;
+		for (let y = FEET - 8; y <= FEET + 5; y++) {
+			const i = (y * W + x) * 3;
+			if (base[i] + base[i + 1] + base[i + 2] < 1.2) continue; // only on snow
+			if (m < 0.95 && hash(x, y) > m * 1.3) continue; // a ragged edge
+			const dy = y - FEET;
+			put(x, y, WET[dy > 3 ? 0 : dy > 0 ? 1 : (x + y) % 5 === 0 ? 2 : 1], Math.min(1, m * 1.1) * 0.9);
+		}
+	}
+}
+
+// ================================================================ page 5: the Sanctum Above the Clouds
+// A cathedral of white marble and gold leaf afloat on a sea of cloud at sunrise: colonnades on cloud banks, a great
+// rose window, golden bells on chains. Something has got into it. Violet-black rot is creeping across the marble in
+// veins from the right, the clouds there are curdling into tar, the gold is tarnishing, and the feathers that drift
+// down are white on the holy side and black on the other. Poison reads magenta, dark magic black with violet rims;
+// warnings are magenta (poison) or white (blades); impact frames are gold on black.
+const DAWN = ["#1a2048", "#242e66", "#344484", "#4e5e9e", "#7a7cb4", "#b49cb8", "#e4c0a4"];
+const MARBLE = ["#2e2c44", "#5a5874", "#8e8ca4", "#c4c0d0", "#ece8ee"];
+const GOLD = ["#4a3010", "#8a6018", "#c8962a", "#f0c850", "#fff0a8"];
+const CLOUD = ["#5a5a88", "#8a8ab0", "#bab8d4", "#e2def0", "#ffffff"];
+const ROT = ["#08040e", "#1a0a24", "#341048", "#5a1a74", "#8a3aa8", "#c88ae0"];
+const VENOM = ["#3a0828", "#7a1050", "#c0287a", "#ff5ab0", "#ffc0e8"];
+const GLASSC = ["#c8962a", "#e8607a", "#4a6ae0", "#f0c850", "#9a4ad8", "#e8e0f8"];
+
+const sanctumBase = new Float32Array(N * 3);
+function buildSanctum() {
+	const set = (x, y, h) => { if (x < 0 || y < 0 || x >= W || y >= H) return; const c = hx(h), i = (y * W + x) * 3; sanctumBase[i] = c[0]; sanctumBase[i + 1] = c[1]; sanctumBase[i + 2] = c[2]; };
+	const rotAt = (x, y) => clamp((x - 210) / 140 + (noise1(x * 0.06 + y * 0.11, 5) - 0.5) * 0.5 + (hash(x, y) - 0.5) * 0.12); // how corrupted this spot is
+	// the dawn sky: deep blue at the top to rose-gold at the cloud line
+	for (let y = 0; y < FEET; y++) for (let x = 0; x < W; x++) set(x, y, DAWN[clamp(Math.floor((y / 150) * 6 + bayer(x, y) - 0.3), 0, 6)]);
+	// the sea of cloud behind, curdling purple-black toward the right
+	for (const [k, base] of [[0, FEET - 46], [1, FEET - 26]]) for (let x = 0; x < W; x++) { const top = base - 10 * Math.abs(Math.sin(x * 0.04 + k * 2)) - 5 * Math.abs(Math.sin(x * 0.13 + k)); for (let y = Math.round(top); y < FEET; y++) { const r = rotAt(x, y) * 0.8, d = y - top; set(x, y, r > 0.55 && bayer(x, y) < r ? ROT[2 + k] : CLOUD[clamp(Math.floor(0.3 + k * 0.8 + (d < 3 ? 1.2 : 0) - d * 0.03 + bayer(x, y) * 0.8), 0, 3)]); } }
+	// the rose window: a great wheel of stained glass, broken open on the lower right where the rot got in
+	const RX = 192, RY = 62, RR = 40;
+	for (let y = RY - RR - 3; y <= RY + RR + 3; y++) for (let x = RX - RR - 3; x <= RX + RR + 3; x++) {
+		const dx = x - RX, dy = y - RY, d = Math.hypot(dx, dy), a = Math.atan2(dy, dx);
+		if (d > RR + 3) continue;
+		const broken = a > 0.1 && a < 1.5 && d > 10 + 14 * hash(Math.round(a * 8), 1);
+		if (d > RR) { set(x, y, d > RR + 2 ? MARBLE[1] : MARBLE[3]); continue; }
+		if (broken) { if (hash(x, y) < 0.08) set(x, y, ROT[3]); continue; }
+		const nsp = d > 27 ? 24 : d > 14 ? 16 : 8, ring = [6, 14, 21, 27, 34].some((r) => Math.abs(d - r) < 0.7), spoke = Math.abs(((a / TAU) * nsp + nsp) % 1 - 0.5) > 0.44;
+		if (ring || spoke || d < 4) { set(x, y, d < 4 ? GOLD[3] : "#120e20"); continue; }
+		const cell = Math.floor(((a / TAU) * nsp + nsp) % nsp) * 7 + Math.floor(d / 7), c = hx(GLASSC[(cell * 5 + (d > 27 ? 1 : 0)) % 6]), sheen = clamp(0.55 - 0.35 * (dx + dy) / RR + (bayer(x, y) - 0.5) * 0.2);
+		const k = 0.32 + 0.45 * sheen; set(x, y, "#" + c.map((v) => Math.round(clamp(v * k) * 255).toString(16).padStart(2, "0")).join(""));
+	}
+	for (let k = 0; k < 40; k++) { const a = 0.1 + hash(k, 3) * 1.4, d = RR - hash(k, 4) * 26; set(Math.round(RX + Math.cos(a) * d), Math.round(RY + Math.sin(a) * d), ROT[4]); } // rot crusted round the break
+	// columns: fluted marble with gold capitals; intact on the left, broken off and veined with rot on the right
+	for (const [cx, top] of [[16, 10], [62, 10], [322, 58], [368, 32]]) {
+		for (let y = top; y < FEET; y++) for (let x = -6; x <= 6; x++) { const r = rotAt(cx + x, y) > 0.6 && noise1((cx + x) * 0.8 + y * 0.04, 9) < rotAt(cx + x, y) * 0.55; set(cx + x, y, r ? ROT[2] : Math.abs(x) === 6 ? MARBLE[0] : (x + 6) % 3 === 0 ? MARBLE[2] : MARBLE[clamp(3 - (x > 2 ? 1 : 0) + (x < -3 ? 1 : 0), 1, 4)]); }
+		if (top < 20) for (let y = top - 6; y < top; y++) for (let x = -9; x <= 9; x++) set(cx + x, y, y === top - 6 ? GOLD[4] : y === top - 1 ? GOLD[1] : GOLD[2 + (x < 0 ? 1 : 0)]);
+		else for (let x = -6; x <= 6; x++) set(cx + x, top - Math.round(hash(x, cx) * 4), MARBLE[1]); // the broken top
+	}
+	for (let x = 0; x < 82; x++) for (let y = 0; y < 5; y++) set(x, y, y === 4 ? GOLD[1] : y === 0 ? GOLD[3] : MARBLE[3]); // an entablature on the holy side
+	// the floor: a marble slab with a gold trim line, floating on cloud; rot veins and tar from the right
+	for (let x = 0; x < W; x++) {
+		for (let y = FEET; y < FEET + 10; y++) { const d = y - FEET, r = rotAt(x, y); let c = d === 0 ? GOLD[3] : d === 1 ? GOLD[1] : (x % 24 === 0 || d === 9) ? MARBLE[1] : MARBLE[clamp(3 - (d > 5 ? 1 : 0) + (hash(x >> 2, d) < 0.15 ? -1 : 0), 1, 4)]; if (r > 0.5 && hash(x, y) < (r - 0.5) * 1.2) c = d < 2 ? GOLD[0] : ROT[2]; set(x, y, c); }
+		const cb = FEET + 10 + Math.round(3 * Math.abs(Math.sin(x * 0.09)) + 2 * Math.sin(x * 0.23));
+		for (let y = FEET + 10; y < H; y++) set(x, y, y < cb ? MARBLE[0] : CLOUD[clamp(Math.floor(3 - (y - cb) * 0.08 + bayer(x, y) * 0.6 - rotAt(x, y) * 1.5), 0, 4)]);
+	}
+	// rot veins: branching cracks crawling in from the right across the floor and up the columns
+	const R = rng(11);
+	for (let v = 0; v < 9; v++) { let x = W - 1 - R() * 40, y = FEET + 2 + R() * 7; for (let s = 0; s < 120 + R() * 80; s++) { x -= 0.6 + R() * 0.8; y += (R() - 0.5) * 1.4; y = clamp(y, FEET + 1, FEET + 9); set(Math.round(x), Math.round(y), s % 9 === 0 ? ROT[4] : ROT[1]); if (x < 200) break; } }
+	for (const cx of [322, 368]) { let x = cx, y = FEET; for (let s = 0; s < 70; s++) { y -= 1; x += (R() - 0.5) * 1.6; set(Math.round(x), y, ROT[1]); if (s % 11 === 0) set(Math.round(x) + 1, y, ROT[4]); } }
+}
+
+// ---------------------------------------------------------------- live scenery: god-rays from the window, motes, the rot breathing
+function drawSanctumLife(t, layer) {
+	if (layer === "back") {
+		for (let r = 0; r < 5; r++) { const x0 = 160 + r * 14 + Math.sin(t * 0.4 + r) * 4, k = 0.03 + 0.015 * Math.sin(t * 0.6 + r * 2); for (let y = 70; y < FEET; y += 2) for (let w = 0; w < 6; w++) light(x0 - (y - 70) * 0.35 + w, y, "#ffe0a0", k * (1 - (y - 70) / 110)); }
+		for (let i = 0; i < 6; i++) { const x = 230 + i * 26, y = FEET + 4 + (i % 3) * 2, k = 0.5 + 0.5 * Math.sin(t * 1.3 + i * 1.7); glow(x, y, 6, ROT[4], 0.12 * k); }
+		for (let i = 0; i < 8; i++) { const x = ((i * 61 + t * (3 + (i % 3) * 2)) % (W + 80)) - 40, y = FEET - 34 - (i % 3) * 18; disc(x, y, 14 + (i % 3) * 5, x > 230 ? "#5a3a78" : "#e8e0f8", 0.05); }
+	} else {
+		for (let i = 0; i < 5; i++) { const x = ((i * 83 + t * 8) % (W + 100)) - 50; disc(x, FEET + 2, 18, x > 230 ? "#3a1a4a" : "#ffffff", 0.07); }
+		for (let i = 0; i < 9; i++) { const x = (i * 43 + Math.sin(t * 0.5 + i) * 12 + 384) % 384, y = 40 + (i * 29) % 110 + Math.sin(t * 0.9 + i * 2) * 5, f = Math.sin(t * 1.8 + i * 1.3); if (f > 0.4) { put(x, y, "#fff0c0", f); light(x, y, "#ffe0a0", 0.25 * f); } }
+	}
+}
+
+// ---------------------------------------------------------------- feathers: drifting down, rocking, settling, cut in two
+// white on the holy side, black on the corrupted side; they settle on whatever surfaces the study hands in
+function makeFeathers(surfaces) {
+	const list = [], R = Math.random;
+	const F = {
+		list,
+		spawn(x, y, half = 0, vx = 0, vy = 0) { list.push({ x, y, vx, vy, ph: R() * 9, sw: 0.7 + R() * 0.6, dark: x > 230 + (R() - 0.5) * 60, half, landed: false, life: 9 + R() * 4, age: 0, spin: 0 }); },
+		update(t, dt) {
+			if (R() < dt * 5) F.spawn(R() * W, -4);
+			for (const l of list) {
+				l.age += dt;
+				if (l.landed) { if (l.on && !l.on()) l.landed = false; else continue; }
+				l.vx += (Math.sin(l.age * l.sw * 2.2 + l.ph) * 30 - l.vx * 0.9) * dt; l.vy += (16 - l.vy * 1.6) * dt;
+				l.x += l.vx * dt; l.y += l.vy * dt; if (l.spin) l.spin *= Math.exp(-dt * 2);
+				for (const s of surfaces()) if (l.vy > 0 && l.x > s.x0 && l.x < s.x1 && Math.abs(l.y - s.y) < 2) { l.landed = true; l.y = s.y - 1; l.on = s.alive; }
+				if (l.y >= FEET - 1) { l.landed = true; l.y = FEET - 1; l.on = null; }
+			}
+			for (let i = list.length - 1; i >= 0; i--) if (list[i].age > list[i].life || list[i].x < -20 || list[i].x > W + 20 || list[i].y < -30) list.splice(i, 1);
+		},
+		slice(ax, ay, bx, by, r = 4) {
+			const dx = bx - ax, dy = by - ay, l2 = dx * dx + dy * dy || 1;
+			for (const l of [...list]) { if (l.half) continue; const u = clamp(((l.x - ax) * dx + (l.y - ay) * dy) / l2); if (Math.hypot(l.x - ax - dx * u, l.y - ay - dy * u) > r) continue; l.half = 1; l.landed = false; l.vy = -20; l.vx = 20; l.spin = 8; list.push({ ...l, vx: -20, ph: l.ph + 2 }); }
+		},
+		gust(x, y, r, fx, fy) { for (const l of list) { const d = Math.hypot(l.x - x, l.y - y); if (d < r) { const k = 1 - d / r; l.landed = false; l.vx += fx * k; l.vy += fy * k; l.spin = 6; } } },
+		puff(x, y, n = 8) { for (let i = 0; i < n; i++) F.spawn(x + (R() - 0.5) * 10, y - 2, 0, (R() - 0.5) * 100, -50 - R() * 60); },
+		draw(t) {
+			for (const l of list) {
+				const a = clamp((l.life - l.age) / 1.5), ang = l.landed ? 0.1 : Math.sin(l.age * l.sw * 2.2 + l.ph) * 0.7 + l.age * l.spin + 0.3;
+				const c1 = l.dark ? ROT[2] : CLOUD[4], c2 = l.dark ? ROT[4] : CLOUD[2], len = l.half ? 1 : 3;
+				for (let j = -len; j <= len; j++) { put(l.x + Math.cos(ang) * j, l.y + Math.sin(ang) * j, j === len ? c2 : c1, a); if (!l.half && Math.abs(j) < 2) put(l.x + Math.cos(ang) * j - Math.sin(ang), l.y + Math.sin(ang) * j + Math.cos(ang), c2, a * 0.7); }
+			}
+		},
+	};
+	for (let i = 0; i < 26; i++) F.spawn(Math.random() * W, 10 + Math.random() * 150);
+	for (let i = 0; i < 20; i++) { F.spawn(Math.random() * W, FEET - 1); list[list.length - 1].landed = true; }
+	return F;
+}
+
+// ---------------------------------------------------------------- set pieces
+// a marble ledge with a gold trim and corbels under it; rot can be crept over it
+function drawLedge(p, t, rot = 0) {
+	for (let x = p.x0; x <= p.x1; x++) for (let y = 0; y < 6; y++) { let c = y === 0 ? GOLD[3] : y === 1 ? GOLD[1] : y === 5 ? MARBLE[0] : MARBLE[3 - (y > 3 ? 1 : 0)]; if (rot > 0 && hash(x, y + 40) < rot * 0.6) c = y < 2 ? GOLD[0] : ROT[2]; put(x, p.y + y, c); }
+	for (let cx = p.x0 + 6; cx < p.x1 - 2; cx += 18) for (let j = 0; j < 8; j++) for (let w = -3 + j * 0.35; w <= 3 - j * 0.35; w++) put(cx + w, p.y + 6 + j, w > 1 ? MARBLE[1] : MARBLE[2]);
+}
+// a cloud you can stand on: lumpy, bright on top; curdle turns it to tar from the top down and it sinks and drips
+function drawCloudPlat(p, t, curdle = 0, sink = 0, fade = 1) {
+	const y0 = p.y + sink, w = p.x1 - p.x0;
+	for (let i = 0; i <= 8; i++) {
+		const u = i / 8, cx = p.x0 + u * w, r = 7 + 4 * Math.sin(u * Math.PI) + 2 * Math.sin(i * 2.1 + t * 0.8);
+		for (let y = -r; y <= r; y++) for (let x = -r; x <= r; x++) {
+			if (x * x + y * y > r * r || y < -2 - Math.sin(u * Math.PI) * 3) continue;
+			const top = y < -r * 0.3, tar = curdle > 0 && (y + r) / (2 * r) < curdle * 1.35 - 0.2 + (noise1((cx + x) * 0.18, 3) - 0.5) * 0.5;
+			put(cx + x, y0 + y + 3, tar ? (top ? ROT[3] : ROT[1]) : top ? CLOUD[4] : y < r * 0.3 ? CLOUD[3] : CLOUD[2], fade);
+		}
+	}
+	if (curdle > 0.3) for (let i = 0; i < 5; i++) { const x = p.x0 + 8 + i * (w - 16) / 4, ph = (t * 0.8 + i * 0.37) % 1; put(x, y0 + 12 + ph * 14, ROT[2], (1 - ph) * curdle); put(x, y0 + 12 + ph * 14 + 1, ROT[4], (1 - ph) * curdle * 0.6); }
+	if (curdle < 0.5) light(p.x0 + w / 2, y0, "#ffffff", 0);
+}
+// balance scales: a gold post, a beam on a pivot, two pans hung on chains; returns where the pans' tops are
+function drawScales(sc, th, t) {
+	const { cx, by, arm } = sc, c = Math.cos(th), s = Math.sin(th);
+	for (let y = by; y < FEET; y++) for (let x = -2; x <= 2; x++) put(cx + x, y, Math.abs(x) === 2 ? GOLD[1] : GOLD[2 + (x < 0 ? 1 : 0)]);
+	for (let x = -9; x <= 9; x++) for (let y = 0; y < 3; y++) put(cx + x, FEET - 3 + y, GOLD[y === 0 ? 3 : 1]);
+	for (let d = -arm; d <= arm; d += 0.5) { put(cx + d * c, by + d * s, GOLD[3]); put(cx + d * c, by + d * s + 1, GOLD[1]); }
+	disc(cx, by, 3, GOLD[4]); disc(cx, by, 1.4, GOLD[1]);
+	for (let k = 0; k < 9; k++) { const a = (k / 9) * Math.PI; put(cx + Math.cos(a) * 5, by - 3 - Math.sin(a) * 5, GOLD[3]); } // a little crest
+	const pans = [];
+	for (const sd of [-1, 1]) {
+		const ex = cx + sd * arm * c, ey = by + sd * arm * s, py = ey + 14;
+		for (const o of [-10, 10]) for (let j = 0; j < 14; j++) put(ex + o * j / 14, ey + j, j % 2 ? GOLD[1] : GOLD[2]);
+		for (let x = -13; x <= 13; x++) { const dd = Math.abs(x) / 13; put(ex + x, py, GOLD[4]); put(ex + x, py + 1, GOLD[2]); if (dd < 0.85) put(ex + x, py + 2, GOLD[1]); if (dd < 0.5) put(ex + x, py + 3, GOLD[0]); }
+		pans.push({ x0: ex - 13, x1: ex + 13, y: py, cx: ex });
+	}
+	return pans;
+}
+
+
+// ---------------------------------------------------------------- shonen staging and states, shared by the studies
+function focusLines(cx, cy, k, t, c = "#ffffff", r0min = 60) {
+	const seed = Math.floor(t * 20);
+	for (let i = 0; i < 44; i++) { const a = hash(i, seed) * TAU, r0 = r0min + hash(i + 99, seed) * 60, sn = Math.sin(a), r2 = sn > 0.05 ? Math.min(320, (FEET - cy) / sn) : 320; if (r2 < r0) continue; const w = hash(i + 7, seed) < 0.3 ? 2 : 1; for (let q = 0; q < w; q++) line(cx + Math.cos(a) * r0 - sn * q, cy + sn * r0 + Math.cos(a) * q, cx + Math.cos(a) * r2, cy + sn * r2, c, 0.22 * k); }
+}
+function impactFrame(hi, lo, cut = 0.32) {
+	const H1 = hx(hi), L1 = hx(lo);
+	for (let i = 0; i < N * 3; i += 3) { const l = 0.3 * (col[i] + lit[i] * 0.5) + 0.59 * (col[i + 1] + lit[i + 1] * 0.5) + 0.11 * (col[i + 2] + lit[i + 2] * 0.5), c = l > cut ? H1 : L1; col[i] = c[0]; col[i + 1] = c[1]; col[i + 2] = c[2]; lit[i] *= 0.15; lit[i + 1] *= 0.15; lit[i + 2] *= 0.15; }
+}
+function glintStar(x, y, len, k, c = "#ffffff") { for (let d = -len; d <= len; d++) { const a = k * (1 - Math.abs(d) / len); put(x + d, y, "#ffffff", a); put(x, y + d, "#ffffff", a); } for (let d = -len / 3; d <= len / 3; d++) { put(x + d, y + d, "#ffffff", k * 0.5); put(x + d, y - d, "#ffffff", k * 0.5); } glow(x, y, len, c, 0.6 * k); }
+// a comic impact star: a bold-outlined spiky burst
+function comicStar(x, y, r, k, fill = "#ffffff", edge = ROT[0]) {
+	for (let yy = -r - 2; yy <= r + 2; yy++) for (let xx = -r - 2; xx <= r + 2; xx++) { const a = Math.atan2(yy, xx), d = Math.hypot(xx, yy), R = r * (0.55 + 0.45 * Math.abs(Math.cos(a * 4 + 0.4))); if (d < R - 1.2) put(x + xx, y + yy, fill, k); else if (d < R + 0.6) put(x + xx, y + yy, edge, k); }
+}
+// poisoned: magenta veins climbing the body, drips that hiss, a pulsing ring at the feet
+function drawPoisoned(e, t, k) {
+	if (k <= 0) return; const fy = e.y ?? FEET, x = e.x;
+	glow(x, fy - 22, 18, VENOM[2], 0.35 * k);
+	for (let v = 0; v < 5; v++) { let vx = x - 6 + v * 3, vy = fy - 2; const h = (14 + v * 5) * k; for (let s = 0; s < h; s++) { vy -= 1; vx += Math.sin(s * 0.7 + v * 2 + t * 3) * 0.5; if (s % 2 === 0) put(vx, vy, s > h - 3 ? VENOM[3] : VENOM[2], 0.75 * k); } }
+	for (let d = 0; d < 3; d++) { const ph = (t * 1.4 + d * 0.33) % 1; put(x - 5 + d * 5, fy - 30 + ph * 28, VENOM[3], (1 - ph) * k); }
+	const ph = (t * 1.6) % 1; for (let a = 0; a < TAU; a += 0.3) put(x + Math.cos(a) * (4 + ph * 12), fy + Math.sin(a) * (1 + ph * 2), VENOM[3], 0.6 * (1 - ph) * k);
+}
+// a venom-eaten pit in marble: a smoking hole with a glowing magenta rim and pale steam
+function drawPit(x, y, r, t, k = 1) {
+	for (let xx = -r; xx <= r; xx++) { const d = Math.abs(xx) / r, depth = Math.round((1 - d * d) * 2.5); put(x + xx, y, d > 0.75 ? VENOM[3] : ROT[0], k); for (let j = 1; j <= depth; j++) put(x + xx, y + j, ROT[1], k); }
+	glow(x, y, r + 4, VENOM[2], 0.3 * k);
+	for (let s = 0; s < 2; s++) { const ph = (t * 0.9 + s * 0.5 + x * 0.01) % 1; disc(x + Math.sin(ph * 6 + s) * 2, y - 2 - ph * 12, 1 + ph * 2, "#e8d8f0", 0.25 * (1 - ph) * k); }
+}
+// cursed: a dark stain creeping up from the feet, violet smoke trailing up, a glitching skull overhead
+const SKULL9 = ["..#####..", ".#######.", "#########", "##oo#oo##", "##oo#oo##", "####.####", ".##o#o##.", "..#####..", "..#.#.#.."];
+function drawCursed(e, t, k) {
+	if (k <= 0) return; const fy = e.y ?? FEET, x = e.x;
+	for (let s = 0; s < 6; s++) { const h = (10 + s * 3) * k; for (let j = 0; j < h; j++) put(x - 6 + s * 2.4 + Math.sin(j * 0.5 + s + t * 2) * 0.6, fy - j, ROT[1], 0.35 * k * (1 - j / (h + 1))); }
+	for (let s = 0; s < 4; s++) { const ph = (t * 0.7 + s * 0.25) % 1; disc(x - 6 + s * 4 + Math.sin(ph * 6 + s) * 3, fy - 10 - ph * 40, 1 + ph * 2.5, ROT[3], 0.3 * (1 - ph) * k); }
+	const sx = x - 4, sy = fy - 62 + Math.sin(t * 3) * 1.5, glitch = Math.sin(t * 23) > 0.85;
+	for (let r = 0; r < 9; r++) { const off = glitch && r % 3 === 1 ? (Math.sin(t * 90 + r) > 0 ? 2 : -2) : 0; for (let c = 0; c < 9; c++) { const ch = SKULL9[r][c]; if (ch === ".") continue; put(sx + c + off, sy + r, ch === "o" ? ROT[0] : r < 3 ? "#ffffff" : ROT[5], (0.75 + 0.25 * Math.sin(t * 9)) * k); } }
+	glow(x, sy + 4, 12, ROT[4], 0.4 * k);
+}
+// glowing cracks spreading from a point across the floor
+function drawCracks(x, y, k, t, seed, c = ROT[4], len = 30) {
+	const R = rng(seed);
+	for (let b = 0; b < 5; b++) { let px = x, py = y; const dir = (b - 2) * 0.5 + (R() - 0.5) * 0.3, sd = Math.cos(dir) >= 0 ? 1 : -1; for (let j = 0; j < len * k; j++) { px += Math.cos(dir) * 1 + (R() - 0.5) * 0.6; py = y + Math.abs(Math.sin(j * 0.3 + b)) * 1.5; put(px, py, j % 5 === 0 ? "#ffffff" : c, (1 - j / len) * 0.9); light(px, py, c, 0.2 * (1 - j / len)); } }
+}
+
+// ================================================================ page 9: the Midas Night Bazaar
+// A night market built in the treasury of a god who touched too much. A canyon of lantern-lit stalls under a gilded
+// colossus: a giant golden hand reaching out of the cliff, dripping molten gold in waterfalls. Striped awnings, coin
+// chutes, paper lanterns on strings, cobbles with gold running in the cracks; in the middle a great balance scale
+// whose two pans are platforms that tilt with weight. The element is molten stretchy gold; the look is 1930s
+// rubber-hose: noodle limbs, white gloves, pie-cut eyes, big brows; and the big hits get hand-lettered sound words.
+const GOLDM = ["#3a1e04", "#7a4a0a", "#c08418", "#f0b832", "#ffe07a", "#fff8d0"];
+const NIGHT9 = ["#0c0716", "#160e2a", "#241842", "#36265c", "#4e3a7a"];
+const CLIFF9 = ["#140a0e", "#24141a", "#3a2026", "#542e30"];
+const AWN = ["#7a1420", "#c0283a", "#f0e0c8"];
+const INK9 = "#120810";
+const BZ_L = { x0: 16, x1: 88, y: FEET - 72 }, BZ_R = { x0: 296, x1: 368, y: FEET - 72 };
+const SC9 = { px: 192, py: FEET - 104, arm: 64, panW: 22, hang: 44 };
+// the scale's pans: where the left (-1) or right (+1) pan's floor is for a given tilt (-1..1, positive = right pan down)
+const panX = (side) => SC9.px + side * SC9.arm;
+const panY = (side, tilt) => SC9.py + SC9.hang + side * tilt * 16;
+
+const bazBase = new Float32Array(N * 3);
+function buildBazaar() {
+	const set = (x, y, h) => { if (x < 0 || y < 0 || x >= W || y >= H) return; const c = hx(h), i = (y * W + x) * 3; bazBase[i] = c[0]; bazBase[i + 1] = c[1]; bazBase[i + 2] = c[2]; };
+	// the night sky between the canyon walls, a band of stars
+	for (let y = 0; y < FEET; y++) for (let x = 0; x < W; x++) { const v = y / FEET; set(x, y, v < 0.2 ? NIGHT9[0] : v < 0.45 ? NIGHT9[1] : v < 0.7 ? NIGHT9[2] : NIGHT9[3]); if (hash(x, y) < 0.004 && y < 80) set(x, y, "#e8d8ff"); }
+	// canyon walls, near and far, layered
+	for (let x = 0; x < W; x++) {
+		const far = 30 + 26 * noise1(x * 0.02, 4) + Math.max(0, 60 - Math.abs(x - 192) * 0.6), near = 14 + 40 * noise1(x * 0.035, 9) + (Math.abs(x - 192) < 110 ? 50 : 0);
+		for (let y = 0; y < FEET; y++) { if (y > FEET - far - 60 && (x < 110 || x > 274)) set(x, y, CLIFF9[1]); if (x < 50 + 20 * noise1(y * 0.04, 2) || x > 334 - 20 * noise1(y * 0.04, 7)) set(x, y, (Math.floor(y / 7) + Math.floor(x / 11)) % 5 === 0 ? CLIFF9[3] : CLIFF9[2]); }
+	}
+	// the gilded colossus: a giant golden hand reaching out of the far cliff, palm up, fingers curled, lit from below
+	const HX = 192, HY = 54;
+	for (let y = 10; y < 108; y++) for (let x = 100; x < 284; x++) {
+		const dx = x - HX, dy = y - HY;
+		const palm = Math.hypot(dx / 52, (dy - 6) / 26) < 1, wrist = x > 236 && Math.abs(dy - 4) < 18 - (x - 236) * 0.05, fingers = [[-42, -24], [-22, -32], [0, -34], [22, -30]].some(([fx, fy]) => Math.hypot((dx - fx) / 8, (dy - fy) / 16) < 1 || (Math.abs(dx - fx) < 8 && dy > fy && dy < 0)), thumb = Math.hypot((dx + 52) / 10, (dy + 2) / 18) < 1;
+		if (!palm && !wrist && !fingers && !thumb) continue;
+		const lit = 0.55 - dx * 0.002 + dy * 0.006 + (bayer(x, y) - 0.5) * 0.12;
+		set(x, y, lit > 0.72 ? GOLDM[4] : lit > 0.58 ? GOLDM[3] : lit > 0.44 ? GOLDM[2] : GOLDM[1]);
+		if ((Math.abs(dx + 30) < 1 || Math.abs(dx - 10) < 1) && palm && dy > 0) set(x, y, GOLDM[1]); // palm creases
+	}
+	// stalls along the back: striped awnings over dark counters
+	for (const [sx, w] of [[6, 70], [104, 46], [234, 46], [308, 72]]) {
+		for (let y = FEET - 44; y < FEET - 34; y++) for (let x = sx; x < sx + w; x++) set(x, y, Math.floor((x - sx) / 6) % 2 ? "#6a4a48" : AWN[0]);
+		for (let x = sx; x < sx + w; x += 6) { set(x + 3, FEET - 34, AWN[0]); set(x + 2, FEET - 33, AWN[0]); }
+		for (let y = FEET - 34; y < FEET; y++) for (let x = sx + 2; x < sx + w - 2; x++) set(x, y, y > FEET - 16 ? CLIFF9[2] : CLIFF9[0]);
+		for (let x = sx + 6; x < sx + w - 6; x += 9) { set(x, FEET - 18, GOLDM[3]); set(x + 1, FEET - 18, GOLDM[4]); } // gold wares on the counters
+	}
+	// the floor: cobbles, gold running in the cracks
+	for (let x = 0; x < W; x++) for (let y = FEET; y < H; y++) {
+		const d = y - FEET, row = Math.floor(d / 5), cx = (x + row * 4) % 11, crack = cx === 0 || d % 5 === 0;
+		set(x, y, d === 0 ? GOLDM[3] : crack ? (noise1(x * 0.1 + d, 3) > 0.55 ? GOLDM[2] : CLIFF9[0]) : (hash(Math.floor((x + row * 4) / 11), row) < 0.5 ? CLIFF9[2] : CLIFF9[3]));
+	}
+}
+function drawBazaarLife(t, layer) {
+	if (layer === "back") {
+		// molten gold pouring off the colossus's fingers, two falls, glowing
+		for (const fx of [150, 214]) { for (let y = 26; y < FEET - 44; y++) { const w = 2 + Math.sin(y * 0.2 - t * 8) * 0.8; for (let dx = -w; dx <= w; dx++) put(fx + dx, y, Math.abs(dx) < 1 ? GOLDM[5] : (y + Math.floor(t * 30)) % 7 === 0 ? GOLDM[4] : GOLDM[3]); if (y % 5 === 0) light(fx, y, GOLDM[3], 0.18); } glow(fx, FEET - 46, 18, GOLDM[3], 0.4); }
+		// strings of paper lanterns across the canyon
+		for (const [a, b, sag] of [[0, 192, 18], [192, W, 18]]) for (let k = 0; k <= 10; k++) { const u = k / 10, x = lerp(a, b, u), y = 18 + sag * 4 * u * (1 - u) + Math.sin(t * 1.2 + k) * 0.8; if (k % 2) { disc(x, y + 3, 2.6, k % 4 === 1 ? AWN[1] : GOLDM[3]); glow(x, y + 3, 9, GOLDM[3], 0.25); } else put(x, y, INK9); }
+		for (let i = 0; i < 12; i++) { const x = (i * 37 + t * 6) % W, y = 60 + (i * 29) % 90; if (Math.sin(t * 3 + i * 2) > 0.8) { put(x, y, "#ffffff"); light(x, y, GOLDM[4], 0.3); } } // glints
+	} else {
+		for (let i = 0; i < 8; i++) { const ph = (t * 0.1 + i * 0.13) % 1; put((i * 53 + Math.sin(t + i) * 10) % W, FEET - ph * 120, GOLDM[4], 0.5 * (1 - ph)); } // rising sparks off the gold
+	}
+}
+// a stall-roof ledge: plank, striped valance under it
+function drawLedge9(p, t) {
+	for (let x = p.x0; x <= p.x1; x++) { for (let y = 0; y < 5; y++) put(x, p.y + y, y === 0 ? GOLDM[4] : y === 4 ? INK9 : CLIFF9[3]); for (let y = 5; y < 11; y++) if (y < 8 + (Math.floor((x - p.x0) / 6) % 2) * 3) put(x, p.y + y, Math.floor((x - p.x0) / 6) % 2 ? AWN[1] : AWN[2]); }
+}
+// the great scale: a post, a beam that tilts, chains, two pans
+function drawScale9(tilt, t) {
+	const a = tilt * 0.25, P = SC9;
+	for (let y = P.py; y < FEET; y++) for (let k = -3; k <= 3; k++) put(P.px + k, y, k === -3 ? GOLDM[4] : k === 3 ? GOLDM[0] : GOLDM[2]);
+	for (let x = -10; x <= 10; x++) for (let y = 0; y < 4; y++) put(P.px + x, FEET - 4 + y, GOLDM[1]);
+	for (let j = -P.arm; j <= P.arm; j++) { const x = P.px + j, y = P.py + Math.sin(a) * j; put(x, y - 1, GOLDM[4]); put(x, y, GOLDM[3]); put(x, y + 1, GOLDM[1]); }
+	disc(P.px, P.py, 4, GOLDM[3]); put(P.px - 1, P.py - 1, GOLDM[5]);
+	for (const sd of [-1, 1]) {
+		const top = [panX(sd), P.py + Math.sin(a) * sd * P.arm], py = panY(sd, tilt);
+		for (const off of [-P.panW + 3, P.panW - 3]) for (let j = 0; j < py - top[1]; j += 2) put(lerp(top[0], top[0] + off, j / (py - top[1])), top[1] + j, GOLDM[2]);
+		for (let x = -P.panW; x <= P.panW; x++) { put(panX(sd) + x, py, GOLDM[5]); put(panX(sd) + x, py + 1, GOLDM[3]); const d = Math.round(3 * (1 - (x / P.panW) ** 2)); for (let y = 2; y < 2 + d; y++) put(panX(sd) + x, py + y, GOLDM[1]); }
+	}
+}
+
+// ---------------------------------------------------------------- the rubber-hose kit
+// a noodle limb: a thick curve from a to b bowed sideways by `bend`, with an outline
+function hose(a, b, bend, r, c, edge = INK9) {
+	const m = [(a[0] + b[0]) / 2 - (b[1] - a[1]) * bend, (a[1] + b[1]) / 2 + (b[0] - a[0]) * bend];
+	const n = Math.max(16, Math.ceil(Math.hypot(b[0] - a[0], b[1] - a[1]) / 1.5)), pts = []; for (let j = 0; j <= n; j++) { const u = j / n; pts.push([(1 - u) * (1 - u) * a[0] + 2 * u * (1 - u) * m[0] + u * u * b[0], (1 - u) * (1 - u) * a[1] + 2 * u * (1 - u) * m[1] + u * u * b[1]]); }
+	for (const p of pts) disc(p[0], p[1], r + 1, edge);
+	for (const p of pts) disc(p[0], p[1], r, c);
+	return pts[n];
+}
+// a white cartoon glove: a puffy mitt, three fat fingers and a thumb, a rolled cuff
+function glove(x, y, ang, open = 1, s = 1) {
+	const c = Math.cos(ang), sn = Math.sin(ang), P = (u, v) => [x + (u * c - v * sn) * s, y + (u * sn + v * c) * s];
+	const blob = (u, v, r) => { const p = P(u, v); disc(p[0], p[1], (r + 1) * s, INK9); };
+	const fill = (u, v, r) => { const p = P(u, v); disc(p[0], p[1], r * s, "#ffffff"); };
+	const fingers = [[5, -3 * open], [6, 0], [5, 3 * open]], thumb = [1, -5 * open];
+	blob(0, 0, 4); for (const [u, v] of fingers) blob(u, v, 2); blob(thumb[0], thumb[1], 1.8); blob(-4, 0, 3);
+	fill(0, 0, 4); for (const [u, v] of fingers) fill(u, v, 2); fill(thumb[0], thumb[1], 1.8);
+	const cf = P(-4, 0); disc(cf[0], cf[1], 3 * s, "#e8e4ee"); const ln = P(-2, 2); put(ln[0], ln[1], INK9);
+}
+// a pie-cut eye: a tall white oval, a big black pupil with a wedge cut out of it for the shine
+function pieEye(x, y, rx, ry, look = [0, 0], lid = 0, lidC = INK9) {
+	for (let yy = -ry - 1; yy <= ry + 1; yy++) for (let dx = -rx - 1; dx <= rx + 1; dx++) { const d = (dx / rx) ** 2 + (yy / ry) ** 2; if (d > 1.25) continue; put(x + dx, y + yy, d > 1 ? INK9 : "#ffffff"); }
+	const px = x + look[0] * rx * 0.35, py = y + look[1] * ry * 0.35 + ry * 0.15, pr = Math.max(1.5, rx * 0.6), prY = Math.max(2, ry * 0.6);
+	for (let yy = -prY; yy <= prY; yy++) for (let dx = -pr; dx <= pr; dx++) { if ((dx / pr) ** 2 + (yy / prY) ** 2 > 1) continue; const a = Math.atan2(yy, dx); if (a < -1.2 && a > -2.0) continue; put(px + dx, py + yy, INK9); }
+	if (lid > 0) { const ly = -ry + 2 * ry * lid; for (let yy = -ry - 1; yy < ly; yy++) for (let dx = -rx; dx <= rx; dx++) if ((dx / rx) ** 2 + (yy / ry) ** 2 <= 1.1) put(x + dx, y + yy, yy > ly - 1.5 ? INK9 : lidC); }
+}
+// a heavy cartoon brow: a wedge of ink, its angle carrying the mood
+function brow9(x, y, len, ang, thick = 3) { for (let j = -len; j <= len; j++) { const w = thick * (1 - Math.abs(j) / (len + 2) * 0.6); for (let q = 0; q < w; q++) put(x + j * Math.cos(ang), y + j * Math.sin(ang) - q, INK9); } }
+// a stretch of molten gold between two points: it sags and thins as it stretches, and drips
+function goldStrand(a, b, t, sag = 1, thick = 3, seed = 0) {
+	const L = Math.hypot(b[0] - a[0], b[1] - a[1]), w0 = Math.max(0.6, thick * Math.min(1, 40 / Math.max(1, L)));
+	for (let j = 0; j <= 24; j++) { const u = j / 24, x = lerp(a[0], b[0], u), y = lerp(a[1], b[1], u) + Math.sin(u * Math.PI) * L * 0.18 * sag, w = w0 * (0.6 + 0.4 * Math.abs(Math.cos(u * Math.PI))); for (let q = -w; q <= w; q++) put(x, y + q, q < -w + 0.8 ? GOLDM[5] : q > w - 0.8 ? GOLDM[1] : GOLDM[3]); if (j % 6 === 3) light(x, y, GOLDM[3], 0.2); if (j === 12 && sag > 0.5) { const ph = (t * 1.4 + seed) % 1; disc(x, y + w + ph * 10, 1.2, GOLDM[4], 1 - ph); } }
+}
+
+// ---------------------------------------------------------------- hand-lettered sound words
+const FONT3 = { A: "010101111101101", B: "110101110101110", C: "011100100100011", D: "110101101101110", E: "111100110100111", G: "011100101101011", H: "101101111101101", I: "111010010010111", K: "101110100110101", L: "100100100100111", M: "101111111101101", N: "110101101101101", O: "010101101101010", P: "110101110100100", R: "110101110110101", S: "011100010001110", T: "111010010010010", U: "101101101101111", W: "101101111111101", Y: "101101010010010", Z: "111001010100111", "!": "010010010000010", F: "111100110100100", "?": "111001010000010", V: "101101101101010", X: "101101010101101", J: "001001001101010", Q: "010101101110011", "-": "000000111000000" };
+function soundWord(word, x, y, k, fill = GOLDM[4], edge = INK9, s = 2) {
+	if (k <= 0) return;
+	const sc = s * (k < 0.15 ? 0.5 + k / 0.15 * 0.7 : 1.2 - 0.2 * Math.min(1, (k - 0.15) / 0.2)), wd = word.length * 4 * sc;
+	let cx = x - wd / 2;
+	for (const [i, ch] of [...word].entries()) {
+		const g = FONT3[ch], wob = Math.sin(i * 1.7 + k * 6) * 1.5;
+		if (g) { for (const pass of [0, 1]) for (let r = 0; r < 5; r++) for (let c = 0; c < 3; c++) { if (g[r * 3 + c] !== "1") continue; for (let yy = 0; yy < sc; yy++) for (let xx = 0; xx < sc; xx++) { const px = cx + c * sc + xx, py = y + r * sc + yy + wob - (i % 2) * 2; if (pass === 0) for (const [ox, oy] of [[-1, 0], [1, 0], [0, -1], [0, 1], [1, 1]]) put(px + ox, py + oy, edge); else put(px, py, yy < sc / 2 ? "#ffffff" : fill); } } }
+		cx += 4 * sc;
+	}
+}
+
+// ================================================================ the Silk Spire: a realm of the climb
+// A level study. The game stays a 2D plane (X along, Z up), but the world around that plane is built in depth and
+// seen through a gentle perspective camera whose eye rides at Elfy's height: anything above her shows its underside
+// (where a spider walks), anything below shows its top (where she came from), and everything at other depths slides
+// past at its own rate. The play plane sits at exactly 1:1, so the sprites stay crisp; walls facing the camera stay
+// rectangles. Fog thickens with distance, so the world goes on instead of ending in a void.
+
+// ---------------------------------------------------------------- the camera and the buffers
+const ZB = new Float32Array(N), SBASE = new Float32Array(N * 3), SBZ = new Float32Array(N);
+let ZT = null;
+const CD = 760; // the camera's distance from the play plane (and its focal length, so the plane is 1:1)
+const SCAM = { x: 160, z: -160 };
+const FOG = hx("#3a3466"), PLANE_D = 1 / CD;
+const sxOf = (X, d) => W / 2 + (X - SCAM.x) * CD / d, syOf = (Z, d) => H / 2 - (Z - SCAM.z) * CD / d;
+const LAV = ["#1c1a30", "#2a2644", "#3c3660", "#544c80", "#6e64a0", "#9086c0", "#b8aee0"];
+const PLUM = ["#1e0c20", "#3a1838", "#5a2a56", "#7e4078", "#a8609c"];
+const SILK = ["#8a88a8", "#c8c6e0", "#eeecfa", "#ffffff"];
+const CANDLE = ["#7a3010", "#e07a30", "#ffc070", "#fff0c8"];
+const GOLDR = ["#3a2408", "#7a5014", "#c08a28", "#f0c050", "#ffe8a0"];
+// a pixel of the static scene: fogged by its distance d, written if nearer than what is there
+function wpix(px, py, d, h) {
+	const i = py * W + px, z = 1 / d;
+	if (z <= SBZ[i]) return;
+	const c = hx(h), f = clamp((d - CD - 140) / 2600) ** 0.75 * 0.88;
+	SBZ[i] = z; SBASE[i * 3] = lerp(c[0], FOG[0], f); SBASE[i * 3 + 1] = lerp(c[1], FOG[1], f); SBASE[i * 3 + 2] = lerp(c[2], FOG[2], f);
+}
+// a wall facing the camera, at depth Y: spans x0..x1, z0..z1; fn(u, v, d) is the color at (X - x0, Z - z0), or null
+function frontQ(Y, x0, x1, z0, z1, fn) {
+	const d = Y + CD; if (d < 20) return;
+	const a = Math.max(0, Math.floor(sxOf(x0, d))), b = Math.min(W - 1, Math.ceil(sxOf(x1, d))), c = Math.max(0, Math.floor(syOf(z1, d))), e = Math.min(H - 1, Math.ceil(syOf(z0, d)));
+	const s = CD / d;
+	for (let py = c; py <= e; py++) { const Z = SCAM.z - (py + 0.5 - H / 2) / s; if (Z < z0 || Z >= z1) continue; for (let px = a; px <= b; px++) { const X = SCAM.x + (px + 0.5 - W / 2) / s; if (X < x0 || X >= x1) continue; const h = fn(X - x0, Z - z0, d); if (h) wpix(px, py, d, h); } }
+}
+// a horizontal face at height Z (its top if the eye is above it, its underside if below)
+function horizQ(Z, x0, x1, y0, y1, fn) {
+	const dz = Z - SCAM.z; if (Math.abs(dz) < 0.01) return;
+	const r0 = syOf(Z, y0 + CD), r1 = syOf(Z, y1 + CD), c = Math.max(0, Math.floor(Math.min(r0, r1))), e = Math.min(H - 1, Math.ceil(Math.max(r0, r1)));
+	for (let py = c; py <= e; py++) {
+		const t = py + 0.5 - H / 2; if (Math.abs(t) < 0.01) continue;
+		const d = -dz * CD / t; if (d <= 20) continue; const Y = d - CD; if (Y < y0 || Y > y1) continue;
+		const a = Math.max(0, Math.floor(sxOf(x0, d))), b = Math.min(W - 1, Math.ceil(sxOf(x1, d)));
+		for (let px = a; px <= b; px++) { const X = SCAM.x + (px + 0.5 - W / 2) * d / CD; if (X < x0 || X >= x1) continue; const h = fn(X - x0, Y - y0, d, dz < 0); if (h) wpix(px, py, d, h); }
+	}
+}
+// a side face at X (seen from whichever side the eye is on)
+function sideQ(X, y0, y1, z0, z1, fn) {
+	const dx = X - SCAM.x; if (Math.abs(dx) < 0.01) return;
+	const q0 = sxOf(X, y0 + CD), q1 = sxOf(X, y1 + CD), a = Math.max(0, Math.floor(Math.min(q0, q1))), b = Math.min(W - 1, Math.ceil(Math.max(q0, q1)));
+	for (let px = a; px <= b; px++) {
+		const t = px + 0.5 - W / 2; if (Math.abs(t) < 0.01) continue;
+		const d = dx * CD / t; if (d <= 20) continue; const Y = d - CD; if (Y < y0 || Y > y1) continue;
+		const c = Math.max(0, Math.floor(syOf(z1, d))), e = Math.min(H - 1, Math.ceil(syOf(z0, d)));
+		for (let py = c; py <= e; py++) { const Z = SCAM.z - (py + 0.5 - H / 2) * d / CD; if (Z < z0 || Z >= z1) continue; const h = fn(Y - y0, Z - z0, d); if (h) wpix(px, py, d, h); }
+	}
+}
+// a box: front, top/bottom and the one side the eye can see; m = { front, top, bot, side } color fns (or a hex)
+function sbox(x0, x1, y0, y1, z0, z1, m) {
+	const F = (f) => (typeof f === "string" ? () => f : f);
+	if (m.front) frontQ(y0, x0, x1, z0, z1, F(m.front));
+	if (SCAM.z > z1 && m.top) horizQ(z1, x0, x1, y0, y1, F(m.top));
+	if (SCAM.z < z0 && m.bot) horizQ(z0, x0, x1, y0, y1, F(m.bot));
+	if (m.side) { if (SCAM.x < x0) sideQ(x0, y0, y1, z0, z1, F(m.side)); else if (SCAM.x > x1) sideQ(x1, y0, y1, z0, z1, F(m.side)); }
+}
+
+// ---------------------------------------------------------------- materials
+const R2 = (a, b) => hash(Math.floor(a), Math.floor(b));
+const brick = (pal, bw = 14, bh = 7) => (u, v, d) => { const row = Math.floor(v / bh), off = row % 2 ? bw / 2 : 0, seam = v % bh < 1 || (u + off) % bw < 1; if (d > 1800) return pal[2]; return seam ? pal[1] : R2((u + off) / bw, row) < 0.25 ? pal[2] : pal[3]; };
+const stone = brick(LAV);
+const trim = (u, v) => (v < 1.5 ? LAV[6] : LAV[5]);
+// a wall with round-topped arches cut through it (null = see through to what is behind)
+function arches(pal, w, gap, top, sill, glowFn) { return (u, v, d) => { const k = ((u % gap) + gap) % gap, cx = gap / 2, inside = Math.abs(k - cx) < w / 2 && v > sill && (v < top - w / 2 || Math.hypot(k - cx, v - (top - w / 2)) < w / 2); if (inside) return glowFn ? glowFn(k - cx, v, d) : null; const rim = Math.abs(k - cx) < w / 2 + 2 && v > sill - 2 && (v < top - w / 2 + 2 || Math.hypot(k - cx, v - (top - w / 2)) < w / 2 + 2); return rim ? pal[5] : brick(pal)(u, v, d); }; }
+
+// ---------------------------------------------------------------- the level: the plane's own geometry (gameplay) and the world around it
+const CH = { x0: 20, x1: 300, floor: 0, ceil: 220, hole: [138, 186], hatch: [134, 190] };
+const L1 = { x0: 20, x1: 82, z: 80 }, L2 = { x0: 238, x1: 300, z: 132 };
+const STEPS = [{ x0: -60, x1: 420, z: -250 }, { x0: 40, x1: 104, z: -190 }, { x0: 170, x1: 236, z: -130 }, { x0: 96, x1: 150, z: -70 }];
+const SKYC = new Float32Array(N * 3);
+function skyFor() {
+	// the sky slides a little with the camera's height, so climbing reads even against it
+	const sh = SCAM.z * 0.06;
+	for (let y = 0; y < H; y++) { const v = clamp((y + sh + 120) / (H + 240)) * 5, i = Math.min(4, Math.floor(v)), f = v - i, A = ["#070820", "#0e1030", "#1a1a44", "#2a2656", "#3e3468", "#5a4880"]; for (let x = 0; x < W; x++) { const h = f > bayer(x, y) ? A[i + 1] : A[i], c = hx(h), k = (y * W + x) * 3; SBASE[k] = c[0]; SBASE[k + 1] = c[1]; SBASE[k + 2] = c[2]; } }
+	for (let i = 0; i < 120; i++) { const x = Math.floor(hash(i, 1) * W), y = Math.floor(hash(i, 2) * H * 1.4 - sh * 0.5) % H; if (y < 0) continue; const k = (y * W + x) * 3, c = hx(hash(i, 3) < 0.3 ? "#d8d8ff" : "#6a6aa0"); SBASE[k] = c[0]; SBASE[k + 1] = c[1]; SBASE[k + 2] = c[2]; }
+	const my = 60 - sh * 0.3; for (let y = -16; y <= 16; y++) for (let x = -16; x <= 16; x++) { const dd = Math.hypot(x, y); if (dd > 15) continue; const X = 540 + x, Y = Math.round(my + y); if (Y < 0 || Y >= H) continue; const k = (Y * W + X) * 3, c = hx(dd > 13.5 ? "#a8acd8" : R2((x + 20) / 4, (y + 20) / 4) < 0.22 ? "#c8cae8" : "#eceefc"); SBASE[k] = c[0]; SBASE[k + 1] = c[1]; SBASE[k + 2] = c[2]; }
+	SBZ.fill(-1);
+}
+const LAVD = ["#100e20", "#181630", "#221e40", "#2e2852", "#3c3466", "#4e447c", "#645a96"];
+function world() {
+	const dstone = brick(LAVD), arch = (pal, w, gap, top, sill, g) => arches(pal, w, gap, top, sill, g);
+	// far away: a sea of cloud far below, a city of spires in the fog all round, an aqueduct
+	horizQ(-760, -6000, 6000, 300, 6000, (u, v, d) => { const n = noise1(u * 0.004 + v * 0.002, 3) + noise1(u * 0.013 - v * 0.006, 4) * 0.5; return n > 0.95 ? "#5a5288" : n > 0.7 ? "#3e3a68" : "#2c2a52"; });
+	for (let i = 0; i < 18; i++) { const x = -3000 + i * 380 + hash(i, 5) * 200, y = 1800 + hash(i, 6) * 1800, w = 120 + hash(i, 7) * 200, h = 700 + hash(i, 8) * 1700; sbox(x, x + w, y, y + w, -760, -760 + h, { front: arch(LAVD, 40, 110, h - 60, h - 260, () => (hash(i, 9) < 0.6 ? CANDLE[2] : null)), top: LAVD[5], side: LAVD[2] }); sbox(x + w * 0.3, x + w * 0.7, y + w * 0.3, y + w * 0.7, -760 + h, -760 + h + 160, { front: LAVD[4], side: LAVD[2] }); }
+	sbox(-1600, 2000, 1100, 1160, -760, -320, { front: arch(LAVD, 80, 170, 380, 0, null), top: LAVD[4] });
+	// the next realm, high above and far out: a floating island lit gold from beneath, its buildings on top
+	{ const ix0 = -700, ix1 = 1100, iy = 1800, iz = 1000; for (let k = 0; k < 9; k++) { const s2 = k / 9, w = (ix1 - ix0) * (1 - s2 * 0.85) / 2, cx = (ix0 + ix1) / 2 + Math.sin(k * 2.1) * 80; sbox(cx - w, cx + w, iy + k * 40, iy + 700 - k * 40, iz - 56 - k * 56, iz - k * 56, { front: (u, v) => (v > 44 ? GOLDR[4] : R2(u / 50, k) < 0.4 ? GOLDR[2] : GOLDR[3]), bot: (u, v) => (noise1(u * 0.01 + v * 0.006, k) > 0.6 ? GOLDR[4] : GOLDR[3]), side: GOLDR[2] }); } for (let i = 0; i < 8; i++) { const x = ix0 + 160 + i * 190, h = 260 + hash(i, 12) * 380; sbox(x, x + 110, iy + 160, iy + 300, iz, iz + h * 0.6, { front: arch(["#3a2408", "#5a3a10", "#8a6020", "#b08030", "#d0a040", "#f0c860"], 40, 80, h - 40, 60, () => "#fff0b0"), top: GOLDR[3], side: GOLDR[1] }); } }
+	// the near world, through the arches and past the pillars: two towers, a bridge, floating stairs and islands
+	const towerF = arch(LAVD, 26, 80, 1500, 40, (k, v) => (v % 300 < 120 && Math.abs(k) < 6 ? CANDLE[2] : null));
+	sbox(-640, -440, 380, 580, -900, 900, { front: towerF, top: LAVD[5], side: LAVD[2] });
+	sbox(-660, -420, 370, 590, 900, 940, { front: (u, v) => (v < 2 ? LAVD[6] : LAVD[5]), top: LAVD[6], bot: LAVD[1], side: LAVD[3] });
+	sbox(-600, -480, 420, 540, 940, 1100, { front: LAVD[4], side: LAVD[2] });
+	sbox(660, 860, 460, 660, -900, 780, { front: towerF, top: LAVD[5], side: LAVD[2] });
+	sbox(640, 880, 450, 670, 780, 820, { front: (u, v) => (v < 2 ? LAVD[6] : LAVD[5]), top: LAVD[6], bot: LAVD[1], side: LAVD[3] });
+	sbox(334, 660, 330, 370, 132, 146, { front: (u, v) => (v < 2 ? LAVD[6] : LAVD[4]), top: LAVD[5], bot: LAVD[2], side: LAVD[3] });
+	for (let i = 0; i < 4; i++) sbox(380 + i * 70, 398 + i * 70, 334, 366, -600, 132, { front: dstone, side: LAVD[2], top: LAVD[4] });
+	const stair = (x, y, z, n, dx, dz, w = 28) => { for (let i = 0; i < n; i++) sbox(x + i * dx, x + i * dx + w, y, y + 36, z + i * dz, z + i * dz + 8, { front: (u, v) => (v > 6 ? LAVD[6] : LAVD[4]), top: LAVD[5], bot: LAVD[1], side: LAVD[3] }); };
+	stair(-380, 180, -220, 10, 26, 24); stair(420, 220, 360, 8, 24, -22); stair(-320, 420, 420, 7, 30, 30);
+	// floating islands at mid depth, each with a little house and a lit window
+	for (const [x, y, z, w] of [[-520, 260, -40, 120], [500, 300, -260, 150], [-220, 600, 620, 160], [420, 520, 520, 110]]) { for (let k = 0; k < 4; k++) sbox(x + k * w * 0.1, x + w - k * w * 0.1, y + k * 6, y + 60 - k * 6, z - 14 - k * 22, z - k * 22, { front: (u, v) => (v > 10 && k === 0 ? "#26404a" : LAVD[2 + (k % 2)]), bot: LAVD[1], side: LAVD[1] }); sbox(x + w * 0.3, x + w * 0.6, y + 14, y + 40, z, z + 34, { front: (u, v) => (u > 8 && u < 14 && v > 10 && v < 22 ? CANDLE[2] : LAVD[4]), top: LAVD[5], side: LAVD[2] }); sbox(x + w * 0.27, x + w * 0.63, y + 10, y + 44, z + 34, z + 42, { front: "#1a2240", top: "#28305a", side: "#141a30" }); }
+	// where she came from: a long bridge off to the left, and down it in the fog, the bathhouse
+	sbox(-1100, -60, 0, 36, -262, -250, { front: (u, v) => (v > 9 ? LAV[6] : u % 40 < 2 ? LAV[2] : LAV[4]), top: (u, v) => (u % 9 < 1 ? LAV[3] : LAV[5]), bot: LAV[1], side: LAV[3] });
+	for (let x = -1100; x < -60; x += 160) sbox(x, x + 14, 6, 30, -760, -262, { front: dstone, side: LAVD[2] });
+	{ const bx = -1700, by = 1400, bz = -420; sbox(bx, bx + 260, by, by + 120, bz - 40, bz, { front: "#2a1c14", top: "#3a2a1c", side: "#1e140e" }); sbox(bx + 20, bx + 240, by + 20, by + 100, bz, bz + 90, { front: (u, v) => (v > 40 && v < 70 && u % 40 > 12 && u % 40 < 30 ? CANDLE[2] : u % 6 < 1 ? "#24160e" : "#3a2414"), side: "#24160e" }); sbox(bx + 4, bx + 256, by + 10, by + 110, bz + 90, bz + 104, { front: "#1a2034", top: "#283052", side: "#141a2c" }); }
+	// the spire: a colonnade of tall arches behind the chamber (you see straight through), open framework below
+	sbox(-14, 334, 70, 96, -10, 236, { front: arch(LAVD, 46, 64, 196, 18, null), top: LAVD[5], bot: LAVD[2] });
+	for (let x = -14; x <= 334; x += 64) sbox(x - 4, x + 4, 66, 70, -10, 236, { front: (u, v) => (v % 24 < 1 ? LAVD[3] : LAVD[5]), side: LAVD[3] });
+	for (const z of [-80, -170]) sbox(-14, 334, 60, 72, z - 6, z, { front: (u, v) => (v > 4 ? LAVD[5] : LAVD[3]), top: LAVD[4], bot: LAVD[1] });
+	for (const [x0, x1] of [[-14, 20], [300, 334]]) sbox(x0, x1, -36, 70, -760, 236, { front: (u, v) => (u < 2 || u > 31 ? LAV[5] : brick(LAV)(u, v)), side: (u, v) => (v % 7 < 1 ? LAV[2] : u < 2 ? LAV[4] : LAV[3]) });
+	const plank = (u, v) => (u % 9 < 1 ? LAV[3] : R2(u / 9, v / 30) < 0.2 ? LAV[5] : LAV[6]);
+	const slab = { front: (u, v, d) => (v > 7 ? SILK[1] : v < 1 ? LAV[1] : LAV[5]), top: plank, bot: (u, v) => (u % 14 < 1 || v % 14 < 1 ? LAV[1] : LAV[3]), side: LAV[4] };
+	sbox(CH.x0, CH.hole[0], -36, 70, -10, 0, slab); sbox(CH.hole[1], CH.x1, -36, 70, -10, 0, slab);
+	sbox(-14, CH.hatch[0], -36, 70, CH.ceil, CH.ceil + 16, slab); sbox(CH.hatch[1], 334, -36, 70, CH.ceil, CH.ceil + 16, slab);
+	sbox(L1.x0, L1.x1, -20, 50, L1.z - 8, L1.z, slab); sbox(L2.x0, L2.x1, -20, 50, L2.z - 8, L2.z, slab);
+	for (const s2 of STEPS) sbox(s2.x0, s2.x1, -24, s2 === STEPS[0] ? 160 : 50, s2.z - (s2 === STEPS[0] ? 20 : 8), s2.z, slab);
+	// hanging chains with lanterns in the open drop below
+	for (const [x, y] of [[-40, 30], [360, 40], [230, 200]]) { for (let z = -230; z < 236; z += 6) sbox(x, x + 2, y, y + 2, z, z + 4, { front: LAVD[4], side: LAVD[2] }); sbox(x - 5, x + 7, y - 5, y + 7, -244, -230, { front: (u, v) => (v > 3 && v < 11 ? CANDLE[2] : LAVD[2]), side: LAVD[2], top: LAVD[4], bot: LAVD[1] }); }
+	// the terrace on top: a railing, and the gate that is this realm's checkpoint
+	for (let x = -10; x < 334; x += 18) sbox(x, x + 4, -32, -28, CH.ceil + 16, CH.ceil + 34, { front: LAV[5], side: LAV[3], top: LAV[6] });
+	sbox(-14, 334, -34, -26, CH.ceil + 32, CH.ceil + 36, { front: LAV[6], top: LAV[6], bot: LAV[2], side: LAV[4] });
+	for (const x of [124, 192]) sbox(x, x + 12, 10, 24, CH.ceil + 16, CH.ceil + 120, { front: (u, v) => (v % 20 < 1 ? LAV[3] : LAV[5]), side: LAV[3] });
+	sbox(112, 216, 6, 28, CH.ceil + 120, CH.ceil + 134, { front: (u, v) => (v > 11 ? LAV[6] : LAV[5]), top: LAV[6], bot: LAV[2], side: LAV[4] });
+	sbox(104, 224, 4, 30, CH.ceil + 134, CH.ceil + 140, { front: LAV[6], top: SILK[2], bot: LAV[3], side: LAV[4] });
+}
+function renderStaticS() { skyFor(); world(); }
+
+// ---------------------------------------------------------------- the stage
+function makeSpireStage(cv, readout) {
+	const T = { DROP_W: 3.8, DROP: 4.2, LANDED: 4.4, LAP_W: 4.7, LAP: 5.1, D1W: 7.9, D1: 8.25, D2W: 9.1, D2: 9.45, SPIT: 10.3, SPLAT: 10.9, LAP2: 11.2, SNAG: 12.2, DANGLE: 12.6, HITS: [13.0, 13.4, 13.8], UNRAVEL: 14.0, HATCH: 14.4, OPEN: 15.2, UP: 15.6, ON_TOP: 16.2, CHECK: 16.7, FADE: 18.6, LOOP: 19.0 };
+	const SPITS = [60, 160, 252];
+	let S, parts, J;
+	const reset = () => { S = { t: 0, flags: {}, pops: [], quips: [] }; parts = []; J = makeJuice(); };
+	reset();
+	const once = (k) => (S.flags[k] ? false : (S.flags[k] = true));
+	const pop = (w, x, z, t, c) => S.pops.push({ w, x, z, t0: t, c });
+	const say = (w, t) => { const p = spider(t); S.quips.push({ w, t0: t, x: p.x, z: p.z }); };
+	const arcP = (a, b, h, k) => [lerp(a[0], b[0], k), lerp(a[1], b[1], k) + 4 * h * k * (1 - k)];
+	// ---------------------------------------------------------------- Elfy, on the plane: x along, z up
+	function elfy(t) {
+		const J2 = (t0, d, a, b, h, flip) => { const k = clamp((t - t0) / d), p = arcP(a, b, h, k); return { a: k < 0.25 ? "jump" : k < 0.45 ? "air_jump" : k < 0.6 ? "apex" : "fall", at: k < 0.25 || k >= 0.45 ? k : (k - 0.25) * d, x: p[0], z: p[1], flip }; };
+		const idle = (x, z, flip, a = "idle", at = t) => ({ a, at, x, z, flip });
+		// the climb in: terrace, three steps, up through the hole in the chamber floor
+		if (t < 0.4) return idle(60, -250);
+		if (t < 0.9) return J2(0.4, 0.5, [60, -250], [72, -190], 34);
+		if (t < 1.05) return idle(72, -190, false, "land", t - 0.9);
+		if (t < 1.6) return J2(1.05, 0.55, [72, -190], [204, -130], 36);
+		if (t < 1.75) return idle(204, -130, true, "land", t - 1.6);
+		if (t < 2.25) return J2(1.75, 0.5, [204, -130], [124, -70], 36, true);
+		if (t < 2.4) return idle(124, -70, false, "land", t - 2.25);
+		if (t < 2.95) return J2(2.4, 0.55, [124, -70], [162, 0], 44);
+		if (t < 3.2) return idle(162, 0, false, "land", t - 2.95);
+		if (t < 3.4) return { a: "run", at: t, x: lerp(162, 120, smooth(3.2, 3.4, t)), z: 0, flip: true };
+		// the fight
+		const jump = (t0, x, h = 30, flip = false) => { const k = clamp((t - t0) / 0.36); return { a: k < 0.3 ? "jump" : k < 0.6 ? "apex" : "fall", at: k, x, z: 4 * h * k * (1 - k), flip }; };
+		const lapPass = T.LAP + (220 - 120) / 440;
+		if (t >= lapPass - 0.17 && t < lapPass + 0.19) return jump(lapPass - 0.17, 120, 30);
+		if (t < 8.05) return idle(120, 0, !(t > 7.0 && t < 8.0));
+		if (t < 8.3) return { a: "dash", at: t - 8.05, x: lerp(120, 190, smooth(8.05, 8.3, t)), z: 0 };
+		if (t < 9.25) return idle(190, 0, true);
+		if (t < 9.5) return { a: "dash", at: t - 9.25, x: lerp(190, 110, smooth(9.25, 9.5, t)), z: 0, flip: true };
+		if (t < 12.7) return idle(110, 0, t < 11.2);
+		if (t < 12.85) return { a: "run", at: t, x: lerp(110, 138, smooth(12.7, 12.85, t)), z: 0 };
+		for (const h of T.HITS) if (t >= h - 0.2 && t < h + 0.2) { const k = (t - h + 0.2) / 0.4; return { a: k < 0.35 ? "jump" : k < 0.65 ? "strike_side" : "fall", at: k < 0.35 ? k : k < 0.65 ? (k - 0.35) * 0.4 + 0.04 : k, x: 138, z: 4 * 34 * k * (1 - k) }; }
+		if (t < T.UP) return idle(138, 0, false, t > T.OPEN ? "idle" : "idle");
+		if (t < T.ON_TOP) { const k = (t - T.UP) / (T.ON_TOP - T.UP); return J2(T.UP, T.ON_TOP - T.UP, [138, 0], [162, CH.ceil + 16], 60); }
+		if (t < T.ON_TOP + 0.15) return idle(162, CH.ceil + 16, false, "land", t - T.ON_TOP);
+		if (t < 17.2) return { a: "run", at: t, x: lerp(162, 150, smooth(T.ON_TOP + 0.15, 17.2, t)), z: CH.ceil + 16, flip: true };
+		return idle(150, CH.ceil + 16);
+	}
+	// ---------------------------------------------------------------- Nana Nightloom: where she is and which way is down for her
+	// surface: "floor" (down is -z), "lwall" (down is -x), "ceil" (down is +z), "rwall" (down is +x), "thread" (hanging)
+	function lap(t, t0, slow = 1) {
+		const runs = [[0.45, (k) => ({ x: lerp(220, CH.x0 + 2, k), z: 0, surf: "floor", face: -1 })], [0.4, (k) => ({ x: CH.x0 + 2, z: lerp(0, CH.ceil, k), surf: "lwall", face: -1 })], [0.65, (k) => ({ x: lerp(CH.x0 + 2, CH.x1 - 2, k), z: CH.ceil, surf: "ceil", face: 1 })], [0.4, (k) => ({ x: CH.x1 - 2, z: lerp(CH.ceil, 0, k), surf: "rwall", face: 1 })]];
+		let a = (t - t0) / slow;
+		for (const [d, f] of runs) { if (a < d) return { ...f(a / d), run: 1 }; a -= d; }
+		return null;
+	}
+	function spider(t) {
+		const base = { x: 230, z: CH.ceil, surf: "ceil", face: -1, run: 0, knit: 1, eyes: "open", brow: "kind", mouth: "smile", thread: null, cocoon: 0 };
+		if (t < T.DROP_W) return { ...base, eyes: t > 3.0 && t < 3.6 ? "wide" : "open" };
+		if (t < T.DROP) return { ...base, eyes: "sly", brow: "sly", mouth: "grin", knit: 0 };
+		if (t < T.LANDED) { const k = (t - T.DROP) / (T.LANDED - T.DROP); return { ...base, x: 220, z: lerp(CH.ceil, 30, k * k), surf: "thread", thread: [220, CH.ceil], knit: 0 }; }
+		if (t < T.LAP) return { ...base, x: 220, z: 0, surf: "floor", knit: 0, brow: "fierce", mouth: "grin", eyes: t > T.LAP_W ? "sly" : "open" };
+		const L = lap(t, T.LAP); if (L && t < 7.0) return { ...base, ...L, knit: 0, brow: "fierce", mouth: "grin" };
+		if (t < 7.2) return { ...base, x: CH.x1 - 2, z: 0, surf: "floor", face: -1, knit: 0, mouth: "laugh", eyes: "happy" };
+		if (t < 7.6) return { ...base, x: CH.x1 - 2, z: lerp(0, CH.ceil, (t - 7.2) / 0.4), surf: "rwall", face: 1, run: 1, knit: 0 };
+		// the drops: scuttle over Elfy on the ceiling, a dashed thread to her spot, down fast, and reel back up
+		const drop = (tw, td, x, from) => {
+			if (t < tw) { const k = smooth(tw - 0.3, tw, t); return { ...base, x: lerp(from, x, k), z: CH.ceil, surf: "ceil", run: 1, knit: 0, face: x < from ? -1 : 1 }; }
+			if (t < td) return { ...base, x, z: CH.ceil, surf: "ceil", knit: 0, eyes: "sly", brow: "sly", mouth: "grin" };
+			if (t < td + 0.15) { const k = (t - td) / 0.15; return { ...base, x, z: lerp(CH.ceil, 30, k * k), surf: "thread", thread: [x, CH.ceil], knit: 0, mouth: "laugh" }; }
+			if (t < td + 0.35) return { ...base, x, z: 30, surf: "thread", thread: [x, CH.ceil], knit: 0, eyes: "wide", mouth: "o" };
+			const k = smooth(td + 0.35, td + 0.65, t); return { ...base, x, z: lerp(30, CH.ceil, k), surf: k < 1 ? "thread" : "ceil", thread: [x, CH.ceil], knit: 0 };
+		};
+		if (t < T.D1 + 0.65) return drop(T.D1W, T.D1, 120, 298);
+		if (t < T.D2 + 0.65) return drop(T.D2W, T.D2, 190, 120);
+		if (t < T.LAP2) { const k = smooth(T.D2 + 0.65, T.SPIT - 0.1, t); return { ...base, x: lerp(190, 160, k), z: CH.ceil, surf: "ceil", knit: 0, run: k < 1 ? 1 : 0, mouth: t > T.SPIT - 0.2 && t < T.SPIT + 0.3 ? "o" : "grin", brow: "fierce", eyes: "sly" }; }
+		// the second lap, too fast, trailing silk, and she runs into her own thread
+		if (t < T.SNAG) { const L2 = lap(t, T.LAP2 - 0.55, 0.55); if (L2 && (L2.surf !== "ceil" || L2.x < 160)) return { ...base, ...L2, knit: 0, brow: "fierce", mouth: "laugh" }; return { ...base, x: 160, z: CH.ceil, surf: "ceil", knit: 0, eyes: "wide", mouth: "o", brow: "worry" }; }
+		if (t < T.DANGLE) { const k = (t - T.SNAG) / (T.DANGLE - T.SNAG); return { ...base, x: 160, z: lerp(CH.ceil, 78, k * k), surf: "thread", thread: [160, CH.ceil], cocoon: k, knit: 0, eyes: "wide", mouth: "o", brow: "worry" }; }
+		if (t < T.UNRAVEL) { const hit = T.HITS.some((h) => t >= h && t < h + 0.12); return { ...base, x: 160 + Math.sin(t * 3) * 3, z: 78, surf: "thread", thread: [160, CH.ceil], cocoon: 1, knit: 0, eyes: t > T.HITS[0] ? "dizzy" : "wide", mouth: "o", brow: "worry", flash: hit ? 1 : 0 }; }
+		return { ...base, x: 160, z: 78, surf: "gone" };
+	}
+	// ---------------------------------------------------------------- the camera: rides with Elfy, holds the chamber for the fight, rises at the end
+	function camAt(t) {
+		const e = elfy(t);
+		let z = t < 3.4 ? Math.min(110, e.z + 96) : t < T.OPEN ? 110 : lerp(110, 400, smooth(T.OPEN, 17.6, t));
+		return { x: 160 + Math.sin(t * 0.25) * 10, z };
+	}
+	// ---------------------------------------------------------------- the sim
+	function update(dt) {
+		if (juiceStep(J, dt)) return;
+		const t = (S.t += dt), R = Math.random;
+		if (t >= T.LOOP) { reset(); return; }
+		const burst = (x, z, n, c, sp = 90, up = 60, g = 260) => { for (let i = 0; i < n; i++) parts.push({ x, z, vx: (R() - 0.5) * sp, vz: up * (0.4 + R()), g, life: 0.5 + R() * 0.4, age: 0, c }); };
+		if (t >= 3.4 && once("q1")) say("OH! A VISITOR~", t);
+		if (t >= T.DROP && once("drop")) pop("ZWIP", 220, 150, t);
+		if (t >= T.LANDED && once("land")) { kick(J, 3, 0.2, 0.08); pop("THUMP", 220, 60, t); burst(220, 1, 12, LAV[5]); }
+		if (t >= T.LAP_W && once("q2")) say("SHALL WE DANCE, DEARIE?", t);
+		if (t >= T.LAP && once("lap")) pop("SKITTER SKITTER", 150, 40, t);
+		for (const [k, td, x] of [["d1", T.D1, 120], ["d2", T.D2, 190]]) if (t >= td + 0.15 && once(k)) { kick(J, 3.4, 0.24, 0.1); pop("DROP!", x, 70, t); burst(x, 1, 14, SILK[1]); }
+		if (t >= T.SPIT - 0.3 && once("q3")) say("KNIT ONE, PURL TWO!", t);
+		if (t >= T.SPIT && once("spit")) { kick(J, 1.6, 0.06); pop("PTOO PTOO PTOO", 160, 170, t); }
+		if (t >= T.SPLAT && once("splat")) { kick(J, 1.8, 0.08); for (const x of SPITS) burst(x, 1, 10, SILK[2], 120, 30); }
+		if (t >= T.SNAG && once("snag")) { kick(J, 2.2, 0.12, 0.05); pop("SNAG!", 160, 190, t); say("OH, BOTHER!", t + 0.1); }
+		for (const h of T.HITS) if (t >= h && once("h" + h)) { kick(J, 2.4, 0.16, 0.07); burst(152, 70, 14, h === T.HITS[2] ? SILK[3] : PLUM[4], 160, 60); if (h === T.HITS[2]) pop("POMF!", 160, 120, t); }
+		if (t >= T.UNRAVEL && once("unr")) { kick(J, 3, 0.3, 0.12); for (let i = 0; i < 40; i++) parts.push({ x: 160, z: 78, vx: (R() - 0.5) * 200, vz: (R() - 0.3) * 160, g: 40, life: 1.6, age: 0, c: SILK[R() < 0.5 ? 2 : 1], silk: 1 }); say("I'LL... JUST HAVE A LIE DOWN.", t + 0.2); }
+		if (t >= T.HATCH && once("hatch")) pop("THE WEB UNRAVELS", 162, 250, t, SILK[2]);
+		if (t >= T.CHECK && once("check")) { pop("CHECKPOINT", 162, CH.ceil + 160, t, CANDLE[3]); kick(J, 1.4, 0.08); }
+		for (const p of parts) { p.age += dt; p.vz -= p.g * dt; p.x += p.vx * dt; p.z += p.vz * dt; if (!p.silk && p.z < 0 && p.vz < 0 && p.x > CH.x0 && p.x < CH.x1) { p.z = 0; p.vz *= -0.3; p.vx *= 0.5; } }
+		parts = parts.filter((p) => p.age < p.life);
+	}
+	// ---------------------------------------------------------------- drawing Nana: in a frame where her surface is below her, then turned onto it
+	function drawSpider(o, t, x, y) {
+		// eight legs: two-jointed, knees up, a walking wave running through them
+		const ph = t * (o.run ? 22 : 3);
+		for (let i = 0; i < 8; i++) {
+			const side = i < 4 ? -1 : 1, j = i % 4, root = [x + (j - 1.5) * 4, y - 13], spread = (j - 1.5) * 11 + side * 3, lift = Math.max(0, Math.sin(ph + i * 1.7 + (side > 0 ? Math.PI : 0))) * 5 * (o.run ? 1 : 0.3);
+			const foot = [x + spread * 1.7 + side * 2, y - lift], knee = [lerp(root[0], foot[0], 0.55), Math.min(root[1], foot[1]) - 12 - (j === 0 || j === 3 ? 2 : 0)];
+			line(root[0], root[1], knee[0], knee[1], i < 4 ? PLUM[1] : PLUM[2]); line(root[0] + 1, root[1], knee[0] + 1, knee[1], i < 4 ? PLUM[1] : PLUM[2]);
+			line(knee[0], knee[1], foot[0], foot[1], i < 4 ? PLUM[1] : PLUM[2]); put(knee[0], knee[1] - 1, PLUM[4]);
+		}
+		// the abdomen behind (a lace doily pattern on it), the head in front
+		const ab = [x - o.face * 10, y - 20];
+		for (let yy = -11; yy <= 11; yy++) for (let dx = -13; dx <= 13; dx++) { const d = Math.hypot(dx / 13, yy / 11); if (d > 1) continue; const lace = Math.abs(((Math.atan2(yy, dx) * 6 / Math.PI) % 1)) < 0.18 && d > 0.35 && d < 0.8; put(ab[0] + dx, ab[1] + yy, d > 0.9 ? PLUM[0] : lace ? SILK[1] : dx * -o.face > 4 && yy < -3 ? PLUM[3] : PLUM[2]); }
+		const hd = [x + o.face * 7, y - 18];
+		for (let yy = -9; yy <= 8; yy++) for (let dx = -9; dx <= 9; dx++) { const d = Math.hypot(dx / 9, yy / 8.5); if (d > 1) continue; put(hd[0] + dx, hd[1] + yy, d > 0.88 ? PLUM[0] : yy < -4 ? PLUM[4] : PLUM[3]); }
+		// a little lace bonnet, round spectacles, two big eyes and four little ones, grey brows, fangs
+		for (let a = Math.PI; a <= TAU; a += 0.08) for (let r = 8; r < 11; r++) put(hd[0] + Math.cos(a) * r, hd[1] - 2 + Math.sin(a) * r * 0.7, Math.sin(a * 12) > 0 ? SILK[2] : SILK[1]);
+		const ey = hd[1] - 1;
+		for (const ex of [-3.5, 3.5]) {
+			const X = hd[0] + ex;
+			if (o.eyes === "happy") { put(X - 1, ey, PLUM[0]); put(X, ey - 1, PLUM[0]); put(X + 1, ey, PLUM[0]); }
+			else if (o.eyes === "dizzy") { const a = t * 12 + ex; for (let r = 0; r < 2.5; r += 0.4) put(X + Math.cos(a + r * 2.4) * r, ey + Math.sin(a + r * 2.4) * r, PLUM[0]); }
+			else { const r = o.eyes === "wide" ? 3 : 2.4; for (let yy = -3; yy <= 3; yy++) for (let dx = -3; dx <= 3; dx++) { const d = Math.hypot(dx, yy); if (d <= r) put(X + dx, ey + yy, d > r - 0.7 ? PLUM[0] : "#ffffff"); } const lk = o.face * 0.8; put(X + lk, ey + 0.5, "#000000"); put(X + lk, ey - 0.5, "#000000"); if (o.eyes === "sly") for (let dx = -3; dx <= 3; dx++) { put(X + dx, ey - 2, PLUM[3]); put(X + dx, ey - 1, PLUM[0]); } }
+			for (let a = 0; a < TAU; a += 0.3) put(X + Math.cos(a) * 3.6, ey + Math.sin(a) * 3.6, GOLDR[3]);
+		}
+		put(hd[0], ey, GOLDR[3]);
+		for (const [ex, ey2] of [[-6, -6], [-2, -7], [2, -7], [6, -6]]) put(hd[0] + ex, hd[1] + ey2, "#ffffff");
+		const BR = { kind: [0.3, -0.3], sly: [0.5, 0.1], fierce: [-0.5, 0.5], worry: [0.6, -0.6] }[o.brow] || [0, 0];
+		for (const [ex, ang] of [[-3.5, BR[0]], [3.5, BR[1]]]) for (let j = -2.5; j <= 2.5; j += 0.5) { put(hd[0] + ex + j * Math.cos(ang), ey - 5.5 + j * Math.sin(ang) * (ex < 0 ? 1 : 1), "#d8d6e8"); put(hd[0] + ex + j * Math.cos(ang), ey - 6.5 + j * Math.sin(ang), "#b8b6c8"); }
+		const my = hd[1] + 5;
+		if (o.mouth === "laugh" || o.mouth === "o") for (let dx = -2; dx <= 2; dx++) for (let q = 0; q <= (o.mouth === "laugh" ? 2 : 1.5); q++) put(hd[0] + dx, my + q, q === 0 ? PLUM[0] : "#3a0a20");
+		else for (let dx = -2; dx <= 2; dx++) put(hd[0] + dx, my + (o.mouth === "grin" ? -Math.abs(dx) * 0.3 + 0.6 : Math.abs(dx) * 0.3 - 0.4), PLUM[0]);
+		for (const fx of [-2, 2]) { put(hd[0] + fx, my + 3, SILK[2]); put(hd[0] + fx, my + 4, SILK[1]); }
+		// knitting: two needles and a ball of silk, while she has a moment
+		if (o.knit) { const k = Math.sin(t * 8); line(hd[0] + o.face * 6, hd[1] + 6, hd[0] + o.face * 14, hd[1] - 2 + k, GOLDR[3]); line(hd[0] + o.face * 6, hd[1] + 8, hd[0] + o.face * 15, hd[1] + 4 - k, GOLDR[3]); disc(hd[0] + o.face * 12, hd[1] + 10, 3, SILK[1]); put(hd[0] + o.face * 11, hd[1] + 9, SILK[3]); }
+		// wrapped up in her own silk
+		if (o.cocoon > 0) for (let yy = -30; yy <= 4; yy++) { const w = 15 * Math.sin(clamp((yy + 31) / 36) * Math.PI) * o.cocoon; for (let dx = -w; dx <= w; dx++) if ((Math.floor(yy + dx * 0.5 + t * 4) % 3) !== 0) put(x + dx, y + yy - 4, (yy + Math.floor(dx)) % 4 ? SILK[2] : SILK[1], 0.92); }
+		if (o.flash) for (let i = 0; i < 50; i++) put(x + (Math.random() - 0.5) * 40, y - Math.random() * 36, "#ffffff", 0.6);
+	}
+	// re-place what drawFn painted: rotated about (cx, cy), mirrored if sx < 0, depth-tested at the play plane
+	function stamp(drawFn, cx, cy, rot, sx) {
+		const sav = col.slice(); ZT = null; drawFn();
+		const src = new Map(); let x0 = W, y0 = H, x1 = -1, y1 = -1;
+		for (let p = 0, i = 0; p < N; p++, i += 3) { if (col[i] === sav[i] && col[i + 1] === sav[i + 1] && col[i + 2] === sav[i + 2]) continue; const x = p % W, y = (p - x) / W; src.set(p, [col[i], col[i + 1], col[i + 2]]); if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+		col.set(sav); if (x1 < 0) return;
+		const c = Math.cos(rot), s = Math.sin(rot), r = Math.ceil(Math.hypot(Math.max(cx - x0, x1 - cx), Math.max(cy - y0, y1 - cy))) + 2;
+		for (let Y = Math.max(0, Math.floor(cy - r)); Y <= Math.min(H - 1, Math.ceil(cy + r)); Y++) for (let X = Math.max(0, Math.floor(cx - r)); X <= Math.min(W - 1, Math.ceil(cx + r)); X++) {
+			const ux = X + 0.5 - cx, uy = Y + 0.5 - cy, u = (ux * c + uy * s) / sx, v = -ux * s + uy * c, qx = Math.floor(cx + u), qy = Math.floor(cy + v);
+			if (qx < 0 || qy < 0 || qx >= W || qy >= H) continue; const got = src.get(qy * W + qx); if (!got) continue;
+			const j = Y * W + X; if (ZB[j] > PLANE_D + 1e-7) continue; col[j * 3] = got[0]; col[j * 3 + 1] = got[1]; col[j * 3 + 2] = got[2];
+		}
+	}
+	const PX = (x) => W / 2 + (x - SCAM.x), PY = (z) => H / 2 - (z - SCAM.z);
+	let camKey = "";
+	const showTrack = { on: true };
+	function paint() {
+		const t = S.t, cam = camAt(t);
+		SCAM.x = cam.x; SCAM.z = cam.z;
+		const key = cam.x.toFixed(2) + "," + cam.z.toFixed(2);
+		if (key !== camKey) { renderStaticS(); camKey = key; }
+		col.set(SBASE); ZB.set(SBZ); lit.fill(0);
+		juiceShake(J, t); const SX = OX, SY = OY; OX = 0; OY = 0;
+		const on = Math.sin(t * 30) > -0.2;
+		const pl = (fn) => { ZT = PLANE_D + 1e-7; fn(); ZT = null; }; // draw on the play plane, behind anything nearer
+		// glows: candles in the arches, the moon, the gate's lamp once the realm is cleared
+		for (const [X, Y] of [[-39, 31], [361, 41], [231, 201]]) { const d = Y + CD; glow(sxOf(X, d), syOf(-237, d), 22, CANDLE[2], 0.5); }
+		for (const [X, Z] of [[70, 176], [250, 182]]) { const sw = Math.sin(t * 1.2 + X) * 1.5, px = PX(X + sw), py = PY(Z); ZT = PLANE_D + 1e-7; line(PX(X), PY(CH.ceil), px, py - 5, LAVD[1]); for (let yy = -5; yy <= 5; yy++) for (let dx = -3; dx <= 3; dx++) if ((dx / 3.4) ** 2 + (yy / 5.5) ** 2 <= 1) put(px + dx, py + yy, Math.abs(yy) > 4 ? LAVD[1] : dx < 0 ? CANDLE[3] : CANDLE[2]); ZT = null; glow(px, py, 60, CANDLE[1], 0.35); glow(px, py, 14, CANDLE[3], 0.5); }
+		{ const fl = PY(0); glow(PX(160), fl, 120, CANDLE[1], 0.12); }
+		{ const d = 2100 + CD; for (const X of [-300, 200, 700]) glow(sxOf(X, d), syOf(560, d), 150, GOLDR[3], 0.28); }
+		const gl = t > T.CHECK ? smooth(T.CHECK, T.CHECK + 0.5, t) : 0.15, gx = sxOf(164, 17 + CD), gy = syOf(CH.ceil + 110, 17 + CD);
+		glow(gx, gy, 40, CANDLE[2], 0.7 * gl); disc(gx, gy, 3, CANDLE[3], 0.5 + gl * 0.5);
+		// webs in the chamber's top corners, dew glinting; and the web over the hatch until she is beaten
+		pl(() => {
+			for (const [cx, cz, sx] of [[CH.x0, CH.ceil, 1], [CH.x1, CH.ceil, -1]]) { for (let k = 0; k < 6; k++) { const a = (k / 5) * Math.PI / 2; line(PX(cx), PY(cz), PX(cx + sx * Math.cos(a) * 60), PY(cz - Math.sin(a) * 60), SILK[1], 0.5); } for (let r = 14; r < 60; r += 12) for (let k = 0; k < 5; k++) { const a0 = (k / 5) * Math.PI / 2, a1 = ((k + 1) / 5) * Math.PI / 2; line(PX(cx + sx * Math.cos(a0) * r), PY(cz - Math.sin(a0) * r), PX(cx + sx * Math.cos(a1) * r), PY(cz - Math.sin(a1) * r), SILK[1], 0.45); } if (Math.sin(t * 2 + cx) > 0.8) put(PX(cx + sx * 30), PY(cz - 20), "#ffffff"); }
+			const open = smooth(T.HATCH, T.OPEN, t), hx0 = CH.hatch[0], hx1 = CH.hatch[1];
+			if (open < 1) for (let k = 0; k <= 8; k++) { const xa = lerp(hx0, hx1, k / 8); line(PX(xa), PY(CH.ceil), PX(lerp(xa, (hx0 + hx1) / 2, open)), PY(CH.ceil + 16 * (1 - open)), SILK[2], 0.7 * (1 - open)); line(PX(hx0), PY(CH.ceil + 2 + k * 1.8), PX(hx1), PY(CH.ceil + 2 + k * 1.8), SILK[1], 0.6 * (1 - open)); }
+			if (open > 0) for (let y = PY(CH.ceil + 16); y < PY(0); y += 1) for (let x = PX(hx0 + 4); x < PX(hx1 - 4); x += 2) put(x + ((y >> 1) & 1), y, "#fff0c8", 0.06 * open * (1 - (y - PY(CH.ceil)) / 240));
+		});
+		// warnings, all on the plane: the drop's thread and ring, the lap's path, each spit's ring
+		const ringAt = (x, z, r, c, a) => { for (let an = 0; an < TAU; an += 0.25) put(PX(x + Math.cos(an) * r), PY(z) + Math.sin(an) * r * 0.25, c, a); };
+		const dashV = (x, z0, z1, c, a) => { for (let z = Math.min(z0, z1); z < Math.max(z0, z1); z += 3) put(PX(x), PY(z), c, a); };
+		pl(() => {
+			if (t > T.DROP_W && t < T.DROP) { dashV(220, 0, CH.ceil, t > T.DROP - 0.1 ? "#ffffff" : SILK[2], on ? 0.9 : 0.35); ringAt(220, 0, 12, SILK[2], on ? 0.9 : 0.4); }
+			if (t > T.LAP_W && t < T.LAP) { const c = t > T.LAP - 0.1 ? "#ffffff" : PLUM[4], a = on ? 0.85 : 0.3; for (let x = CH.x0 + 2; x < 220; x += 3) put(PX(x), PY(2), c, a); dashV(CH.x0 + 3, 0, CH.ceil, c, a); for (let x = CH.x0 + 2; x < CH.x1 - 2; x += 3) put(PX(x), PY(CH.ceil - 2), c, a); dashV(CH.x1 - 3, 0, CH.ceil, c, a); }
+			for (const [tw, td, x] of [[T.D1W, T.D1, 120], [T.D2W, T.D2, 190]]) if (t > tw && t < td) { dashV(x, 0, CH.ceil, t > td - 0.1 ? "#ffffff" : SILK[2], on ? 0.9 : 0.35); ringAt(x, 0, 12, SILK[2], on ? 0.9 : 0.4); }
+			if (t > T.SPIT - 0.4 && t < T.SPLAT) for (const x of SPITS) ringAt(x, 0, 12, t > T.SPLAT - 0.12 ? "#ffffff" : SILK[2], on ? 0.9 : 0.4);
+		});
+		// the spit, in flight, then stuck to the floor as sticky stars of web
+		pl(() => {
+			if (t > T.SPIT && t < T.SPLAT) { const k = (t - T.SPIT) / (T.SPLAT - T.SPIT); for (const x of SPITS) { const p = [lerp(160, x, k), lerp(CH.ceil - 20, 2, k) + 4 * 20 * k * (1 - k)]; disc(PX(p[0]), PY(p[1]), 3.2, SILK[3]); disc(PX(p[0]) - 1, PY(p[1]) - 1, 1.2, SILK[1]); } }
+			if (t >= T.SPLAT && t < T.UNRAVEL) for (const x of SPITS) for (let k = 0; k < 8; k++) { const a = (k / 8) * TAU; line(PX(x), PY(1), PX(x + Math.cos(a) * 12), PY(1) + Math.sin(a) * 3, SILK[2], 0.8); }
+			// her trailing silk on the second lap
+			if (t > T.LAP2 && t < T.DANGLE) { const pts = []; for (let tt = T.LAP2; tt < Math.min(t, T.SNAG); tt += 0.04) { const q = spider(tt); pts.push([q.x, q.z]); } for (let i = 1; i < pts.length; i++) line(PX(pts[i - 1][0]), PY(pts[i - 1][1]), PX(pts[i][0]), PY(pts[i][1]), SILK[2], 0.7); }
+		});
+		// Nana herself, turned onto whatever she is walking on, with her thread when she hangs
+		const o = spider(t);
+		if (o.surf !== "gone") {
+			if (o.thread) pl(() => line(PX(o.thread[0]), PY(o.thread[1]), PX(o.x), PY(o.z), SILK[2], 0.9));
+			const rot = { floor: 0, lwall: Math.PI / 2, ceil: Math.PI, rwall: -Math.PI / 2, thread: Math.PI }[o.surf], sx = o.surf === "ceil" || o.surf === "thread" || o.surf === "rwall" ? -o.face : o.face;
+			const cx = PX(o.x), cy = PY(o.z);
+			stamp(() => drawSpider({ ...o, face: 1 }, t, cx, cy), cx, cy, rot, sx);
+		}
+		// Elfy, lit by where she stands
+		const e = elfy(t), ex = Math.round(PX(e.x)), ey = Math.round(PY(e.z));
+		{ const sav = col.slice(); pl(() => drawElfy(e.a, e.at, ex, ey, 0, !!e.flip)); const inCh = e.z > -5 && e.z < CH.ceil, warm = inCh ? 0.16 : 0.06, cool = inCh ? 0.06 : 0.16; for (let i = 0; i < N * 3; i += 3) if (col[i] !== sav[i] || col[i + 1] !== sav[i + 1] || col[i + 2] !== sav[i + 2]) { lit[i] += warm + cool * 0.5; lit[i + 1] += warm * 0.64 + cool * 0.6; lit[i + 2] += warm * 0.3 + cool; } }
+		// particles: dust, silk, splinters of web
+		pl(() => { for (const p of parts) put(PX(p.x), PY(p.z), p.c, 1 - p.age / p.life * 0.5); });
+		// words
+		for (const w of S.pops) { const a = t - w.t0; soundWord(w.w, clamp(PX(w.x), 50, W - 50), clamp(PY(w.z), 8, H - 20), Math.min(1, a / 0.7) * (a < 1.1 && a >= 0 ? 1 : 0), w.c || SILK[2], "#0c0814", 2); }
+		for (const q of S.quips) { const a = t - q.t0; if (a < 0 || a > 1.4) continue; soundWord(q.w, clamp(PX(q.x), 80, W - 80), clamp(PY(q.z) + (q.z > 150 ? 34 : -50) - a * 6, 8, H - 20), Math.min(1, a / 0.6) * (a < 1.25 ? 1 : 0), "#ffffff", "#0c0814", 1); }
+		// the track view: the plane as the game sees it, in the corner
+		if (showTrack.on) {
+			const bx = 8, by = H - 92, bw = 120, bh = 84, sc = 0.25;
+			for (let y = by; y < by + bh; y++) for (let x = bx; x < bx + bw; x++) put(x, y, "#05070d", 0.82);
+			for (let x = bx; x < bx + bw; x++) { put(x, by, "#7ae8ff", 0.5); put(x, by + bh - 1, "#7ae8ff", 0.5); } for (let y = by; y < by + bh; y++) { put(bx, y, "#7ae8ff", 0.5); put(bx + bw - 1, y, "#7ae8ff", 0.5); }
+			const TX = (x) => bx + 14 + (x + 40) * sc, TY = (z) => by + bh - 8 - (z + 260) * sc * 0.62;
+			const seg = (x0, x1, z) => { for (let x = x0; x < x1; x += 1) put(TX(x), TY(z), "#c8d0dc"); };
+			seg(CH.x0, CH.hole[0], 0); seg(CH.hole[1], CH.x1, 0); seg(CH.x0, CH.hatch[0], CH.ceil); seg(CH.hatch[1], CH.x1, CH.ceil); seg(L1.x0, L1.x1, L1.z); seg(L2.x0, L2.x1, L2.z); for (const s of STEPS) seg(Math.max(-40, s.x0), Math.min(340, s.x1), s.z);
+			for (let z = -10; z < CH.ceil; z += 1) { put(TX(CH.x0), TY(z), "#c8d0dc"); put(TX(CH.x1), TY(z), "#c8d0dc"); }
+			if (o.surf !== "gone") for (let y = -2; y <= 2; y++) for (let x = -2; x <= 2; x++) put(TX(o.x) + x, TY(o.z) + y, "#e0283a");
+			for (let y = 0; y < 4; y++) for (let x = -1; x <= 1; x++) put(TX(e.x) + x, TY(e.z) - y, "#4dff6a");
+			soundWord("TRACK", bx + 20, by + 4, 1, "#7ae8ff", "#05070d", 1);
+		}
+		if (t >= T.D1 + 0.15 && t < T.D1 + 0.2) impactFrame("#f8f4ff", "#05070d", 0.3);
+		const fade = Math.min(smooth(0, 0.5, t), 1 - smooth(T.FADE, T.LOOP, t));
+		if (fade < 1) for (let i = 0; i < N * 3; i++) { col[i] *= fade; lit[i] *= fade; }
+		OX = SX; OY = SY;
+		readout.textContent = t < 3.4 ? "the climb in: up from the terrace below, step to step, through the hole in the chamber floor; the camera rises with her, the bridge she came by runs off into the fog" : t < T.LAP_W ? "Nana Nightloom, knitting upside down on the ceiling (above Elfy, so its underside shows) · OH! A VISITOR~ · she drops on a thread, its line and ring dashed first" : t < 7.2 ? "the lap · her whole route round the room is dashed first: along the floor (jump her), up the wall, across the ceiling, down the other wall" : t < T.SPIT - 0.3 ? "the drops · she scuttles over Elfy on the ceiling, a thread to Elfy's spot is dashed, and she drops · dash" : t < T.LAP2 ? "phase two · KNIT ONE, PURL TWO! · three spits of web onto rings; they stick to the floor" : t < T.DANGLE ? "the second lap, too fast, trailing silk across the room · SNAG! · she runs into her own thread" : t < T.UNRAVEL ? "weak window · wound up in her own silk, dangling · jump and hit" : t < T.UP ? "she comes apart in a cloud of silk; the web over the hatch unravels and light comes down" : "up through the hatch to the terrace and the gate: the realm is cleared, the checkpoint lit, and the next realm hangs above, lit gold";
+	}
+	return { cv, update, paint, reset, showTrack };
+}
+
+const pix = document.createElement("canvas"), lig = document.createElement("canvas");
+pix.width = lig.width = W; pix.height = lig.height = H;
+const pctx = pix.getContext("2d"), lctx = lig.getContext("2d");
+const pimg = pctx.createImageData(W, H), limg = lctx.createImageData(W, H);
+function present(cv) {
+	const pd = pimg.data, ld = limg.data, sctx = cv.getContext("2d");
+	for (let i = 0, j = 0; i < N * 3; i += 3, j += 4) {
+		pd[j] = clamp(col[i] + lit[i] * 0.5) * 255; pd[j + 1] = clamp(col[i + 1] + lit[i + 1] * 0.5) * 255; pd[j + 2] = clamp(col[i + 2] + lit[i + 2] * 0.5) * 255; pd[j + 3] = 255;
+		ld[j] = clamp(lit[i] * 0.9) * 255; ld[j + 1] = clamp(lit[i + 1] * 0.9) * 255; ld[j + 2] = clamp(lit[i + 2] * 0.9) * 255; ld[j + 3] = 255;
+	}
+	pctx.putImageData(pimg, 0, 0); lctx.putImageData(limg, 0, 0);
+	const cw = cv.width, ch = cv.height, k = cw / W, ox = OX * k, oy = OY * k;
+	sctx.fillStyle = "#05060d"; sctx.fillRect(0, 0, cw, ch);
+	sctx.imageSmoothingEnabled = false; sctx.drawImage(pix, ox, oy, cw, ch);
+	sctx.imageSmoothingEnabled = true; sctx.globalCompositeOperation = "lighter"; sctx.drawImage(lig, ox, oy, cw, ch); sctx.globalCompositeOperation = "source-over";
+}
+const cvs = document.getElementById("stage-spire"), st = makeSpireStage(cvs, document.getElementById("readout-spire"));
+function resize() { const w = Math.max(W, Math.round(cvs.clientWidth * Math.min(2, window.devicePixelRatio || 1) / W) * W); cvs.width = w; cvs.height = Math.round(w * 9 / 16); }
+window.addEventListener("resize", resize); resize();
+let paused = window.matchMedia("(prefers-reduced-motion: reduce)").matches, slow = false, last = 0;
+function frame(now) {
+	const dt = Math.min(0.05, (now - last) / 1000 || 0); last = now;
+	if (!paused) { let left = dt * (slow ? 0.25 : 1); while (left > 0) { const s = Math.min(left, 1 / 120); st.update(s); left -= s; } }
+	st.paint(); present(cvs);
+	requestAnimationFrame(frame);
+}
+const pauseBtn = document.getElementById("pause"), slowBtn = document.getElementById("slow"), trackBtn = document.getElementById("track");
+const setPaused = (v) => { paused = v; pauseBtn.setAttribute("aria-pressed", String(v)); pauseBtn.firstChild.textContent = v ? "Play" : "Pause"; };
+const setSlow = (v) => { slow = v; slowBtn.setAttribute("aria-pressed", String(v)); };
+const setTrack = (v) => { st.showTrack.on = v; trackBtn.setAttribute("aria-pressed", String(v)); };
+setPaused(paused);
+pauseBtn.addEventListener("click", () => setPaused(!paused));
+slowBtn.addEventListener("click", () => setSlow(!slow));
+trackBtn.addEventListener("click", () => setTrack(!st.showTrack.on));
+document.getElementById("replay").addEventListener("click", () => { st.reset(); setPaused(false); });
+window.addEventListener("keydown", (e) => {
+	if (e.target instanceof HTMLButtonElement && (e.key === " " || e.key === "Enter")) return;
+	const k = e.key.toLowerCase();
+	if (k === " ") { e.preventDefault(); setPaused(!paused); } else if (k === "s") setSlow(!slow); else if (k === "r") { st.reset(); setPaused(false); } else if (k === "t") setTrack(!st.showTrack.on);
+});
+if (window.__STUDY_TIME__ !== undefined) { st.reset(); for (let i = 0; i < window.__STUDY_TIME__ * 120; i++) st.update(1 / 120); }
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

@@ -1,0 +1,1373 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Saint Rime, circled: a chapel you walk round, the whole miniature turning a quarter at each corner.">
+<meta property="og:title" content="The Rime Chapel · Square Off devlog (study)">
+<meta property="og:description" content="Saint Rime, circled: a chapel you walk round, the whole miniature turning a quarter at each corner.">
+<meta property="og:type" content="website">
+<title>The Rime Chapel · Square Off devlog (study)</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: a game-screen page. Global controls under the title, then one study per enemy: a wide stage at the game's
+   own pixel scale, its readout, then its key-pose sheet beside short notes. Deliberately single-theme (the dark
+   arena), every color set explicitly. */
+:root {
+	--bg: #0a0c13;
+	--panel: #11151f;
+	--line: #232a3c;
+	--ink: #e2e7f2;
+	--muted: #8d96ad;
+	--ember: #a8dcff;
+	--ember-soft: #e4f6ff;
+	--display: "Chakra Petch", "Trebuchet MS", sans-serif;
+	--body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+	--mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+	color-scheme: dark;
+}
+html { background: var(--bg); }
+body { background: var(--bg); color: var(--ink); font: 16px/1.55 var(--body); }
+.wrap { max-width: 1120px; margin: 0 auto; padding-block: 32px 56px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 28px; }
+header { display: grid; gap: 6px; }
+.eyebrow { font: 500 12px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ember-soft); }
+h1 { font: 700 clamp(30px, 5vw, 46px)/1.05 var(--display); letter-spacing: 0.01em; margin: 0; text-wrap: balance; }
+h2 { font: 700 20px/1.2 var(--display); margin: 0 0 8px; letter-spacing: 0.02em; }
+h2.name { font-size: clamp(24px, 3.6vw, 32px); margin: 0; text-wrap: balance; }
+.study { display: grid; gap: 14px; border-top: 1px solid var(--line); padding-top: 28px; }
+.wrap { gap: 40px; }
+.lede { color: var(--muted); max-width: 68ch; margin: 0; }
+.stage { position: relative; border: 1px solid var(--line); background: #000; }
+.stage canvas { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; max-width: 100%; }
+.controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+button { font: 500 14px/1 var(--mono); color: var(--ink); background: var(--panel); border: 1px solid var(--line); padding: 10px 14px; cursor: pointer; }
+button:hover { border-color: var(--ember); }
+button:focus-visible { outline: 2px solid var(--ember); outline-offset: 2px; }
+button[aria-pressed="true"] { border-color: var(--ember); color: var(--ember-soft); }
+kbd { font: 500 11px/1 var(--mono); color: var(--muted); border: 1px solid var(--line); padding: 2px 5px; margin-left: 6px; }
+.readout { font: 500 13px/1.3 var(--mono); color: var(--muted); margin-left: auto; font-variant-numeric: tabular-nums; }
+.lower { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 28px; align-items: start; }
+.sheet { border: 1px solid var(--line); background: var(--panel); padding: 14px; display: grid; gap: 10px; }
+.sheet canvas { width: 100%; height: auto; max-width: 100%; image-rendering: pixelated; display: block; }
+.caption { font: 500 12px/1.4 var(--mono); color: var(--muted); }
+.notes { display: grid; gap: 22px; min-width: 0; }
+.notes p, .notes li { color: #c4cbdb; margin: 0; }
+.notes ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
+.notes strong { color: var(--ink); }
+footer { font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 16px; }
+footer a { color: var(--ember-soft); }
+@media (max-width: 760px) { .lower { grid-template-columns: minmax(0, 1fr); } .readout { margin-left: 0; width: 100%; } }
+</style>
+
+</head>
+<body>
+<div class="wrap">
+	<header>
+		<div class="eyebrow">Square Off devlog · study · level study · Saint Rime, all the way round</div>
+		<h1>The Rime Chapel</h1>
+		<p class="lede">Saint Rime, the Frost Chandelier from realm 3 (the one that skitters across the ceiling and down the walls), in a miniature. A frozen chapel sits on a floating rock under an aurora, with a cloister walk round all four sides and open rafters overhead for it to hang from. The camera is close, looking at one side almost face on, and the track runs right round the building. When the fight goes round a corner, the whole miniature turns a quarter with it, the way Fez turns its world. Some attacks are dodged by ducking round the corner. Everything is drawn by code.</p>
+		<div class="controls">
+			<button id="pause" type="button" aria-pressed="false">Pause<kbd>Space</kbd></button>
+			<button id="slow" type="button" aria-pressed="false">Slow motion<kbd>S</kbd></button>
+			<button id="replay" type="button">Replay<kbd>R</kbd></button>
+			<button id="track" type="button" aria-pressed="true">Track view<kbd>T</kbd></button>
+		</div>
+	</header>
+	<section class="study" aria-labelledby="h-chapel">
+		<h2 class="name" id="h-chapel">Saint Rime, the Frost Chandelier</h2>
+		<div class="stage"><canvas id="stage-chapel" width="1280" height="720" aria-label="A snow-covered stone chapel with stained-glass windows floats on a rock under an aurora, a cloister walk with wooden rafters round all four sides; a chandelier of black iron with six hooked legs, cold blue candles and a porcelain mask hangs from the rafters over Elfy, crawls along them growing icicles that drop onto the walk, then crawls round the corner; the whole miniature turns a quarter as Elfy follows it; on the next side it climbs down the chapel wall and screams a beam of frost the length of the side and out past the corner, while Elfy hides round the corner; it crosses back over her and drops, a wave of ice spikes running along the walk, and lies wrecked while she hits it; it winches up and crawls round the next corner, the miniature turns again, and it swings on a chain like a pendulum until the chain snaps"></canvas></div>
+		<div class="controls"><span class="readout" id="readout-chapel">idle</span></div>
+		<div class="notes">
+			<ul>
+				<li><strong>The miniature, up close.</strong> The same isometric pixel-art renderer as the bathhouse, but the camera is in close, so you see one side of the chapel at a time: the stone wall with its stained-glass lancet, the walk, the rafters, the lanterns, the snow-heavy roof. The far mountains, aurora and floating rocks are painted flat behind and slide as it turns, so there is always something out there.</li>
+				<li><strong>Round and round.</strong> The track is a loop round the chapel, four sides long. When the fight goes round a corner, the miniature turns a quarter under the camera, so the side you are on always faces you and forward is always to the right. The columns of whichever side is nearest the camera are cut away, dollhouse-style; the rafters stay, because it hangs from them.</li>
+				<li><strong>Dodge round the corner.</strong> The frost breath shoots straight down one side of the building and out past the corner into the air. Its whole line is dashed first. The answer is to run back round the corner, out of the line, and wait for it to finish. A wall at a corner is cover.</li>
+				<li><strong>Following it round.</strong> It crawls the rafters round corners too, and Elfy has to follow. Its spike waves run along the track, so they can come round a corner at you.</li>
+				<li><strong>Its moves</strong> (from realm 3): the crawl that grows icicles along the rafters (their shadows sharpen on the walk before they snap); the frost breath; the drop with a wave of ice spikes, then the wreck you hit; and in phase two, the pendulum swing on a chain (crouch), the snap, the crash. Its mask ticks round to a new face before each one.</li>
+				<li><strong>The game is still 2D.</strong> The inset shows the loop unrolled into one long line, with the corners dashed. Elfy (green) and the chandelier (red, up at rafter height) move along it, and that is all the game knows about.</li>
+			</ul>
+		</div>
+	</section>
+	<footer>A study for Square Off. All drawing and code here are new. Elfy is the game's own sprite.</footer>
+</div>
+<script>
+"use strict";
+const W = 640, H = 360, TAU = Math.PI * 2, N = W * H;
+const FEET = 172; // feet line: the middle of the snow's top surface
+const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+const lerp = (a, b, k) => a + (b - a) * k;
+const smooth = (a, b, x) => { const k = clamp((x - a) / (b - a)); return k * k * (3 - 2 * k); };
+const BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5].map((v) => (v + 0.5) / 16);
+const bayer = (x, y) => BAYER[(y & 3) * 4 + (x & 3)];
+function hash(a, b) { let h = (a * 374761393 + b * 668265263) | 0; h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296; }
+function noise1(x, seed = 0) { const i = Math.floor(x), f = x - i, s = f * f * (3 - 2 * f); return lerp(hash(i, seed), hash(i + 1, seed), s); }
+function rng(seed) { return () => { seed = (seed + 0x6d2b79f5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+const hexCache = new Map();
+function hx(h) { let c = hexCache.get(h); if (!c) { c = [parseInt(h.slice(1, 3), 16) / 255, parseInt(h.slice(3, 5), 16) / 255, parseInt(h.slice(5, 7), 16) / 255]; hexCache.set(h, c); } return c; }
+
+// ---------------------------------------------------------------- palette (the game's roles and ramps)
+const SKY = ["#121827", "#151c2e", "#192136", "#1e273f", "#232d48"];
+const PEAK = ["#232c44", "#2c3753", "#55637f", "#7d8db0"];
+const SNOW = ["#3b4a68", "#5f7398", "#97abcd", "#d4e1f5", "#ffffff"];
+const STONE = ["#11141d", "#181c28", "#1f2433", "#272d3f"];
+const WET = ["#1b2030", "#252c40", "#36405a"];
+const CLOTH = ["#2a0710", "#4c0d1b", "#7c1428", "#b0223d"];
+const LEATHER = ["#170d0b", "#2b1913", "#45291d"];
+const BRASS = ["#4a2c10", "#86561c", "#c88d34", "#f3cd73"];
+const WOOD = ["#24140a", "#3f2512", "#62391c"];
+const FIRE = ["#fffbe6", "#ffe46e", "#ffb22f", "#ff7420", "#e0391a", "#8c1a12"];
+const OUTLINE = "#07060b";
+
+// ---------------------------------------------------------------- the painter: a color grid and a light grid
+const col = new Float32Array(N * 3), lit = new Float32Array(N * 3), base = new Float32Array(N * 3);
+let OX = 0, OY = 0; // screen shake, in whole pixels
+function putRGB(x, y, c, a = 1) {
+	x = Math.floor(x + OX); y = Math.floor(y + OY);
+	if (x < 0 || y < 0 || x >= W || y >= H || a <= 0) return;
+	if (ZT !== null && ZB[y * W + x] > ZT) return;
+	const i = (y * W + x) * 3;
+	col[i] += (c[0] - col[i]) * a; col[i + 1] += (c[1] - col[i + 1]) * a; col[i + 2] += (c[2] - col[i + 2]) * a;
+}
+const put = (x, y, h, a = 1) => putRGB(x, y, hx(h), a);
+function light(x, y, h, k) {
+	x = Math.floor(x + OX); y = Math.floor(y + OY);
+	if (x < 0 || y < 0 || x >= W || y >= H) return;
+	const c = hx(h), i = (y * W + x) * 3;
+	lit[i] += c[0] * k; lit[i + 1] += c[1] * k; lit[i + 2] += c[2] * k;
+}
+function glow(x, y, r, h, k) {
+	if (k <= 0.004 || r <= 0) return;
+	x += OX; y += OY;
+	const c = hx(h);
+	for (let py = Math.max(0, Math.floor(y - r)); py <= Math.min(H - 1, Math.ceil(y + r)); py++)
+		for (let px = Math.max(0, Math.floor(x - r)); px <= Math.min(W - 1, Math.ceil(x + r)); px++) {
+			const d = Math.hypot(px + 0.5 - x, py + 0.5 - y) / r;
+			if (d < 1) { const f = (1 - d) * (1 - d) * k, i = (py * W + px) * 3; lit[i] += c[0] * f; lit[i + 1] += c[1] * f; lit[i + 2] += c[2] * f; }
+		}
+}
+function disc(x, y, r, h, a = 1) {
+	for (let py = Math.floor(y - r); py <= Math.ceil(y + r); py++)
+		for (let px = Math.floor(x - r); px <= Math.ceil(x + r); px++)
+			if (Math.hypot(px + 0.5 - x, py + 0.5 - y) <= r) put(px, py, h, a);
+}
+function line(x0, y0, x1, y1, h, a = 1) {
+	const n = Math.max(1, Math.ceil(Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0))));
+	for (let i = 0; i <= n; i++) put(x0 + ((x1 - x0) * i) / n, y0 + ((y1 - y0) * i) / n, h, a);
+}
+
+// ---------------------------------------------------------------- the backdrop (sky, peaks, floor), built once
+function buildBase() {
+	const set = (x, y, h) => { const c = hx(h), i = (y * W + x) * 3; base[i] = c[0]; base[i + 1] = c[1]; base[i + 2] = c[2]; };
+	for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) set(x, y, SKY[clamp(Math.floor((y / 190) * 4 + bayer(x, y) - 0.2), 0, 4)]);
+	const ridge = (x, k) => FEET - 58 - k * 4 - 34 * Math.max(0, Math.sin(x * 0.012 + k * 2.3)) ** 2 - 8 * Math.sin(x * 0.041 + k) - 3 * Math.sin(x * 0.11 + k * 3) + k * 18;
+	for (const k of [0, 1]) for (let x = 0; x < W; x++) {
+		const top = Math.round(ridge(x, k)), slope = ridge(x + 1, k) - ridge(x - 1, k);
+		for (let y = top; y < FEET; y++) {
+			const dep = y - top, lit2 = slope > 0.2; // slopes that face the light on the left
+			const cap = dep < 2 + 3 * Math.max(0, Math.sin(x * 0.05 + k * 4)) + (bayer(x, y) < 0.5 ? 1 : 0);
+			const c2 = k === 0 ? (cap ? PEAK[1] : PEAK[0]) : cap ? (lit2 ? PEAK[3] : PEAK[2]) : lit2 && dep < 5 + bayer(x, y) * 4 ? PEAK[2] : PEAK[1];
+			set(x, y, c2);
+		}
+	}
+	// the floor: the snow's top surface (seen from just above), its bright lip, then the stone face in blocks
+	for (let x = 0; x < W; x++) {
+		const bump = Math.round(1.2 * Math.sin(x * 0.13) + 0.7 * Math.sin(x * 0.31 + 1));
+		for (let y = FEET - 7 + bump; y < H; y++) {
+			const d = y - FEET;
+			let c;
+			if (d < -4) c = SNOW[1]; else if (d < -1) c = SNOW[2]; else if (d < 3) c = SNOW[3]; else if (d < 4) c = SNOW[4];
+			else if (d < 6) c = SNOW[2];
+			else {
+				const row = Math.floor((d - 6) / 12), bx = (x + (row % 2) * 13) % 26, by = (d - 6) % 12;
+				c = bx === 0 || by === 0 ? STONE[0] : by === 1 || bx === 1 ? STONE[3] : STONE[1 + ((hash(Math.floor((x + (row % 2) * 13) / 26), row) * 2) | 0)];
+			}
+			if (d === -7 + bump && (x & 1)) c = SNOW[0];
+			set(x, y, c);
+		}
+	}
+}
+
+const COOL = ["#2c3550", "#3e4a68"];
+// ---------------------------------------------------------------- Elfy, the game's own sprite (embedded)
+const ELFY = { fw: 64, fh: 76, cols: 8, ox: 32, oy: 72, anims: {"idle": {"start": 0, "count": 6, "fps": 6, "loop": true}, "jump": {"start": 17, "count": 2, "fps": 10, "loop": true}, "apex": {"start": 19, "count": 2, "fps": 10, "loop": true}, "fall": {"start": 21, "count": 2, "fps": 10, "loop": true}, "land": {"start": 23, "count": 1, "fps": 10, "loop": false}, "run": {"start": 7, "count": 10, "fps": 16, "loop": true}, "hurt": {"start": 57, "count": 1, "fps": 10, "loop": false}, "crouch": {"start": 53, "count": 4, "fps": 6, "loop": true}, "crouch_down": {"start": 52, "count": 1, "fps": 24, "loop": false}, "wall_grab": {"start": 35, "count": 1, "fps": 12, "loop": false}, "wall": {"start": 36, "count": 3, "fps": 10, "loop": true}, "wall_kick": {"start": 39, "count": 1, "fps": 12, "loop": false}, "air_flip": {"start": 40, "count": 8, "fps": 24, "loop": false}, "dash": {"start": 26, "count": 2, "fps": 12, "loop": true}, "air_jump": {"start": 24, "count": 2, "fps": 12, "loop": false}, "strike_side": {"start": 28, "count": 3, "fps": 30, "loop": false}}, data: null };
+{
+	const img = new Image();
+	img.onload = () => { const c = document.createElement("canvas"); c.width = img.width; c.height = img.height; const x = c.getContext("2d"); x.drawImage(img, 0, 0); ELFY.data = x.getImageData(0, 0, img.width, img.height); ELFY.w = img.width; };
+	img.src = "data:image/png;base64,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";
+}
+function drawElfy(name, time, fx, fy, flash = 0, flip = false) {
+	if (!ELFY.data) return;
+	const a = ELFY.anims[name], f = a.start + (a.loop ? Math.floor(time * a.fps) % a.count : Math.min(a.count - 1, Math.floor(time * a.fps)));
+	const sx0 = (f % ELFY.cols) * ELFY.fw, sy0 = Math.floor(f / ELFY.cols) * ELFY.fh, d = ELFY.data.data;
+	for (let y = 0; y < ELFY.fh; y++) for (let x = 0; x < ELFY.fw; x++) {
+		const i = ((sy0 + y) * ELFY.w + sx0 + x) * 4;
+		if (d[i + 3] < 128) continue;
+		const X = flip ? fx + ELFY.ox - x - 1 : fx - ELFY.ox + x; // flip: she faces left
+		putRGB(X, fy - ELFY.oy + y, [d[i] / 255, d[i + 1] / 255, d[i + 2] / 255]);
+		if (flash > 0) put(X, fy - ELFY.oy + y, "#ffffff", flash);
+	}
+	glow(fx + (flip ? -8 : 8), fy - 24, 14, "#4dff6a", 0.12);
+}
+
+// tongues of flame: hot white at the root, cooling to red at a wavering tip
+function tongue(bx, by, h, w, heat, seed, t, pal = FIRE) {
+	const n = Math.round(h);
+	const sway = (noise1(t * 2.3, seed) - 0.5) * 3;
+	for (let j = 0; j < n; j++) {
+		const v = j / n, y = by - j;
+		const cx = bx + sway * v * v + (noise1(t * 7 + j * 0.4, seed + 9) - 0.5) * 1.6 * v;
+		const hw = w * Math.pow(1 - v, 0.65) + 0.3;
+		for (let x = Math.floor(cx - hw); x <= Math.ceil(cx + hw); x++) {
+			const dd = Math.abs(x + 0.5 - cx) / hw;
+			if (dd > 1) continue;
+			const k = heat * (1 - v * 0.8) * (1 - dd * 0.5) + (bayer(x, y) - 0.5) * 0.14;
+			put(x, y, k > 0.84 ? pal[0] : k > 0.68 ? pal[1] : k > 0.52 ? pal[2] : k > 0.36 ? pal[3] : k > 0.2 ? pal[4] : pal[5]);
+		}
+	}
+}
+function impactFrame(hi, lo, cut = 0.32) { const H1 = hx(hi), L1 = hx(lo); for (let i = 0; i < N * 3; i += 3) { const l = 0.3 * (col[i] + lit[i] * 0.5) + 0.59 * (col[i + 1] + lit[i + 1] * 0.5) + 0.11 * (col[i + 2] + lit[i + 2] * 0.5), c = l > cut ? H1 : L1; col[i] = c[0]; col[i + 1] = c[1]; col[i + 2] = c[2]; lit[i] *= 0.15; lit[i + 1] *= 0.15; lit[i + 2] *= 0.15; } }
+function focusLines(cx, cy, k, t, c = "#ffffff", r0min = 60) { const seed = Math.floor(t * 20); for (let i = 0; i < 44; i++) { const a = hash(i, seed) * TAU, r0 = r0min + hash(i + 99, seed) * 60, sn = Math.sin(a), r2 = sn > 0.05 ? Math.min(320, (FEET - cy) / sn) : 320; if (r2 < r0) continue; line(cx + Math.cos(a) * r0, cy + sn * r0, cx + Math.cos(a) * r2, cy + sn * r2, c, 0.22 * k); } }
+// ================================================================ more enemies: shared tools
+// A part painter for creature sprites (the knight's, generalized): limbs, shells and custom fills land in a
+// cell with a depth per part; then nearer parts darken the pixels behind their edges, the cold rim catches
+// the far left edges, and a dark outline goes outside.
+function makeRig(KW, KH, KX0, KY0, lv) {
+	const l = Math.hypot(...lv), Lv = lv.map((a) => a / l), n = KW * KH;
+	const ramp = new Array(n).fill(null), idx = new Int8Array(n), pid = new Int8Array(n).fill(-1), emit = new Uint8Array(n), cool = new Uint8Array(n);
+	let P = 0;
+	const R = { KW, KH, KX0, KY0, geo: {} };
+	R.shade = (nx, ny) => { const nz = Math.sqrt(Math.max(0, 1 - nx * nx - ny * ny)); return clamp((nx * Lv[0] + ny * Lv[1] + nz * Lv[2] + 0.2) / 1.2); };
+	R.part = (p) => { P = p; };
+	R.plot = (x, y, r, i, e = 0, cl = 0) => {
+		x = Math.floor(x + KX0); y = Math.floor(y + KY0);
+		if (x < 0 || y < 0 || x >= KW || y >= KH) return;
+		const j = y * KW + x;
+		ramp[j] = r; idx[j] = clamp(i, 0, r.length - 1); pid[j] = P; emit[j] = e; cool[j] = cl;
+	};
+	R.level = (lum, r, x, y) => Math.floor(lum * r.length + (bayer(x + 64, y + 64) - 0.5) * 0.3);
+	R.scan = (x0, y0, x1, y1, fn) => { for (let y = Math.floor(y0); y <= Math.ceil(y1); y++) for (let x = Math.floor(x0); x <= Math.ceil(x1); x++) fn(x, y, x + 0.5, y + 0.5); };
+	R.capsule = (a, b, r0, r1, rp, bias = 0, extra) => {
+		const dx = b[0] - a[0], dy = b[1] - a[1], ll = Math.hypot(dx, dy) || 1, px = -dy / ll, py = dx / ll, RR = Math.max(r0, r1);
+		R.scan(Math.min(a[0], b[0]) - RR, Math.min(a[1], b[1]) - RR, Math.max(a[0], b[0]) + RR, Math.max(a[1], b[1]) + RR, (x, y, cx, cy) => {
+			const t = clamp(((cx - a[0]) * dx + (cy - a[1]) * dy) / (ll * ll)), qx = a[0] + dx * t, qy = a[1] + dy * t, r = lerp(r0, r1, t);
+			if (Math.hypot(cx - qx, cy - qy) > r) return;
+			const s = ((cx - qx) * px + (cy - qy) * py) / r;
+			let i = R.level(clamp(R.shade(px * s, py * s) + bias), rp, x, y);
+			if (extra) { i = extra(x, y, t, s, i); if (i === null) return; }
+			if (Array.isArray(i)) R.plot(x, y, i[0], i[1], i[2] || 0);
+			else R.plot(x, y, rp, i, 0, px * s < -0.72 ? 1 : 0);
+		});
+	};
+	R.ellipse = (cx0, cy0, rx, ry, rp, bias = 0, extra) => {
+		R.scan(cx0 - rx, cy0 - ry, cx0 + rx, cy0 + ry, (x, y, cx, cy) => {
+			const nx = (cx - cx0) / rx, ny = (cy - cy0) / ry;
+			if (nx * nx + ny * ny > 1) return;
+			let i = R.level(clamp(R.shade(nx * 0.92, ny * 0.92) + bias), rp, x, y);
+			if (extra) { i = extra(x, y, nx, ny, i); if (i === null) return; }
+			if (Array.isArray(i)) R.plot(x, y, i[0], i[1], i[2] || 0);
+			else R.plot(x, y, rp, i, 0, nx < -0.78 ? 1 : 0);
+		});
+	};
+	R.finish = () => {
+		const px = new Array(n).fill(null), em = new Uint8Array(n), emR = new Array(n).fill(null);
+		for (let y = 0; y < KH; y++) for (let x = 0; x < KW; x++) {
+			const j = y * KW + x;
+			if (!ramp[j]) continue;
+			let i = idx[j];
+			if (!emit[j]) for (const [ax, ay] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+				const xx = x + ax, yy = y + ay;
+				if (xx < 0 || yy < 0 || xx >= KW || yy >= KH) continue;
+				if (pid[yy * KW + xx] > pid[j] + 1) { i = Math.max(0, i - 2); break; }
+			}
+			px[j] = cool[j] && x > 0 && !ramp[j - 1] ? COOL[1] : ramp[j][i];
+			em[j] = emit[j];
+			if (emit[j]) emR[j] = ramp[j];
+		}
+		for (let y = 0; y < KH; y++) for (let x = 0; x < KW; x++) {
+			const j = y * KW + x;
+			if (ramp[j]) continue;
+			if ((x > 0 && ramp[j - 1]) || (x < KW - 1 && ramp[j + 1]) || (y > 0 && ramp[j - KW]) || (y < KH - 1 && ramp[j + KW])) px[j] = OUTLINE;
+		}
+		return { KW, KH, KX0, KY0, px, em, emR, geo: R.geo };
+	};
+	return R;
+}
+// two-bone reach (shoulder to hand), elbow bending down
+function ik2(s0, h, L1, L2) {
+	let dx = h[0] - s0[0], dy = h[1] - s0[1], D = Math.hypot(dx, dy);
+	if (D > L1 + L2 - 0.5) { const k = (L1 + L2 - 0.5) / D; h = [s0[0] + dx * k, s0[1] + dy * k]; dx *= k; dy *= k; D = L1 + L2 - 0.5; }
+	const A = Math.acos(clamp((L1 * L1 + D * D - L2 * L2) / (2 * L1 * D), -1, 1)), b0 = Math.atan2(dy, dx);
+	const e1 = [s0[0] + Math.cos(b0 + A) * L1, s0[1] + Math.sin(b0 + A) * L1], e2 = [s0[0] + Math.cos(b0 - A) * L1, s0[1] + Math.sin(b0 - A) * L1];
+	return [e1[1] > e2[1] ? e1 : e2, h];
+}
+// Stamps a sprite facing left at (fx, fy). Its emissive pixels flicker live; flash whites the silhouette.
+function stampSprite(S, fx, fy, t, flash = 0, lk = 0.15) {
+	for (let y = 0; y < S.KH; y++) for (let x = 0; x < S.KW; x++) {
+		const j = y * S.KW + x, c = S.px[j];
+		if (!c) continue;
+		const X = fx - (x - S.KX0) - 1, Y = fy + (y - S.KY0), e = S.em[j];
+		if (!e) put(X, Y, c);
+		else {
+			const r = S.emR[j], fi = r.indexOf(c);
+			const nn = noise1(t * 7 + Y * 0.55, X * 13 + 7) * 0.65 + noise1(t * 17 + Y * 1.3, X * 5 + 3) * 0.35;
+			const i = clamp(fi + (nn > 0.68 ? -1 : nn < 0.3 ? 1 : 0), e === 2 ? 0 : 1, r.length - 1);
+			put(X, Y, r[i]);
+			light(X, Y, r[Math.min(2, r.length - 1)], lk * (e === 2 ? 3 : 1));
+		}
+		if (flash > 0) put(X, Y, "#ffffff", flash);
+	}
+}
+const gpt = (fx, fy, p) => [fx - p[0] - 1, fy + p[1]]; // a sprite point on the stage (mirrored)
+
+// juice: screen shake and hit-stop, per stage
+const makeJuice = () => ({ sa: 0, st: 0, sT: 1, stop: 0 });
+function kick(J, amp, time = 0.2, stop = 0) { if (amp >= J.sa * (J.st / J.sT)) { J.sa = amp; J.st = time; J.sT = time; } J.stop = Math.max(J.stop, stop); }
+function juiceStep(J, dt) { J.st = Math.max(0, J.st - dt); if (J.stop > 0) { J.stop -= dt; return true; } return false; }
+function juiceShake(J, t) { const k = J.st / J.sT; OX = Math.round(Math.sin(t * 97) * J.sa * k); OY = Math.round(Math.cos(t * 71) * J.sa * 0.7 * k); }
+
+// particles and rings
+function stepParts(list, dt) {
+	for (const p of list) {
+		p.age += dt;
+		if (p.pull) { const dx = p.pull[0] - p.x, dy = p.pull[1] - p.y; p.vx += dx * p.pk * dt; p.vy += dy * p.pk * dt; p.vx *= Math.exp(-dt * 2.5); p.vy *= Math.exp(-dt * 2.5); if (Math.hypot(dx, dy) < 2.5) p.life = p.age; }
+		if (p.g) p.vy += p.g * dt;
+		if (p.drag) { p.vx *= Math.exp(-p.drag * dt); p.vy *= Math.exp(-p.drag * dt); }
+		if (p.flut) p.vx += Math.sin(p.age * 9 + p.ph) * p.flut * dt;
+		if (p.spin !== undefined) { // drawn into a funnel: around, in and up
+			p.ang += p.spin * dt; p.rad = Math.max(1, p.rad - p.inward * dt); p.y += p.vy * dt;
+			p.x = p.cx + Math.cos(p.ang) * p.rad;
+		} else { p.x += p.vx * dt; p.y += p.vy * dt; }
+		if (p.grow) p.r += p.grow * dt;
+		if (p.floor && p.y > FEET) { p.y = FEET; p.vy *= -0.3; p.vx *= 0.6; }
+	}
+	return list.filter((p) => p.age < p.life);
+}
+function drawParts(list, t) {
+	for (const p of list) {
+		const a = 1 - p.age / p.life;
+		if (p.k === "spark") { line(p.x - p.vx * 0.022, p.y - p.vy * 0.022, p.x, p.y, p.pal[2], a); put(p.x, p.y, p.pal[0], a); light(p.x, p.y, p.pal[1], 0.35 * a); }
+		else if (p.k === "ember") { const f = a * (0.6 + 0.4 * Math.sin(t * 22 + p.ph)); put(p.x, p.y, f > 0.55 ? p.pal[1] : p.pal[3], f); light(p.x, p.y, p.pal[2], 0.3 * f); }
+		else if (p.k === "puff") {
+			const u = p.age / p.life;
+			disc(p.x, p.y, p.r, p.pal[Math.min(p.pal.length - 1, 1 + Math.floor(u * (p.pal.length - 1)))], 0.8 * a);
+			if (u < 0.45) disc(p.x - p.r * 0.2, p.y - p.r * 0.3, p.r * 0.5, p.pal[0], (0.45 - u) * 1.8);
+			glow(p.x, p.y, p.r * 2 + 2, p.pal[2], 0.1 * a);
+		}
+		else if (p.k === "smoke") disc(p.x, p.y, p.r, p.c, p.a0 * a);
+		else if (p.k === "bit") { put(p.x, p.y, p.c); if (p.c2 && ((p.age * 14) | 0) % 2) put(p.x + 1, p.y, p.c2); }
+		else if (p.k === "glint") { if (Math.sin(t * 14 + p.ph) > 0.1) { put(p.x, p.y, p.c, a); light(p.x, p.y, p.c, 0.25 * a); } }
+	}
+}
+function stepRings(list, dt) { for (const r of list) r.age += dt; return list.filter((r) => r.age < r.life); }
+function drawRings(list) {
+	for (const r of list) {
+		const u = r.age / r.life, RR = lerp(r.r0, r.r1, 1 - (1 - u) ** 3), ry = r.flat ? RR * r.flat : RR;
+		for (let a = 0; a < TAU; a += 0.7 / Math.max(RR, 4)) {
+			const x = r.x + Math.cos(a) * RR, y = r.y + Math.sin(a) * ry;
+			put(x, y, u < 0.35 ? r.pal[0] : r.pal[1], 1 - u);
+			if (r.thick && u < 0.5) put(x, y + 1, r.pal[1], (1 - u) * 0.6);
+		}
+		if (r.lit) glow(r.x, r.y, RR * 0.8, r.pal[1], r.lit * (1 - u));
+	}
+}
+const flashDisc = (x, y, r, k) => { disc(x, y, r, "#ffffff", k); glow(x, y, r * 5, "#ffffff", 0.7 * k); };
+
+// melted snow, as the Brazier Knight's ring leaves it: per column, how far the drift has gone to wet stone
+const makeMelt = () => new Float32Array(W);
+function meltAt(M, x, r, k) {
+	for (let i = Math.floor(x - r); i <= Math.ceil(x + r); i++) {
+		if (i < 0 || i >= W) continue;
+		const f = 1 - Math.abs(i + 0.5 - x) / r;
+		if (f > 0) M[i] = Math.min(1, M[i] + k * Math.min(1, f * 1.6));
+	}
+}
+// a hit melts a patch at once and throws up steam
+function meltBurst(M, parts, x, r) {
+	meltAt(M, x, r, 1);
+	for (let n = 0; n < 3 + r / 6; n++) parts.push({ k: "smoke", x: x + (Math.random() - 0.5) * r * 1.4, y: FEET - 2, vx: 6 + (Math.random() - 0.5) * 10, vy: -12 - Math.random() * 12, r: 1.5 + Math.random() * 1.5, grow: 4, life: 1 + Math.random() * 0.8, age: 0, c: Math.random() < 0.5 ? "#8a99b8" : "#c6d4ec", a0: 0.3 });
+}
+// steam rising off ground that is still melting
+const steamAt = (parts, x) => parts.push({ k: "smoke", x, y: FEET - 2, vx: 6 + (Math.random() - 0.5) * 8, vy: -10 - Math.random() * 10, r: 1.2 + Math.random(), grow: 3.5, life: 0.9 + Math.random() * 0.6, age: 0, c: Math.random() < 0.5 ? "#8a99b8" : "#c6d4ec", a0: 0.25 });
+function drawMelt(M, fade) {
+	for (let x = 0; x < W; x++) {
+		const m = M[x] * fade;
+		if (m < 0.02) continue;
+		for (let y = FEET - 8; y <= FEET + 5; y++) {
+			const i = (y * W + x) * 3;
+			if (base[i] + base[i + 1] + base[i + 2] < 1.2) continue; // only on snow
+			if (m < 0.95 && hash(x, y) > m * 1.3) continue; // a ragged edge
+			const dy = y - FEET;
+			put(x, y, WET[dy > 3 ? 0 : dy > 0 ? 1 : (x + y) % 5 === 0 ? 2 : 1], Math.min(1, m * 1.1) * 0.9);
+		}
+	}
+}
+
+// ================================================================ page 5: the Sanctum Above the Clouds
+// A cathedral of white marble and gold leaf afloat on a sea of cloud at sunrise: colonnades on cloud banks, a great
+// rose window, golden bells on chains. Something has got into it. Violet-black rot is creeping across the marble in
+// veins from the right, the clouds there are curdling into tar, the gold is tarnishing, and the feathers that drift
+// down are white on the holy side and black on the other. Poison reads magenta, dark magic black with violet rims;
+// warnings are magenta (poison) or white (blades); impact frames are gold on black.
+const DAWN = ["#1a2048", "#242e66", "#344484", "#4e5e9e", "#7a7cb4", "#b49cb8", "#e4c0a4"];
+const MARBLE = ["#2e2c44", "#5a5874", "#8e8ca4", "#c4c0d0", "#ece8ee"];
+const GOLD = ["#4a3010", "#8a6018", "#c8962a", "#f0c850", "#fff0a8"];
+const CLOUD = ["#5a5a88", "#8a8ab0", "#bab8d4", "#e2def0", "#ffffff"];
+const ROT = ["#08040e", "#1a0a24", "#341048", "#5a1a74", "#8a3aa8", "#c88ae0"];
+const VENOM = ["#3a0828", "#7a1050", "#c0287a", "#ff5ab0", "#ffc0e8"];
+const GLASSC = ["#c8962a", "#e8607a", "#4a6ae0", "#f0c850", "#9a4ad8", "#e8e0f8"];
+
+const sanctumBase = new Float32Array(N * 3);
+function buildSanctum() {
+	const set = (x, y, h) => { if (x < 0 || y < 0 || x >= W || y >= H) return; const c = hx(h), i = (y * W + x) * 3; sanctumBase[i] = c[0]; sanctumBase[i + 1] = c[1]; sanctumBase[i + 2] = c[2]; };
+	const rotAt = (x, y) => clamp((x - 210) / 140 + (noise1(x * 0.06 + y * 0.11, 5) - 0.5) * 0.5 + (hash(x, y) - 0.5) * 0.12); // how corrupted this spot is
+	// the dawn sky: deep blue at the top to rose-gold at the cloud line
+	for (let y = 0; y < FEET; y++) for (let x = 0; x < W; x++) set(x, y, DAWN[clamp(Math.floor((y / 150) * 6 + bayer(x, y) - 0.3), 0, 6)]);
+	// the sea of cloud behind, curdling purple-black toward the right
+	for (const [k, base] of [[0, FEET - 46], [1, FEET - 26]]) for (let x = 0; x < W; x++) { const top = base - 10 * Math.abs(Math.sin(x * 0.04 + k * 2)) - 5 * Math.abs(Math.sin(x * 0.13 + k)); for (let y = Math.round(top); y < FEET; y++) { const r = rotAt(x, y) * 0.8, d = y - top; set(x, y, r > 0.55 && bayer(x, y) < r ? ROT[2 + k] : CLOUD[clamp(Math.floor(0.3 + k * 0.8 + (d < 3 ? 1.2 : 0) - d * 0.03 + bayer(x, y) * 0.8), 0, 3)]); } }
+	// the rose window: a great wheel of stained glass, broken open on the lower right where the rot got in
+	const RX = 192, RY = 62, RR = 40;
+	for (let y = RY - RR - 3; y <= RY + RR + 3; y++) for (let x = RX - RR - 3; x <= RX + RR + 3; x++) {
+		const dx = x - RX, dy = y - RY, d = Math.hypot(dx, dy), a = Math.atan2(dy, dx);
+		if (d > RR + 3) continue;
+		const broken = a > 0.1 && a < 1.5 && d > 10 + 14 * hash(Math.round(a * 8), 1);
+		if (d > RR) { set(x, y, d > RR + 2 ? MARBLE[1] : MARBLE[3]); continue; }
+		if (broken) { if (hash(x, y) < 0.08) set(x, y, ROT[3]); continue; }
+		const nsp = d > 27 ? 24 : d > 14 ? 16 : 8, ring = [6, 14, 21, 27, 34].some((r) => Math.abs(d - r) < 0.7), spoke = Math.abs(((a / TAU) * nsp + nsp) % 1 - 0.5) > 0.44;
+		if (ring || spoke || d < 4) { set(x, y, d < 4 ? GOLD[3] : "#120e20"); continue; }
+		const cell = Math.floor(((a / TAU) * nsp + nsp) % nsp) * 7 + Math.floor(d / 7), c = hx(GLASSC[(cell * 5 + (d > 27 ? 1 : 0)) % 6]), sheen = clamp(0.55 - 0.35 * (dx + dy) / RR + (bayer(x, y) - 0.5) * 0.2);
+		const k = 0.32 + 0.45 * sheen; set(x, y, "#" + c.map((v) => Math.round(clamp(v * k) * 255).toString(16).padStart(2, "0")).join(""));
+	}
+	for (let k = 0; k < 40; k++) { const a = 0.1 + hash(k, 3) * 1.4, d = RR - hash(k, 4) * 26; set(Math.round(RX + Math.cos(a) * d), Math.round(RY + Math.sin(a) * d), ROT[4]); } // rot crusted round the break
+	// columns: fluted marble with gold capitals; intact on the left, broken off and veined with rot on the right
+	for (const [cx, top] of [[16, 10], [62, 10], [322, 58], [368, 32]]) {
+		for (let y = top; y < FEET; y++) for (let x = -6; x <= 6; x++) { const r = rotAt(cx + x, y) > 0.6 && noise1((cx + x) * 0.8 + y * 0.04, 9) < rotAt(cx + x, y) * 0.55; set(cx + x, y, r ? ROT[2] : Math.abs(x) === 6 ? MARBLE[0] : (x + 6) % 3 === 0 ? MARBLE[2] : MARBLE[clamp(3 - (x > 2 ? 1 : 0) + (x < -3 ? 1 : 0), 1, 4)]); }
+		if (top < 20) for (let y = top - 6; y < top; y++) for (let x = -9; x <= 9; x++) set(cx + x, y, y === top - 6 ? GOLD[4] : y === top - 1 ? GOLD[1] : GOLD[2 + (x < 0 ? 1 : 0)]);
+		else for (let x = -6; x <= 6; x++) set(cx + x, top - Math.round(hash(x, cx) * 4), MARBLE[1]); // the broken top
+	}
+	for (let x = 0; x < 82; x++) for (let y = 0; y < 5; y++) set(x, y, y === 4 ? GOLD[1] : y === 0 ? GOLD[3] : MARBLE[3]); // an entablature on the holy side
+	// the floor: a marble slab with a gold trim line, floating on cloud; rot veins and tar from the right
+	for (let x = 0; x < W; x++) {
+		for (let y = FEET; y < FEET + 10; y++) { const d = y - FEET, r = rotAt(x, y); let c = d === 0 ? GOLD[3] : d === 1 ? GOLD[1] : (x % 24 === 0 || d === 9) ? MARBLE[1] : MARBLE[clamp(3 - (d > 5 ? 1 : 0) + (hash(x >> 2, d) < 0.15 ? -1 : 0), 1, 4)]; if (r > 0.5 && hash(x, y) < (r - 0.5) * 1.2) c = d < 2 ? GOLD[0] : ROT[2]; set(x, y, c); }
+		const cb = FEET + 10 + Math.round(3 * Math.abs(Math.sin(x * 0.09)) + 2 * Math.sin(x * 0.23));
+		for (let y = FEET + 10; y < H; y++) set(x, y, y < cb ? MARBLE[0] : CLOUD[clamp(Math.floor(3 - (y - cb) * 0.08 + bayer(x, y) * 0.6 - rotAt(x, y) * 1.5), 0, 4)]);
+	}
+	// rot veins: branching cracks crawling in from the right across the floor and up the columns
+	const R = rng(11);
+	for (let v = 0; v < 9; v++) { let x = W - 1 - R() * 40, y = FEET + 2 + R() * 7; for (let s = 0; s < 120 + R() * 80; s++) { x -= 0.6 + R() * 0.8; y += (R() - 0.5) * 1.4; y = clamp(y, FEET + 1, FEET + 9); set(Math.round(x), Math.round(y), s % 9 === 0 ? ROT[4] : ROT[1]); if (x < 200) break; } }
+	for (const cx of [322, 368]) { let x = cx, y = FEET; for (let s = 0; s < 70; s++) { y -= 1; x += (R() - 0.5) * 1.6; set(Math.round(x), y, ROT[1]); if (s % 11 === 0) set(Math.round(x) + 1, y, ROT[4]); } }
+}
+
+// ---------------------------------------------------------------- live scenery: god-rays from the window, motes, the rot breathing
+function drawSanctumLife(t, layer) {
+	if (layer === "back") {
+		for (let r = 0; r < 5; r++) { const x0 = 160 + r * 14 + Math.sin(t * 0.4 + r) * 4, k = 0.03 + 0.015 * Math.sin(t * 0.6 + r * 2); for (let y = 70; y < FEET; y += 2) for (let w = 0; w < 6; w++) light(x0 - (y - 70) * 0.35 + w, y, "#ffe0a0", k * (1 - (y - 70) / 110)); }
+		for (let i = 0; i < 6; i++) { const x = 230 + i * 26, y = FEET + 4 + (i % 3) * 2, k = 0.5 + 0.5 * Math.sin(t * 1.3 + i * 1.7); glow(x, y, 6, ROT[4], 0.12 * k); }
+		for (let i = 0; i < 8; i++) { const x = ((i * 61 + t * (3 + (i % 3) * 2)) % (W + 80)) - 40, y = FEET - 34 - (i % 3) * 18; disc(x, y, 14 + (i % 3) * 5, x > 230 ? "#5a3a78" : "#e8e0f8", 0.05); }
+	} else {
+		for (let i = 0; i < 5; i++) { const x = ((i * 83 + t * 8) % (W + 100)) - 50; disc(x, FEET + 2, 18, x > 230 ? "#3a1a4a" : "#ffffff", 0.07); }
+		for (let i = 0; i < 9; i++) { const x = (i * 43 + Math.sin(t * 0.5 + i) * 12 + 384) % 384, y = 40 + (i * 29) % 110 + Math.sin(t * 0.9 + i * 2) * 5, f = Math.sin(t * 1.8 + i * 1.3); if (f > 0.4) { put(x, y, "#fff0c0", f); light(x, y, "#ffe0a0", 0.25 * f); } }
+	}
+}
+
+// ---------------------------------------------------------------- feathers: drifting down, rocking, settling, cut in two
+// white on the holy side, black on the corrupted side; they settle on whatever surfaces the study hands in
+function makeFeathers(surfaces) {
+	const list = [], R = Math.random;
+	const F = {
+		list,
+		spawn(x, y, half = 0, vx = 0, vy = 0) { list.push({ x, y, vx, vy, ph: R() * 9, sw: 0.7 + R() * 0.6, dark: x > 230 + (R() - 0.5) * 60, half, landed: false, life: 9 + R() * 4, age: 0, spin: 0 }); },
+		update(t, dt) {
+			if (R() < dt * 5) F.spawn(R() * W, -4);
+			for (const l of list) {
+				l.age += dt;
+				if (l.landed) { if (l.on && !l.on()) l.landed = false; else continue; }
+				l.vx += (Math.sin(l.age * l.sw * 2.2 + l.ph) * 30 - l.vx * 0.9) * dt; l.vy += (16 - l.vy * 1.6) * dt;
+				l.x += l.vx * dt; l.y += l.vy * dt; if (l.spin) l.spin *= Math.exp(-dt * 2);
+				for (const s of surfaces()) if (l.vy > 0 && l.x > s.x0 && l.x < s.x1 && Math.abs(l.y - s.y) < 2) { l.landed = true; l.y = s.y - 1; l.on = s.alive; }
+				if (l.y >= FEET - 1) { l.landed = true; l.y = FEET - 1; l.on = null; }
+			}
+			for (let i = list.length - 1; i >= 0; i--) if (list[i].age > list[i].life || list[i].x < -20 || list[i].x > W + 20 || list[i].y < -30) list.splice(i, 1);
+		},
+		slice(ax, ay, bx, by, r = 4) {
+			const dx = bx - ax, dy = by - ay, l2 = dx * dx + dy * dy || 1;
+			for (const l of [...list]) { if (l.half) continue; const u = clamp(((l.x - ax) * dx + (l.y - ay) * dy) / l2); if (Math.hypot(l.x - ax - dx * u, l.y - ay - dy * u) > r) continue; l.half = 1; l.landed = false; l.vy = -20; l.vx = 20; l.spin = 8; list.push({ ...l, vx: -20, ph: l.ph + 2 }); }
+		},
+		gust(x, y, r, fx, fy) { for (const l of list) { const d = Math.hypot(l.x - x, l.y - y); if (d < r) { const k = 1 - d / r; l.landed = false; l.vx += fx * k; l.vy += fy * k; l.spin = 6; } } },
+		puff(x, y, n = 8) { for (let i = 0; i < n; i++) F.spawn(x + (R() - 0.5) * 10, y - 2, 0, (R() - 0.5) * 100, -50 - R() * 60); },
+		draw(t) {
+			for (const l of list) {
+				const a = clamp((l.life - l.age) / 1.5), ang = l.landed ? 0.1 : Math.sin(l.age * l.sw * 2.2 + l.ph) * 0.7 + l.age * l.spin + 0.3;
+				const c1 = l.dark ? ROT[2] : CLOUD[4], c2 = l.dark ? ROT[4] : CLOUD[2], len = l.half ? 1 : 3;
+				for (let j = -len; j <= len; j++) { put(l.x + Math.cos(ang) * j, l.y + Math.sin(ang) * j, j === len ? c2 : c1, a); if (!l.half && Math.abs(j) < 2) put(l.x + Math.cos(ang) * j - Math.sin(ang), l.y + Math.sin(ang) * j + Math.cos(ang), c2, a * 0.7); }
+			}
+		},
+	};
+	for (let i = 0; i < 26; i++) F.spawn(Math.random() * W, 10 + Math.random() * 150);
+	for (let i = 0; i < 20; i++) { F.spawn(Math.random() * W, FEET - 1); list[list.length - 1].landed = true; }
+	return F;
+}
+
+// ---------------------------------------------------------------- set pieces
+// a marble ledge with a gold trim and corbels under it; rot can be crept over it
+function drawLedge(p, t, rot = 0) {
+	for (let x = p.x0; x <= p.x1; x++) for (let y = 0; y < 6; y++) { let c = y === 0 ? GOLD[3] : y === 1 ? GOLD[1] : y === 5 ? MARBLE[0] : MARBLE[3 - (y > 3 ? 1 : 0)]; if (rot > 0 && hash(x, y + 40) < rot * 0.6) c = y < 2 ? GOLD[0] : ROT[2]; put(x, p.y + y, c); }
+	for (let cx = p.x0 + 6; cx < p.x1 - 2; cx += 18) for (let j = 0; j < 8; j++) for (let w = -3 + j * 0.35; w <= 3 - j * 0.35; w++) put(cx + w, p.y + 6 + j, w > 1 ? MARBLE[1] : MARBLE[2]);
+}
+// a cloud you can stand on: lumpy, bright on top; curdle turns it to tar from the top down and it sinks and drips
+function drawCloudPlat(p, t, curdle = 0, sink = 0, fade = 1) {
+	const y0 = p.y + sink, w = p.x1 - p.x0;
+	for (let i = 0; i <= 8; i++) {
+		const u = i / 8, cx = p.x0 + u * w, r = 7 + 4 * Math.sin(u * Math.PI) + 2 * Math.sin(i * 2.1 + t * 0.8);
+		for (let y = -r; y <= r; y++) for (let x = -r; x <= r; x++) {
+			if (x * x + y * y > r * r || y < -2 - Math.sin(u * Math.PI) * 3) continue;
+			const top = y < -r * 0.3, tar = curdle > 0 && (y + r) / (2 * r) < curdle * 1.35 - 0.2 + (noise1((cx + x) * 0.18, 3) - 0.5) * 0.5;
+			put(cx + x, y0 + y + 3, tar ? (top ? ROT[3] : ROT[1]) : top ? CLOUD[4] : y < r * 0.3 ? CLOUD[3] : CLOUD[2], fade);
+		}
+	}
+	if (curdle > 0.3) for (let i = 0; i < 5; i++) { const x = p.x0 + 8 + i * (w - 16) / 4, ph = (t * 0.8 + i * 0.37) % 1; put(x, y0 + 12 + ph * 14, ROT[2], (1 - ph) * curdle); put(x, y0 + 12 + ph * 14 + 1, ROT[4], (1 - ph) * curdle * 0.6); }
+	if (curdle < 0.5) light(p.x0 + w / 2, y0, "#ffffff", 0);
+}
+// balance scales: a gold post, a beam on a pivot, two pans hung on chains; returns where the pans' tops are
+function drawScales(sc, th, t) {
+	const { cx, by, arm } = sc, c = Math.cos(th), s = Math.sin(th);
+	for (let y = by; y < FEET; y++) for (let x = -2; x <= 2; x++) put(cx + x, y, Math.abs(x) === 2 ? GOLD[1] : GOLD[2 + (x < 0 ? 1 : 0)]);
+	for (let x = -9; x <= 9; x++) for (let y = 0; y < 3; y++) put(cx + x, FEET - 3 + y, GOLD[y === 0 ? 3 : 1]);
+	for (let d = -arm; d <= arm; d += 0.5) { put(cx + d * c, by + d * s, GOLD[3]); put(cx + d * c, by + d * s + 1, GOLD[1]); }
+	disc(cx, by, 3, GOLD[4]); disc(cx, by, 1.4, GOLD[1]);
+	for (let k = 0; k < 9; k++) { const a = (k / 9) * Math.PI; put(cx + Math.cos(a) * 5, by - 3 - Math.sin(a) * 5, GOLD[3]); } // a little crest
+	const pans = [];
+	for (const sd of [-1, 1]) {
+		const ex = cx + sd * arm * c, ey = by + sd * arm * s, py = ey + 14;
+		for (const o of [-10, 10]) for (let j = 0; j < 14; j++) put(ex + o * j / 14, ey + j, j % 2 ? GOLD[1] : GOLD[2]);
+		for (let x = -13; x <= 13; x++) { const dd = Math.abs(x) / 13; put(ex + x, py, GOLD[4]); put(ex + x, py + 1, GOLD[2]); if (dd < 0.85) put(ex + x, py + 2, GOLD[1]); if (dd < 0.5) put(ex + x, py + 3, GOLD[0]); }
+		pans.push({ x0: ex - 13, x1: ex + 13, y: py, cx: ex });
+	}
+	return pans;
+}
+
+
+// ---------------------------------------------------------------- shonen staging and states, shared by the studies
+function focusLines(cx, cy, k, t, c = "#ffffff", r0min = 60) {
+	const seed = Math.floor(t * 20);
+	for (let i = 0; i < 44; i++) { const a = hash(i, seed) * TAU, r0 = r0min + hash(i + 99, seed) * 60, sn = Math.sin(a), r2 = sn > 0.05 ? Math.min(320, (FEET - cy) / sn) : 320; if (r2 < r0) continue; const w = hash(i + 7, seed) < 0.3 ? 2 : 1; for (let q = 0; q < w; q++) line(cx + Math.cos(a) * r0 - sn * q, cy + sn * r0 + Math.cos(a) * q, cx + Math.cos(a) * r2, cy + sn * r2, c, 0.22 * k); }
+}
+function impactFrame(hi, lo, cut = 0.32) {
+	const H1 = hx(hi), L1 = hx(lo);
+	for (let i = 0; i < N * 3; i += 3) { const l = 0.3 * (col[i] + lit[i] * 0.5) + 0.59 * (col[i + 1] + lit[i + 1] * 0.5) + 0.11 * (col[i + 2] + lit[i + 2] * 0.5), c = l > cut ? H1 : L1; col[i] = c[0]; col[i + 1] = c[1]; col[i + 2] = c[2]; lit[i] *= 0.15; lit[i + 1] *= 0.15; lit[i + 2] *= 0.15; }
+}
+function glintStar(x, y, len, k, c = "#ffffff") { for (let d = -len; d <= len; d++) { const a = k * (1 - Math.abs(d) / len); put(x + d, y, "#ffffff", a); put(x, y + d, "#ffffff", a); } for (let d = -len / 3; d <= len / 3; d++) { put(x + d, y + d, "#ffffff", k * 0.5); put(x + d, y - d, "#ffffff", k * 0.5); } glow(x, y, len, c, 0.6 * k); }
+// a comic impact star: a bold-outlined spiky burst
+function comicStar(x, y, r, k, fill = "#ffffff", edge = ROT[0]) {
+	for (let yy = -r - 2; yy <= r + 2; yy++) for (let xx = -r - 2; xx <= r + 2; xx++) { const a = Math.atan2(yy, xx), d = Math.hypot(xx, yy), R = r * (0.55 + 0.45 * Math.abs(Math.cos(a * 4 + 0.4))); if (d < R - 1.2) put(x + xx, y + yy, fill, k); else if (d < R + 0.6) put(x + xx, y + yy, edge, k); }
+}
+// poisoned: magenta veins climbing the body, drips that hiss, a pulsing ring at the feet
+function drawPoisoned(e, t, k) {
+	if (k <= 0) return; const fy = e.y ?? FEET, x = e.x;
+	glow(x, fy - 22, 18, VENOM[2], 0.35 * k);
+	for (let v = 0; v < 5; v++) { let vx = x - 6 + v * 3, vy = fy - 2; const h = (14 + v * 5) * k; for (let s = 0; s < h; s++) { vy -= 1; vx += Math.sin(s * 0.7 + v * 2 + t * 3) * 0.5; if (s % 2 === 0) put(vx, vy, s > h - 3 ? VENOM[3] : VENOM[2], 0.75 * k); } }
+	for (let d = 0; d < 3; d++) { const ph = (t * 1.4 + d * 0.33) % 1; put(x - 5 + d * 5, fy - 30 + ph * 28, VENOM[3], (1 - ph) * k); }
+	const ph = (t * 1.6) % 1; for (let a = 0; a < TAU; a += 0.3) put(x + Math.cos(a) * (4 + ph * 12), fy + Math.sin(a) * (1 + ph * 2), VENOM[3], 0.6 * (1 - ph) * k);
+}
+// a venom-eaten pit in marble: a smoking hole with a glowing magenta rim and pale steam
+function drawPit(x, y, r, t, k = 1) {
+	for (let xx = -r; xx <= r; xx++) { const d = Math.abs(xx) / r, depth = Math.round((1 - d * d) * 2.5); put(x + xx, y, d > 0.75 ? VENOM[3] : ROT[0], k); for (let j = 1; j <= depth; j++) put(x + xx, y + j, ROT[1], k); }
+	glow(x, y, r + 4, VENOM[2], 0.3 * k);
+	for (let s = 0; s < 2; s++) { const ph = (t * 0.9 + s * 0.5 + x * 0.01) % 1; disc(x + Math.sin(ph * 6 + s) * 2, y - 2 - ph * 12, 1 + ph * 2, "#e8d8f0", 0.25 * (1 - ph) * k); }
+}
+// cursed: a dark stain creeping up from the feet, violet smoke trailing up, a glitching skull overhead
+const SKULL9 = ["..#####..", ".#######.", "#########", "##oo#oo##", "##oo#oo##", "####.####", ".##o#o##.", "..#####..", "..#.#.#.."];
+function drawCursed(e, t, k) {
+	if (k <= 0) return; const fy = e.y ?? FEET, x = e.x;
+	for (let s = 0; s < 6; s++) { const h = (10 + s * 3) * k; for (let j = 0; j < h; j++) put(x - 6 + s * 2.4 + Math.sin(j * 0.5 + s + t * 2) * 0.6, fy - j, ROT[1], 0.35 * k * (1 - j / (h + 1))); }
+	for (let s = 0; s < 4; s++) { const ph = (t * 0.7 + s * 0.25) % 1; disc(x - 6 + s * 4 + Math.sin(ph * 6 + s) * 3, fy - 10 - ph * 40, 1 + ph * 2.5, ROT[3], 0.3 * (1 - ph) * k); }
+	const sx = x - 4, sy = fy - 62 + Math.sin(t * 3) * 1.5, glitch = Math.sin(t * 23) > 0.85;
+	for (let r = 0; r < 9; r++) { const off = glitch && r % 3 === 1 ? (Math.sin(t * 90 + r) > 0 ? 2 : -2) : 0; for (let c = 0; c < 9; c++) { const ch = SKULL9[r][c]; if (ch === ".") continue; put(sx + c + off, sy + r, ch === "o" ? ROT[0] : r < 3 ? "#ffffff" : ROT[5], (0.75 + 0.25 * Math.sin(t * 9)) * k); } }
+	glow(x, sy + 4, 12, ROT[4], 0.4 * k);
+}
+// glowing cracks spreading from a point across the floor
+function drawCracks(x, y, k, t, seed, c = ROT[4], len = 30) {
+	const R = rng(seed);
+	for (let b = 0; b < 5; b++) { let px = x, py = y; const dir = (b - 2) * 0.5 + (R() - 0.5) * 0.3, sd = Math.cos(dir) >= 0 ? 1 : -1; for (let j = 0; j < len * k; j++) { px += Math.cos(dir) * 1 + (R() - 0.5) * 0.6; py = y + Math.abs(Math.sin(j * 0.3 + b)) * 1.5; put(px, py, j % 5 === 0 ? "#ffffff" : c, (1 - j / len) * 0.9); light(px, py, c, 0.2 * (1 - j / len)); } }
+}
+
+// ================================================================ page 9: the Midas Night Bazaar
+// A night market built in the treasury of a god who touched too much. A canyon of lantern-lit stalls under a gilded
+// colossus: a giant golden hand reaching out of the cliff, dripping molten gold in waterfalls. Striped awnings, coin
+// chutes, paper lanterns on strings, cobbles with gold running in the cracks; in the middle a great balance scale
+// whose two pans are platforms that tilt with weight. The element is molten stretchy gold; the look is 1930s
+// rubber-hose: noodle limbs, white gloves, pie-cut eyes, big brows; and the big hits get hand-lettered sound words.
+const GOLDM = ["#3a1e04", "#7a4a0a", "#c08418", "#f0b832", "#ffe07a", "#fff8d0"];
+const NIGHT9 = ["#0c0716", "#160e2a", "#241842", "#36265c", "#4e3a7a"];
+const CLIFF9 = ["#140a0e", "#24141a", "#3a2026", "#542e30"];
+const AWN = ["#7a1420", "#c0283a", "#f0e0c8"];
+const INK9 = "#120810";
+const BZ_L = { x0: 16, x1: 88, y: FEET - 72 }, BZ_R = { x0: 296, x1: 368, y: FEET - 72 };
+const SC9 = { px: 192, py: FEET - 104, arm: 64, panW: 22, hang: 44 };
+// the scale's pans: where the left (-1) or right (+1) pan's floor is for a given tilt (-1..1, positive = right pan down)
+const panX = (side) => SC9.px + side * SC9.arm;
+const panY = (side, tilt) => SC9.py + SC9.hang + side * tilt * 16;
+
+const bazBase = new Float32Array(N * 3);
+function buildBazaar() {
+	const set = (x, y, h) => { if (x < 0 || y < 0 || x >= W || y >= H) return; const c = hx(h), i = (y * W + x) * 3; bazBase[i] = c[0]; bazBase[i + 1] = c[1]; bazBase[i + 2] = c[2]; };
+	// the night sky between the canyon walls, a band of stars
+	for (let y = 0; y < FEET; y++) for (let x = 0; x < W; x++) { const v = y / FEET; set(x, y, v < 0.2 ? NIGHT9[0] : v < 0.45 ? NIGHT9[1] : v < 0.7 ? NIGHT9[2] : NIGHT9[3]); if (hash(x, y) < 0.004 && y < 80) set(x, y, "#e8d8ff"); }
+	// canyon walls, near and far, layered
+	for (let x = 0; x < W; x++) {
+		const far = 30 + 26 * noise1(x * 0.02, 4) + Math.max(0, 60 - Math.abs(x - 192) * 0.6), near = 14 + 40 * noise1(x * 0.035, 9) + (Math.abs(x - 192) < 110 ? 50 : 0);
+		for (let y = 0; y < FEET; y++) { if (y > FEET - far - 60 && (x < 110 || x > 274)) set(x, y, CLIFF9[1]); if (x < 50 + 20 * noise1(y * 0.04, 2) || x > 334 - 20 * noise1(y * 0.04, 7)) set(x, y, (Math.floor(y / 7) + Math.floor(x / 11)) % 5 === 0 ? CLIFF9[3] : CLIFF9[2]); }
+	}
+	// the gilded colossus: a giant golden hand reaching out of the far cliff, palm up, fingers curled, lit from below
+	const HX = 192, HY = 54;
+	for (let y = 10; y < 108; y++) for (let x = 100; x < 284; x++) {
+		const dx = x - HX, dy = y - HY;
+		const palm = Math.hypot(dx / 52, (dy - 6) / 26) < 1, wrist = x > 236 && Math.abs(dy - 4) < 18 - (x - 236) * 0.05, fingers = [[-42, -24], [-22, -32], [0, -34], [22, -30]].some(([fx, fy]) => Math.hypot((dx - fx) / 8, (dy - fy) / 16) < 1 || (Math.abs(dx - fx) < 8 && dy > fy && dy < 0)), thumb = Math.hypot((dx + 52) / 10, (dy + 2) / 18) < 1;
+		if (!palm && !wrist && !fingers && !thumb) continue;
+		const lit = 0.55 - dx * 0.002 + dy * 0.006 + (bayer(x, y) - 0.5) * 0.12;
+		set(x, y, lit > 0.72 ? GOLDM[4] : lit > 0.58 ? GOLDM[3] : lit > 0.44 ? GOLDM[2] : GOLDM[1]);
+		if ((Math.abs(dx + 30) < 1 || Math.abs(dx - 10) < 1) && palm && dy > 0) set(x, y, GOLDM[1]); // palm creases
+	}
+	// stalls along the back: striped awnings over dark counters
+	for (const [sx, w] of [[6, 70], [104, 46], [234, 46], [308, 72]]) {
+		for (let y = FEET - 44; y < FEET - 34; y++) for (let x = sx; x < sx + w; x++) set(x, y, Math.floor((x - sx) / 6) % 2 ? "#6a4a48" : AWN[0]);
+		for (let x = sx; x < sx + w; x += 6) { set(x + 3, FEET - 34, AWN[0]); set(x + 2, FEET - 33, AWN[0]); }
+		for (let y = FEET - 34; y < FEET; y++) for (let x = sx + 2; x < sx + w - 2; x++) set(x, y, y > FEET - 16 ? CLIFF9[2] : CLIFF9[0]);
+		for (let x = sx + 6; x < sx + w - 6; x += 9) { set(x, FEET - 18, GOLDM[3]); set(x + 1, FEET - 18, GOLDM[4]); } // gold wares on the counters
+	}
+	// the floor: cobbles, gold running in the cracks
+	for (let x = 0; x < W; x++) for (let y = FEET; y < H; y++) {
+		const d = y - FEET, row = Math.floor(d / 5), cx = (x + row * 4) % 11, crack = cx === 0 || d % 5 === 0;
+		set(x, y, d === 0 ? GOLDM[3] : crack ? (noise1(x * 0.1 + d, 3) > 0.55 ? GOLDM[2] : CLIFF9[0]) : (hash(Math.floor((x + row * 4) / 11), row) < 0.5 ? CLIFF9[2] : CLIFF9[3]));
+	}
+}
+function drawBazaarLife(t, layer) {
+	if (layer === "back") {
+		// molten gold pouring off the colossus's fingers, two falls, glowing
+		for (const fx of [150, 214]) { for (let y = 26; y < FEET - 44; y++) { const w = 2 + Math.sin(y * 0.2 - t * 8) * 0.8; for (let dx = -w; dx <= w; dx++) put(fx + dx, y, Math.abs(dx) < 1 ? GOLDM[5] : (y + Math.floor(t * 30)) % 7 === 0 ? GOLDM[4] : GOLDM[3]); if (y % 5 === 0) light(fx, y, GOLDM[3], 0.18); } glow(fx, FEET - 46, 18, GOLDM[3], 0.4); }
+		// strings of paper lanterns across the canyon
+		for (const [a, b, sag] of [[0, 192, 18], [192, W, 18]]) for (let k = 0; k <= 10; k++) { const u = k / 10, x = lerp(a, b, u), y = 18 + sag * 4 * u * (1 - u) + Math.sin(t * 1.2 + k) * 0.8; if (k % 2) { disc(x, y + 3, 2.6, k % 4 === 1 ? AWN[1] : GOLDM[3]); glow(x, y + 3, 9, GOLDM[3], 0.25); } else put(x, y, INK9); }
+		for (let i = 0; i < 12; i++) { const x = (i * 37 + t * 6) % W, y = 60 + (i * 29) % 90; if (Math.sin(t * 3 + i * 2) > 0.8) { put(x, y, "#ffffff"); light(x, y, GOLDM[4], 0.3); } } // glints
+	} else {
+		for (let i = 0; i < 8; i++) { const ph = (t * 0.1 + i * 0.13) % 1; put((i * 53 + Math.sin(t + i) * 10) % W, FEET - ph * 120, GOLDM[4], 0.5 * (1 - ph)); } // rising sparks off the gold
+	}
+}
+// a stall-roof ledge: plank, striped valance under it
+function drawLedge9(p, t) {
+	for (let x = p.x0; x <= p.x1; x++) { for (let y = 0; y < 5; y++) put(x, p.y + y, y === 0 ? GOLDM[4] : y === 4 ? INK9 : CLIFF9[3]); for (let y = 5; y < 11; y++) if (y < 8 + (Math.floor((x - p.x0) / 6) % 2) * 3) put(x, p.y + y, Math.floor((x - p.x0) / 6) % 2 ? AWN[1] : AWN[2]); }
+}
+// the great scale: a post, a beam that tilts, chains, two pans
+function drawScale9(tilt, t) {
+	const a = tilt * 0.25, P = SC9;
+	for (let y = P.py; y < FEET; y++) for (let k = -3; k <= 3; k++) put(P.px + k, y, k === -3 ? GOLDM[4] : k === 3 ? GOLDM[0] : GOLDM[2]);
+	for (let x = -10; x <= 10; x++) for (let y = 0; y < 4; y++) put(P.px + x, FEET - 4 + y, GOLDM[1]);
+	for (let j = -P.arm; j <= P.arm; j++) { const x = P.px + j, y = P.py + Math.sin(a) * j; put(x, y - 1, GOLDM[4]); put(x, y, GOLDM[3]); put(x, y + 1, GOLDM[1]); }
+	disc(P.px, P.py, 4, GOLDM[3]); put(P.px - 1, P.py - 1, GOLDM[5]);
+	for (const sd of [-1, 1]) {
+		const top = [panX(sd), P.py + Math.sin(a) * sd * P.arm], py = panY(sd, tilt);
+		for (const off of [-P.panW + 3, P.panW - 3]) for (let j = 0; j < py - top[1]; j += 2) put(lerp(top[0], top[0] + off, j / (py - top[1])), top[1] + j, GOLDM[2]);
+		for (let x = -P.panW; x <= P.panW; x++) { put(panX(sd) + x, py, GOLDM[5]); put(panX(sd) + x, py + 1, GOLDM[3]); const d = Math.round(3 * (1 - (x / P.panW) ** 2)); for (let y = 2; y < 2 + d; y++) put(panX(sd) + x, py + y, GOLDM[1]); }
+	}
+}
+
+// ---------------------------------------------------------------- the rubber-hose kit
+// a noodle limb: a thick curve from a to b bowed sideways by `bend`, with an outline
+function hose(a, b, bend, r, c, edge = INK9) {
+	const m = [(a[0] + b[0]) / 2 - (b[1] - a[1]) * bend, (a[1] + b[1]) / 2 + (b[0] - a[0]) * bend];
+	const n = Math.max(16, Math.ceil(Math.hypot(b[0] - a[0], b[1] - a[1]) / 1.5)), pts = []; for (let j = 0; j <= n; j++) { const u = j / n; pts.push([(1 - u) * (1 - u) * a[0] + 2 * u * (1 - u) * m[0] + u * u * b[0], (1 - u) * (1 - u) * a[1] + 2 * u * (1 - u) * m[1] + u * u * b[1]]); }
+	for (const p of pts) disc(p[0], p[1], r + 1, edge);
+	for (const p of pts) disc(p[0], p[1], r, c);
+	return pts[n];
+}
+// a white cartoon glove: a puffy mitt, three fat fingers and a thumb, a rolled cuff
+function glove(x, y, ang, open = 1, s = 1) {
+	const c = Math.cos(ang), sn = Math.sin(ang), P = (u, v) => [x + (u * c - v * sn) * s, y + (u * sn + v * c) * s];
+	const blob = (u, v, r) => { const p = P(u, v); disc(p[0], p[1], (r + 1) * s, INK9); };
+	const fill = (u, v, r) => { const p = P(u, v); disc(p[0], p[1], r * s, "#ffffff"); };
+	const fingers = [[5, -3 * open], [6, 0], [5, 3 * open]], thumb = [1, -5 * open];
+	blob(0, 0, 4); for (const [u, v] of fingers) blob(u, v, 2); blob(thumb[0], thumb[1], 1.8); blob(-4, 0, 3);
+	fill(0, 0, 4); for (const [u, v] of fingers) fill(u, v, 2); fill(thumb[0], thumb[1], 1.8);
+	const cf = P(-4, 0); disc(cf[0], cf[1], 3 * s, "#e8e4ee"); const ln = P(-2, 2); put(ln[0], ln[1], INK9);
+}
+// a pie-cut eye: a tall white oval, a big black pupil with a wedge cut out of it for the shine
+function pieEye(x, y, rx, ry, look = [0, 0], lid = 0, lidC = INK9) {
+	for (let yy = -ry - 1; yy <= ry + 1; yy++) for (let dx = -rx - 1; dx <= rx + 1; dx++) { const d = (dx / rx) ** 2 + (yy / ry) ** 2; if (d > 1.25) continue; put(x + dx, y + yy, d > 1 ? INK9 : "#ffffff"); }
+	const px = x + look[0] * rx * 0.35, py = y + look[1] * ry * 0.35 + ry * 0.15, pr = Math.max(1.5, rx * 0.6), prY = Math.max(2, ry * 0.6);
+	for (let yy = -prY; yy <= prY; yy++) for (let dx = -pr; dx <= pr; dx++) { if ((dx / pr) ** 2 + (yy / prY) ** 2 > 1) continue; const a = Math.atan2(yy, dx); if (a < -1.2 && a > -2.0) continue; put(px + dx, py + yy, INK9); }
+	if (lid > 0) { const ly = -ry + 2 * ry * lid; for (let yy = -ry - 1; yy < ly; yy++) for (let dx = -rx; dx <= rx; dx++) if ((dx / rx) ** 2 + (yy / ry) ** 2 <= 1.1) put(x + dx, y + yy, yy > ly - 1.5 ? INK9 : lidC); }
+}
+// a heavy cartoon brow: a wedge of ink, its angle carrying the mood
+function brow9(x, y, len, ang, thick = 3) { for (let j = -len; j <= len; j++) { const w = thick * (1 - Math.abs(j) / (len + 2) * 0.6); for (let q = 0; q < w; q++) put(x + j * Math.cos(ang), y + j * Math.sin(ang) - q, INK9); } }
+// a stretch of molten gold between two points: it sags and thins as it stretches, and drips
+function goldStrand(a, b, t, sag = 1, thick = 3, seed = 0) {
+	const L = Math.hypot(b[0] - a[0], b[1] - a[1]), w0 = Math.max(0.6, thick * Math.min(1, 40 / Math.max(1, L)));
+	for (let j = 0; j <= 24; j++) { const u = j / 24, x = lerp(a[0], b[0], u), y = lerp(a[1], b[1], u) + Math.sin(u * Math.PI) * L * 0.18 * sag, w = w0 * (0.6 + 0.4 * Math.abs(Math.cos(u * Math.PI))); for (let q = -w; q <= w; q++) put(x, y + q, q < -w + 0.8 ? GOLDM[5] : q > w - 0.8 ? GOLDM[1] : GOLDM[3]); if (j % 6 === 3) light(x, y, GOLDM[3], 0.2); if (j === 12 && sag > 0.5) { const ph = (t * 1.4 + seed) % 1; disc(x, y + w + ph * 10, 1.2, GOLDM[4], 1 - ph); } }
+}
+
+// ---------------------------------------------------------------- hand-lettered sound words
+const FONT3 = { A: "010101111101101", B: "110101110101110", C: "011100100100011", D: "110101101101110", E: "111100110100111", G: "011100101101011", H: "101101111101101", I: "111010010010111", K: "101110100110101", L: "100100100100111", M: "101111111101101", N: "110101101101101", O: "010101101101010", P: "110101110100100", R: "110101110110101", S: "011100010001110", T: "111010010010010", U: "101101101101111", W: "101101111111101", Y: "101101010010010", Z: "111001010100111", "!": "010010010000010", F: "111100110100100", "?": "111001010000010", V: "101101101101010", X: "101101010101101", J: "001001001101010", Q: "010101101110011", "-": "000000111000000" };
+function soundWord(word, x, y, k, fill = GOLDM[4], edge = INK9, s = 2) {
+	if (k <= 0) return;
+	const sc = s * (k < 0.15 ? 0.5 + k / 0.15 * 0.7 : 1.2 - 0.2 * Math.min(1, (k - 0.15) / 0.2)), wd = word.length * 4 * sc;
+	let cx = x - wd / 2;
+	for (const [i, ch] of [...word].entries()) {
+		const g = FONT3[ch], wob = Math.sin(i * 1.7 + k * 6) * 1.5;
+		if (g) { for (const pass of [0, 1]) for (let r = 0; r < 5; r++) for (let c = 0; c < 3; c++) { if (g[r * 3 + c] !== "1") continue; for (let yy = 0; yy < sc; yy++) for (let xx = 0; xx < sc; xx++) { const px = cx + c * sc + xx, py = y + r * sc + yy + wob - (i % 2) * 2; if (pass === 0) for (const [ox, oy] of [[-1, 0], [1, 0], [0, -1], [0, 1], [1, 1]]) put(px + ox, py + oy, edge); else put(px, py, yy < sc / 2 ? "#ffffff" : fill); } } }
+		cx += 4 * sc;
+	}
+}
+
+// ================================================================ Saint Rime, the Frost Chandelier
+// A cathedral chandelier that became a predator. A cage of black iron rimed with frost, six long jointed legs
+// ending in hooks that carry it upside-down across the ceiling and down the walls, candles burning with cold
+// blue flame, crystal prisms swinging under it, a torn veil of frozen lace. At its heart a drum of porcelain
+// masks: serene, weeping, screaming, sleeping. It ticks round to a new face before every attack.
+const IRON = ["#030306", "#0a0a10", "#15151e", "#22222e", "#34344a"];
+const WAX = ["#8a90a8", "#c8d0e0", "#eef2fa"];
+const COLDFIRE = ["#ffffff", "#d8f6ff", "#7ad8ff", "#3a8ae0", "#1a3a8a", "#0a1430"];
+const PORCELAIN = ["#5a5a6a", "#a8a8b8", "#dcdce6", "#f6f6fa"];
+
+function makeRimeStage(cv, readout) {
+	const CY = 20, WALLX = 366, EX0 = 110;
+	const T = { LOOP: 18.6, CRAWL: 1.0, ARRIVE: 3.0, SNAP0: 3.15, TURN: 4.3, CORNER: 5.0, WALL: 5.6, GATHER: 6.1, BREATH: 6.75, BREATHEND: 7.7, CLIMB: 7.9, OVER: 8.9, LETGO: 9.4, CRASH: 9.68, WINCH: 11.0, UP: 11.8 };
+	const ICICLES = [276, 246, 216, 186, 156, 126, 96, 66].map((x, i) => ({ x, grow: T.CRAWL + 0.25 * i, snap: T.SNAP0 + 0.11 * i }));
+	const DROPX = 128, SPIKE_V = 150;
+	// the second half: it lowers itself on a chain from the middle of the ceiling and swings the room like a
+	// pendulum, legs out, candles flaring; the chain snaps and it crashes; crumpled; it winches up and crawls home
+	const Q = { MOVE: 12.4, AT: 12.7, SWING: 12.95, SNAP: 15.2, CRASH: 15.45, WINCH: 17.2, UPQ: 17.8, PX: 200, AMP: 0.8 };
+	const QL = FEET - 70 - CY, HITS = [16.5, 16.85];
+	const swingA = (t) => t < Q.SWING ? Q.AMP * smooth(Q.AT, Q.SWING, t) : Q.AMP * Math.cos(TAU * (t - Q.SWING));
+	let S, parts, rings, J, EM;
+	const reset = () => { S = { t: 0, flags: {}, lastPos: null, ic: ICICLES.map((q) => ({ ...q })) }; parts = []; rings = []; J = makeJuice(); EM = makeEmbers(); for (let i = 0; i < 400; i++) EM.update(i / 60, 1 / 60); };
+	reset();
+	const once = (k) => (S.flags[k] ? false : (S.flags[k] = true));
+	const spring = (dt, amp, freq = 16, damp = 7) => (dt < 0 ? 0 : amp * Math.exp(-dt * damp) * Math.cos(dt * freq));
+	function keys(K, t) {
+		if (t <= K[0][0]) return K[0].slice(1);
+		for (let i = 1; i < K.length; i++) if (t < K[i][0]) { const a = K[i - 1], b = K[i], u = (t - a[0]) / (b[0] - a[0]), k = b[4] === "in" ? u * u : smooth(0, 1, u); return [lerp(a[1], b[1], k), lerp(a[2], b[2], k), lerp(a[3], b[3], k)]; }
+		const z = K[K.length - 1]; return z.slice(1, 4);
+	}
+	// ---------------------------------------------------------------- where it is: position of its hub, and which way is "up" (toward what it clings to)
+	const HANG = 26; // hub to the surface
+	const PATH = [[0, 300, CY + HANG, 0], [T.CRAWL, 300, CY + HANG, 0], [T.ARRIVE, 70, CY + HANG, 0], [T.TURN, 70, CY + HANG, 0], [T.CORNER, 328, CY + HANG, 0], [T.WALL, WALLX - HANG, CY + 40, Math.PI / 2], [T.GATHER, WALLX - HANG, FEET - 58, Math.PI / 2], [T.CLIMB, WALLX - HANG, FEET - 58, Math.PI / 2], [T.CLIMB + 0.5, WALLX - HANG, CY + 40, Math.PI / 2], [T.CLIMB + 0.8, 328, CY + HANG, 0], [T.OVER, DROPX, CY + HANG, 0], [T.LETGO, DROPX, CY + HANG, 0], [T.CRASH, DROPX, FEET - 14, 0, "in"], [T.WINCH, DROPX, FEET - 14, 0], [T.UP, DROPX, CY + HANG, 0], [T.LOOP, 300, CY + HANG, 0]];
+	function rime(t) {
+		if (t >= Q.MOVE) {
+			const o = { x: Q.PX, y: CY + HANG, rot: 0, sx: 1, sy: 1, flare: 0, legsFold: 0, crumple: 0, open: 0, walking: false };
+			if (t < Q.AT) { const p0 = keys(PATH, Q.MOVE); o.x = lerp(p0[0], Q.PX, smooth(Q.MOVE, Q.AT, t)); o.walking = true; return o; }
+			if (t < Q.SNAP) { const a = swingA(t), L = lerp(HANG, QL, smooth(Q.AT, Q.SWING, t)); o.x = Q.PX + Math.sin(a) * L; o.y = CY + Math.cos(a) * L; o.rot = a; o.flare = 1; o.open = 0.7; o.legsFold = 0; o.sx = 1.05; o.sy = 0.95; return o; }
+			if (t < Q.CRASH) { const a0 = swingA(Q.SNAP), u = (t - Q.SNAP) / (Q.CRASH - Q.SNAP); o.x = Q.PX + Math.sin(a0) * QL + 40 * u; o.y = lerp(CY + Math.cos(a0) * QL, FEET - 14, u * u); o.rot = a0 * (1 - u); o.legsFold = u; o.sy = 1.2; o.sx = 0.85; o.flare = 1; return o; }
+			const CX2 = Q.PX + Math.sin(swingA(Q.SNAP)) * QL + 40;
+			if (t < Q.WINCH) { const a = t - Q.CRASH; o.x = CX2; o.y = FEET - 14; o.crumple = 1; o.legsFold = 0.3; o.sy = a < 0.08 ? 0.6 : 0.85 + 0.1 * spring(a - 0.08, 1, 14, 5); o.sx = 2 - o.sy; return o; }
+			if (t < Q.UPQ) { const k = smooth(Q.WINCH, Q.UPQ, t); o.x = CX2; o.y = lerp(FEET - 14, CY + HANG, k); o.legsFold = 0.9 * (1 - k); o.sy = 1.1; return o; }
+			o.x = lerp(CX2, 300, smooth(Q.UPQ, T.LOOP - 0.2, t)); o.walking = true; return o;
+		}
+		let [x, y, rot] = keys(PATH, t);
+		let sx = 1, sy = 1, flare = 0, legsFold = 0, crumple = 0, open = 0;
+		const walking = (t > T.CRAWL && t < T.ARRIVE) || (t > T.TURN && t < T.GATHER) || (t > T.CLIMB && t < T.OVER) || (t > T.UP && t < T.LOOP);
+		y += Math.sin(t * 1.1) * 1.2;
+		// the breath: it pulls back against the wall (anticipation), the mask's mouth opening, then recoils with the blast
+		if (t > T.GATHER && t < T.BREATH) { const k = smooth(T.GATHER, T.BREATH, t); x += 6 * k; flare = k; open = k * 0.6; sy = 1 - 0.12 * k; }
+		if (t >= T.BREATH && t < T.BREATHEND) { open = 1; flare = 1; x += 6 - 2 * Math.sin(t * 50); }
+		if (t >= T.BREATHEND && t < T.BREATHEND + 0.5) { open = 1 - (t - T.BREATHEND) / 0.5; x += 6 * (1 - (t - T.BREATHEND) / 0.5) + 3 * spring(t - T.BREATHEND, 1, 14, 6); }
+		// the drop: candles flare, it hangs still, lets go, legs folding in as it falls, crashes and crumples
+		if (t > T.OVER && t < T.LETGO) { flare = smooth(T.OVER, T.LETGO, t); sy = 1 + 0.1 * flare; }
+		if (t >= T.LETGO && t < T.CRASH) { legsFold = smooth(T.LETGO, T.LETGO + 0.12, t); sy = 1.25; sx = 0.85; }
+		if (t >= T.CRASH && t < T.WINCH) { const a = t - T.CRASH; crumple = 1; legsFold = 0.3; sy = a < 0.08 ? 0.6 : 0.85 + 0.1 * spring(a - 0.08, 1, 14, 5); sx = 2 - sy; }
+		if (t >= T.WINCH && t < T.UP) { legsFold = 0.9 * (1 - smooth(T.UP - 0.3, T.UP, t)); sy = 1.1; }
+		return { x, y, rot, sx, sy, flare, legsFold, crumple, open, walking };
+	}
+	// the mask on its drum: which face, and how far through a turn it is
+	const FACES = [[0, "serene"], [T.CRAWL - 0.3, "weeping"], [T.TURN - 0.2, "serene"], [T.GATHER - 0.35, "scream"], [T.OVER - 0.4, "sleep"], [T.LETGO - 0.12, "scream"], [T.WINCH + 0.4, "serene"], [Q.MOVE + 0.1, "scream"], [Q.CRASH, "weeping"], [Q.WINCH + 0.3, "serene"]];
+	function mask(t) { let f = "serene", t0 = -9; for (const [ft, name] of FACES) if (t >= ft) { f = name; t0 = ft; } return { face: f, turn: clamp((t - t0) / 0.22) }; }
+	function elfy(t) {
+		if (t >= Q.MOVE) {
+			if (t < 13.0) return { a: "idle", at: t, x: EX0 };
+			if (t < 13.2) return { a: "run", at: t - 13.0, x: lerp(EX0, 170, (t - 13.0) / 0.2) };
+			if (t < 15.4) return { a: t < 13.32 ? "crouch_down" : "crouch", at: t - 13.2, x: 170 };
+			if (t < 15.65) return { a: "idle", at: t, x: 170 };
+			if (t < 16.05) { const k = (t - 15.65) / 0.4; return { a: k < 0.4 ? "jump" : k < 0.6 ? "apex" : "fall", at: t - 15.65, x: 170, y: FEET - 4 * 28 * k * (1 - k) }; }
+			if (t < 16.4) return { a: t < 16.15 ? "land" : "run", at: t - 16.15, x: lerp(170, 212, smooth(16.15, 16.4, t)) };
+			if (t < 17.4) { const h = HITS.findLast((h) => t >= h - 0.06); return h !== undefined && t - h < 0.3 ? { a: "strike_side", at: t - h + 0.06, x: 212 } : { a: "idle", at: t, x: 212 }; }
+			if (t < 17.8) return { a: "run", at: t - 17.4, x: lerp(212, EX0, smooth(17.4, 17.8, t)), flip: true };
+			return { a: "idle", at: t, x: EX0 };
+		}
+		const runs = [[2.55, EX0, 50], [T.UP + 0.1, 50, EX0]];
+		for (const [t0, a, b] of runs) if (t >= t0 && t < t0 + 0.32) return { a: "run", at: t - t0, x: lerp(a, b, (t - t0) / 0.32), flip: b < a };
+		if (t > T.BREATH - 0.15 && t < T.BREATHEND + 0.15) return { a: t < T.BREATH ? "crouch_down" : "crouch", at: t - T.BREATH + 0.15, x: 50 };
+		const tj = T.CRASH + (DROPX - 50 - 8) / SPIKE_V - 0.18;
+		if (t >= tj && t < tj + 0.4) { const k = (t - tj) / 0.4; return { a: k < 0.4 ? "jump" : k < 0.6 ? "apex" : "fall", at: t - tj, x: 50, y: FEET - 4 * 26 * k * (1 - k) }; }
+		return { a: "idle", at: t, x: t < 2.55 || t > T.UP + 0.42 ? EX0 : 50 };
+	}
+	const frozenFalls = (t) => [0, 1, 2].map((i) => { const fx = FALLS[i].x, reach = WALLX - 34 - fx, tr = T.BREATH + reach / 420; return t > tr ? smooth(tr, tr + 0.2, t) * (1 - smooth(T.LOOP - 3.2, T.LOOP - 0.6, t)) : 0; });
+	// ---------------------------------------------------------------- the sim
+	function update(dt) {
+		if (juiceStep(J, dt)) return;
+		const t = (S.t += dt), R = Math.random;
+		if (t >= T.LOOP) { reset(); return; }
+		const r = rime(t), fz = frozenFalls(t);
+		if (t > Q.SWING && t < Q.SNAP && R() < dt * 30) parts.push({ k: "glint", x: r.x + (R() - 0.5) * 30, y: r.y + R() * 20, vx: 0, vy: 10, life: 0.8, age: 0, ph: R() * 9, c: FROST[4] });
+		if (t > Q.SWING && t < Q.SNAP && Math.abs(Math.sin(TAU * (t - Q.SWING))) > 0.97 && R() < dt * 20) kick(J, 0.5, 0.06);
+		if (t >= Q.SNAP && once("qsnap")) { kick(J, 1.6, 0.12, 0.05); for (let n = 0; n < 12; n++) parts.push({ k: "spark", x: Q.PX, y: CY + 2, vx: (R() - 0.5) * 120, vy: R() * 60, g: 300, life: 0.4, age: 0, pal: ["#ffffff", FROST[4], FROST[3]] }); }
+		if (t >= Q.CRASH && once("qcrash")) { const cx = r.x; kick(J, 4.6, 0.5, 0.2); rings.push({ x: cx, y: FEET, r0: 6, r1: 70, flat: 0.18, age: 0, life: 0.45, pal: ["#ffffff", FROST[3]], thick: true, lit: 0.5 }); EM.snuff(cx, FEET - 10, 120, parts); for (let n = 0; n < 30; n++) { const a = -Math.PI / 2 + (R() - 0.5) * 2.6, sp = 80 + R() * 220; parts.push({ k: "chunk", x: cx + (R() - 0.5) * 20, y: FEET - 6, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, g: 420, floor: true, life: 1.4, age: 0, s: 1 + Math.floor(R() * 3), ang: R() * TAU, rot: (R() - 0.5) * 20 }); } }
+		for (const h of HITS) if (t >= h && once("hit" + h)) { kick(J, 2.2, 0.16, 0.07); for (let n = 0; n < 12; n++) { const a = (R() - 0.5) * 1.6, sp = 60 + R() * 120; parts.push({ k: "spark", x: r.x - 18, y: FEET - 20, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 20, g: 200, life: 0.35, age: 0, pal: ["#ffffff", COLDFIRE[1], FROST[3]] }); } rings.push({ x: r.x - 18, y: FEET - 20, r0: 2, r1: 16, age: 0, life: 0.2, pal: ["#ffffff", FROST[4]], lit: 0.5 }); }
+		EM.frozen = fz.map((k) => k > 0.5);
+		EM.update(t, dt);
+		EM.snuff(r.x, r.y, 30, parts); // the cold round it kills every ember that comes near
+		if (R() < dt * 6) parts.push({ k: "glint", x: r.x + (R() - 0.5) * 40, y: r.y + (R() - 0.5) * 30, vx: 0, vy: 8, life: 1.2, age: 0, ph: R() * 9, c: COLDFIRE[1] });
+		// icicles: they grow where it passed, drip and tremble, snap off their roots and drop
+		for (const [i, ic] of S.ic.entries()) {
+			if (t >= ic.snap && once("snap" + i)) { ic.y = CY + 14; ic.vy = 0; ic.falling = true; for (let n = 0; n < 4; n++) parts.push({ k: "bit", x: ic.x, y: CY + 2, vx: (R() - 0.5) * 30, vy: 10, g: 300, life: 0.6, age: 0, c: FROST[4] }); }
+			if (ic.falling && !ic.landed) { ic.vy += 700 * dt; ic.y += ic.vy * dt; if (ic.y >= FEET) { ic.landed = true; kick(J, 1.2, 0.1, 0.02); rings.push({ x: ic.x, y: FEET, r0: 2, r1: 16, flat: 0.25, age: 0, life: 0.3, pal: ["#ffffff", FROST[3]] }); for (let n = 0; n < 10; n++) { const a = -Math.PI / 2 + (R() - 0.5) * 2.8, sp = 50 + R() * 120; parts.push({ k: "chunk", x: ic.x, y: FEET - 3, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, g: 420, floor: true, life: 1.2, age: 0, s: 1 + (n % 2), ang: R() * TAU, rot: (R() - 0.5) * 16 }); } EM.snuff(ic.x, FEET - 10, 18, parts); } }
+			if (ic.landed && !ic.gone && t > ic.snap + 1.2) ic.gone = true;
+		}
+		// the breath: frost puffs, wind streaks, tumbling crystals, out of the mask's screaming mouth across the room
+		if (t > T.BREATH && t < T.BREATHEND) {
+			const m = mouthPos(t, r), len = Math.min(330, (t - T.BREATH) * 420);
+			if (once("breath")) kick(J, 3, 0.3, 0.1);
+			for (let n = 0; n < 3; n++) if (R() < dt * 70) { const a = Math.PI + (R() - 0.5) * 0.22 - 0.06, sp = 220 + R() * 140; parts.push({ k: "puff", x: m[0], y: m[1], vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, drag: 0.9, r: 2 + R() * 2, grow: 9, life: 0.9 + R() * 0.3, age: 0, pal: ["#ffffff", FROST[4], FROST[3], FROST[2]] }); }
+			if (R() < dt * 50) { const a = Math.PI + (R() - 0.5) * 0.16 - 0.06; parts.push({ k: "spark", x: m[0], y: m[1], vx: Math.cos(a) * 420, vy: Math.sin(a) * 420, life: 0.6, age: 0, pal: ["#ffffff", FROST[4], FROST[3]] }); }
+			for (let d = 20; d < len; d += 18) EM.snuff(m[0] - d, m[1] - d * 0.06, 8 + d * 0.07, parts);
+			if (R() < dt * 12) kick(J, 1, 0.1);
+		}
+		// the drop: the crash, a frost nova, then a wave of ice spikes racing out along the floor both ways
+		if (t >= T.LETGO && once("letgo")) kick(J, 0.8, 0.08);
+		if (t >= T.CRASH && once("crash")) {
+			kick(J, 4, 0.45, 0.2);
+			rings.push({ x: DROPX, y: FEET - 6, r0: 6, r1: 70, flat: 0.3, age: 0, life: 0.5, pal: ["#ffffff", FROST[3]], thick: true, lit: 0.8 });
+			rings.push({ x: DROPX, y: FEET - 20, r0: 4, r1: 40, age: 0, life: 0.3, pal: ["#ffffff", COLDFIRE[2]], lit: 0.6 });
+			for (let n = 0; n < 30; n++) { const a = -Math.PI / 2 + (R() - 0.5) * 3, sp = 80 + R() * 200; parts.push({ k: "chunk", x: DROPX, y: FEET - 8, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, g: 420, floor: true, life: 1.4, age: 0, s: 1 + (n % 3), ang: R() * TAU, rot: (R() - 0.5) * 18 }); }
+			EM.snuff(DROPX, FEET - 20, 90, parts);
+		}
+		for (const d of [-1, 1]) { const fx = DROPX + d * (t - T.CRASH) * SPIKE_V; if (t > T.CRASH && fx > -10 && fx < W + 10 && R() < dt * 30) parts.push({ k: "glint", x: fx, y: FEET - 1, vx: 0, vy: 0, life: 0.5, age: 0, ph: 0, c: "#ffffff" }); }
+		for (const [i, b] of SPIKES.entries()) if (t >= b.t + 0.5 && once("shatter" + i)) { for (let n = 0; n < 4; n++) { const a = -Math.PI / 2 + (R() - 0.5) * 2.4; parts.push({ k: "chunk", x: b.x, y: FEET - 4, vx: Math.cos(a) * 70, vy: Math.sin(a) * 90, g: 420, floor: true, life: 1, age: 0, s: 1, ang: R() * TAU, rot: (R() - 0.5) * 16 }); } }
+		// the winch: chain links rattling as it hauls itself up
+		if (t > T.WINCH && t < T.UP && R() < dt * 20) parts.push({ k: "bit", x: DROPX + (R() - 0.5) * 2, y: CY + R() * (r.y - CY), vx: (R() - 0.5) * 20, vy: 0, g: 300, life: 0.4, age: 0, c: FROST[4] });
+		for (const q of parts) if (q.k === "chunk") { q.ang += q.rot * dt; if (q.y >= FEET - 1) q.rot *= 0.9; }
+		parts = stepParts(parts, dt);
+		rings = stepRings(rings, dt);
+	}
+	// the ice spikes: clusters along the floor, each rising when the frost line reaches it, glinting, then shattering
+	const SPIKES = [];
+	for (const d of [-1, 1]) for (let k = 1; k < 18; k++) { const x = DROPX + d * k * 9; if (x < 0 || x > W) continue; SPIKES.push({ x, t: T.CRASH + (k * 9) / SPIKE_V, h: 10 + 6 * hash(k, d + 5) - k * 0.2, n: 2 + Math.floor(hash(k, d) * 3) }); }
+	function mouthPos(t, r) { const P = xf(r); return P(0, 24); }
+	function xf(r) { const c = Math.cos(r.rot), s = Math.sin(r.rot); return (lx, ly) => [r.x + (lx * r.sx) * c - (ly * r.sy) * s, r.y + (lx * r.sx) * s + (ly * r.sy) * c]; }
+	// ---------------------------------------------------------------- drawing
+	function drawRime(t) {
+		const r = rime(t), P = xf(r), px = (lx, ly, h, a = 1) => { const p = P(lx, ly); put(p[0], p[1], h, a); put(p[0] + 0.6, p[1], h, a); put(p[0], p[1] + 0.6, h, a); };
+		const thick = (a, b, h, w = 1.4) => { const n = Math.ceil(Math.hypot(b[0] - a[0], b[1] - a[1]) * 1.5); for (let j = 0; j <= n; j++) { const u = j / n; disc(lerp(a[0], b[0], u), lerp(a[1], b[1], u), w, h); } };
+		// how fast it's moving, for the prisms' swing (follow-through)
+		const prev = S.lastPos || [r.x, r.y]; const vx = (r.x - prev[0]) * 60; S.lastPos = [r.x, r.y];
+		// the chain while it winches up
+		if (t > T.CRASH && t < T.UP + 0.2) { const top = [DROPX, CY]; for (let y = CY; y < r.y - 6; y += 3) { put(DROPX, y, IRON[4]); put(DROPX + ((y / 3) & 1 ? 1 : -1), y + 1, IRON[3]); } }
+		// six legs: long, jointed, black iron rimed with frost, hooking into the surface; tripod gait when it walks
+		const OFF = [-46, -30, -14, 14, 30, 46];
+		for (const [i, o] of OFF.entries()) {
+			const g = i % 2, dist = r.walking ? t * 3.2 : 0, fr = ((dist + g * 0.5) % 1 + 1) % 1, lift = r.walking && fr > 0.5 ? Math.sin(((fr - 0.5) / 0.5) * Math.PI) * 6 : 0, slide = r.walking ? (fr < 0.5 ? lerp(6, -6, fr / 0.5) : lerp(-6, 6, (fr - 0.5) / 0.5)) : 0;
+			const fold = r.legsFold, cr = r.crumple;
+			const foot = cr ? [o * 0.9, 8 + Math.abs(o) * 0.1 + Math.sin(t * 9 + i) * (t < T.WINCH ? 1.5 : 0)] : [lerp(o + slide, o * 0.35, fold), lerp(-HANG + lift, 18, fold)];
+			const hip = [o * 0.22, -4], knee = [lerp(hip[0], foot[0], 0.5) + Math.sign(o) * (10 - fold * 4), Math.min(hip[1], foot[1]) - 14 + fold * 16 + (cr ? 18 : 0)];
+			const a = P(...hip), b = P(...knee), c = P(...foot);
+			thick(a, b, IRON[2], 1.5); thick(b, c, IRON[2], 1.1);
+			line(a[0], a[1] - 1, b[0], b[1] - 1, FROST[2], 0.6); line(b[0], b[1] - 1, c[0], c[1] - 1, FROST[2], 0.5);
+			disc(b[0], b[1], 2, IRON[3]); put(b[0], b[1] - 1, FROST[4]);
+			const hk = P(foot[0] + Math.sign(o) * 3, foot[1] + (cr ? 0 : 3)); line(c[0], c[1], hk[0], hk[1], IRON[4]); put(hk[0], hk[1], FROST[4]);
+		}
+		// the cage: a crown of iron with spikes, frost along its rims
+		for (let a = 0; a < TAU; a += 0.05) { const p = P(Math.cos(a) * 14, Math.sin(a) * 4); put(p[0], p[1], Math.sin(a) < 0 ? IRON[4] : IRON[2]); const q = P(Math.cos(a) * 10, 8 + Math.sin(a) * 3); put(q[0], q[1], IRON[3]); }
+		for (let k = 0; k < 9; k++) { const lx = -12 + k * 3; thick(P(lx, 0), P(lx * 0.75, 8), IRON[1], 0.7); const sp = P(lx, -4 - (k % 2 ? 5 : 3)); line(P(lx, -2)[0], P(lx, -2)[1], sp[0], sp[1], IRON[4]); put(sp[0], sp[1], FROST[4]); }
+		// candle arms curling out and down, cold blue flames burning upward whatever way it hangs
+		for (const sd of [-1, 1]) for (let k = 0; k < 3; k++) {
+			const tip = [sd * (16 + k * 9), 6 + (k === 1 ? -4 : 3)], mid = [sd * (10 + k * 6), 12 + k * 2];
+			const a = P(sd * 10, 4), m = P(...mid), b = P(...tip);
+			thick(a, m, IRON[3], 0.8); thick(m, b, IRON[3], 0.8);
+			const cb = P(tip[0], tip[1] - 1), ct = P(tip[0], tip[1] - 6);
+			line(cb[0], cb[1], ct[0], ct[1], WAX[1]); line(cb[0] + 1, cb[1], ct[0] + 1, ct[1], WAX[0]); put(ct[0], ct[1] + 2, WAX[2]);
+			tongue(ct[0], ct[1], 4 + 3 * r.flare + Math.sin(t * 9 + k + sd) * 1, 1.6, 0.8, k * 7 + sd * 3, t, COLDFIRE);
+			glow(ct[0], ct[1] - 3, 10 + 8 * r.flare, COLDFIRE[2], 0.3 + 0.3 * r.flare);
+			// a crystal prism hanging from the arm, swinging behind its every move
+			const sw = Math.sin(t * 3 + k * 2 + sd) * 2 - vx * 0.03;
+			const p0 = m, p1 = [p0[0] + sw, p0[1] + 8], p2 = [p0[0] + sw * 1.3, p0[1] + 13];
+			line(p0[0], p0[1], p1[0], p1[1], IRON[4], 0.7);
+			for (let j = 0; j < 5; j++) { const u = j / 5; const w = 2 * Math.sin(u * Math.PI); for (let d = -w; d <= w; d++) put(lerp(p1[0], p2[0], u) + d, lerp(p1[1], p2[1], u), Math.abs(d) < 0.6 ? "#ffffff" : FROST[3]); }
+			if (Math.sin(t * 5 + k * 3 + sd) > 0.9) { put(p2[0], p2[1] - 2, "#ffffff"); light(p2[0], p2[1] - 2, COLDFIRE[1], 0.5); }
+		}
+		// the veil: torn frozen lace hanging round the drum, rippling
+		for (let lx = -10; lx <= 10; lx += 1) { const len = 16 + 6 * hash(lx + 20, 4) + Math.sin(t * 2 + lx) * 1.5; for (let ly = 9; ly < 9 + len; ly += 1) { if (hash(lx + 30, Math.floor(ly)) < 0.22) continue; const sw = Math.sin(t * 2.4 + ly * 0.25 + lx) * (ly - 9) * 0.06 - vx * 0.004 * (ly - 9); px(lx * (1 + (ly - 9) * 0.02) + sw, ly, (ly + lx) % 4 === 0 ? FROST[4] : FROST[2], 0.55); } }
+		// the mask on its drum
+		drawMask(t, r, P, px);
+		glow(P(0, 14)[0], P(0, 14)[1], 34, COLDFIRE[3], 0.18 + 0.2 * r.flare);
+		return r;
+	}
+	function drawMask(t, r, P, px) {
+		const m = mask(t), turnSq = m.turn < 1 ? Math.abs(Math.cos(m.turn * Math.PI)) : 1, w = 7 * Math.max(0.15, turnSq), cy = 17;
+		// the drum's rim showing as it turns
+		if (m.turn < 1) for (let ly = cy - 9; ly <= cy + 9; ly++) { px(-w - 1.5, ly, IRON[3]); px(w + 1.5, ly, IRON[2]); }
+		for (let ly = cy - 9; ly <= cy + 9; ly++) { const hw = w * Math.sqrt(Math.max(0, 1 - ((ly - cy) / 9.5) ** 2)); for (let lx = -hw; lx <= hw; lx += 0.7) px(lx, ly, PORCELAIN[clamp(Math.floor((0.7 - 0.35 * lx / 7 - 0.2 * (ly - cy) / 9) * 4), 0, 3)]); }
+		if (turnSq < 0.6) return;
+		const f = m.face, cold = (lx, ly) => { const p = P(lx, ly); glow(p[0], p[1], 4, COLDFIRE[2], 0.5); };
+		const eye = (sd) => [sd * 2.8, cy - 2.5];
+		if (f === "serene" || f === "sleep") for (const sd of [-1, 1]) { const [ex, ey] = eye(sd); for (let x = -1.5; x <= 1.5; x += 0.5) px(ex + x, ey + Math.abs(x) * (f === "sleep" ? -0.4 : 0.4), PORCELAIN[0]); }
+		if (f === "weeping" || f === "scream") for (const sd of [-1, 1]) { const [ex, ey] = eye(sd); for (let y = -1.6; y <= 1.6; y += 0.5) for (let x = -1.4; x <= 1.4; x += 0.5) if (x * x + y * y < 2.4) px(ex + x, ey + y * (f === "scream" ? 1.3 : 1), "#06060c"); px(ex, ey, COLDFIRE[1]); cold(ex, ey); }
+		if (f === "weeping") for (const sd of [-1, 1]) for (let j = 0; j < 9; j++) px(sd * 2.8 + Math.sin(j) * 0.3, cy + j * 0.8, "#06060c", 0.9); // black tears down to the rim
+		// mouth
+		if (f === "serene") for (let x = -1.5; x <= 1.5; x += 0.5) px(x, cy + 4, PORCELAIN[0]);
+		if (f === "sleep") for (let x = -1, y = 0; x <= 1; x += 0.5) px(x, cy + 4.5, PORCELAIN[0]);
+		if (f === "weeping") for (let x = -2; x <= 2; x += 0.5) px(x, cy + 4.6 - Math.abs(x) * -0.4 - 0.8, "#06060c");
+		if (f === "scream") { const oh = 2 + 3.5 * r.open; for (let y = -oh; y <= oh; y += 0.5) for (let x = -2.2; x <= 2.2; x += 0.5) if ((x / 2.2) ** 2 + (y / oh) ** 2 <= 1) px(x, cy + 5 + y * 0.8, r.open > 0.4 ? (Math.abs(y) < oh * 0.5 ? "#ffffff" : COLDFIRE[2]) : "#06060c"); if (r.open > 0.4) { const mp = P(0, cy + 5); glow(mp[0], mp[1], 10, COLDFIRE[1], 0.7 * r.open); } }
+		// a fine crack across the porcelain
+		for (let j = 0; j < 6; j++) px(-6 + j * 1.2, cy - 6 + j * 0.7 + (j % 2) * 0.5, PORCELAIN[0], 0.8);
+	}
+	function paint() {
+		const t = S.t;
+		col.set(hellBase); lit.fill(0);
+		juiceShake(J, t);
+		const fz = frozenFalls(t);
+		drawFalls(t, fz);
+		for (let i = 0; i < 3; i++) riverIce(FALLS[i].x, 50 * fz[i], t);
+		heatHaze(t, Math.max(...fz) * 0.7);
+		EM.draw(t, "back");
+		drawSoulfire(t);
+		// the right wall it climbs: basalt columns, rimed where it has been
+		for (let y = 0; y < FEET - 6; y++) for (let x = WALLX; x < W; x++) put(x, y, x === WALLX ? BASALT[4] : (x + Math.floor(y / 6)) % 5 === 0 ? BASALT[1] : BASALT[2]);
+		for (let y = CY + 20; y < FEET - 30; y += 2) if (t > T.WALL && hash(y, 3) < 0.5) put(WALLX - 1, y, FROST[3], 0.6);
+		// icicles: growing where it passed, trembling, the shadow of each sharpening on the floor before it drops
+		for (const ic of S.ic) {
+			if (t < ic.grow || ic.gone) continue;
+			const len = 14 * smooth(ic.grow, ic.grow + 0.6, t), tr = t > ic.snap - 0.5 && !ic.falling ? Math.sin(t * 60) * 0.7 : 0, top = ic.falling ? ic.y - 14 : CY;
+			if (!ic.landed) { for (let j = 0; j < len; j++) { const w = 2.4 * (1 - j / len); for (let d = -w; d <= w; d++) put(ic.x + d + tr, top + j, d < -w + 1 ? "#ffffff" : d > w - 1 ? FROST[2] : FROST[3]); } if (!ic.falling && len > 10 && (t * 3 + ic.x) % 1 < 0.1) put(ic.x + tr, top + len + 1, FROST[4]); }
+			if (!ic.falling && t > ic.snap - 0.7) { const k = smooth(ic.snap - 0.7, ic.snap, t); disc(ic.x, FEET - 1, 2 + 3 * k, "#0a0a14", 0.5 * k); put(ic.x, FEET - 1, FROST[3], k); }
+			if (ic.landed && t < ic.snap + 1.2) { const k = 1 - clamp((t - ic.snap - 0.5) / 0.7); for (let j = 0; j < 8; j++) put(ic.x + (j % 2), FEET - 1 - j, FROST[3], k); }
+		}
+		// warnings: the breath's corridor outlined while it gathers; the drop's target and the spikes' reach
+		if (t > T.GATHER && t < T.BREATH) { const r = rime(t), m = mouthPos(t, r), on = Math.sin(t * 30) > -0.2, k = smooth(T.GATHER, T.GATHER + 0.2, t); for (let d = 6; d < 330; d += 3) for (const sd of [-1, 1]) put(m[0] - d, m[1] - d * 0.06 + sd * (5 + d * 0.06), FROST[3], (on ? 0.85 : 0.3) * k); }
+		if (t > T.OVER && t < T.CRASH) { const on = Math.sin(t * 30) > -0.2, k = smooth(T.OVER, T.OVER + 0.3, t); for (let a = 0; a < TAU; a += 0.1) put(DROPX + Math.cos(a) * 16, FEET + Math.sin(a) * 3, FROST[3], (on ? 0.9 : 0.3) * k); for (let x = 0; x < W; x += 4) put(x, FEET + 2, FROST[2], (on ? 0.5 : 0.15) * k); }
+		// the ice spikes: jagged blades bursting up behind the racing frost line, glinting, then shattering
+		for (const b of SPIKES) { const a = t - b.t; if (a < 0 || a > 0.5) continue; const h = b.h * Math.min(1, a / 0.06) * (a > 0.4 ? 1 - (a - 0.4) / 0.1 : 1); for (let n = 0; n < b.n; n++) { const bx = b.x - 3 + n * 3, hh = h * (0.6 + 0.4 * hash(n, Math.round(b.x))), lean = (n - b.n / 2) * 0.25; for (let y = 0; y < hh; y++) { const w = 1.6 * (1 - y / hh); for (let d = -w; d <= w; d++) put(bx + d + lean * y, FEET - 1 - y, d < -w + 0.8 ? "#ffffff" : FROST[3]); } } if (a > 0.32 && a < 0.4) glow(b.x, FEET - 6, 8, "#ffffff", 0.6); }
+		for (const d of [-1, 1]) { const fx = DROPX + d * (t - T.CRASH) * SPIKE_V; if (t > T.CRASH && fx > -10 && fx < W + 10) for (let k = 0; k < 10; k++) put(fx - d * k, FEET, "#ffffff", 1 - k / 10); }
+		// warnings for the second half: the swing's whole arc dashed out under the ceiling; the shock's reach after the crash
+		if (t > Q.AT && t < Q.SWING + 0.6) { const on = Math.sin(t * 30) > -0.2, k = smooth(Q.AT, Q.AT + 0.15, t) * (1 - smooth(Q.SWING + 0.3, Q.SWING + 0.6, t)); for (let a = -Q.AMP; a <= Q.AMP; a += 0.03) { const x = Q.PX + Math.sin(a) * (QL + 30), y = CY + Math.cos(a) * (QL + 30); put(x, y, FROST[4], (on ? 0.85 : 0.3) * k); } }
+		if (t > Q.SNAP - 0.25 && t < Q.CRASH) { const cx = Q.PX + Math.sin(swingA(Q.SNAP)) * QL + 40; landMark(cx, 24, t > Q.CRASH - 0.1 ? "#ffffff" : FROST[4], 1, t); }
+		if (t > Q.CRASH && t < Q.CRASH + 0.9) { const a = t - Q.CRASH, cx = Q.PX + Math.sin(swingA(Q.SNAP)) * QL + 40, k = 1 - smooth(0.6, 0.9, a); for (const sd of [-1, 1]) { const x0 = cx + sd * (16 + a * SPIKE_V); for (let n = 0; n < 3; n++) { const bx = x0 - sd * n * 6, h = (12 - n * 3) * k; for (let j = 0; j < h; j++) { const w = 2.2 * (1 - j / h); for (let d = -w; d <= w; d++) put(bx + d, FEET - 1 - j, d < -w + 1 ? "#ffffff" : FROST[3]); } } } }
+		// the chain it hangs and swings from
+		if (t > Q.AT && t < Q.SNAP) { const r0 = rime(t); for (let j = 0; j < 60; j++) { const u = j / 60; put(lerp(Q.PX, r0.x, u), lerp(CY, r0.y - 10, u), j % 3 ? "#8a8aa0" : "#d8d8e8", 0.9); } }
+		const r = drawRime(t);
+		// the breath itself: a corridor of cold light behind the puffs
+		if (t > T.BREATH && t < T.BREATHEND) { const m = mouthPos(t, r), len = Math.min(330, (t - T.BREATH) * 420); for (let d = 4; d < len; d += 2) { const w = 4 + d * 0.06; for (let k2 = -w; k2 <= w; k2 += 2) put(m[0] - d, m[1] - d * 0.06 + k2 + Math.sin(t * 40 + d) * 1, Math.abs(k2) < 2 ? "#ffffff" : FROST[4], 0.18); } }
+		const e = elfy(t);
+		drawElfy(e.a, e.at, Math.round(e.x), Math.round(e.y ?? FEET), 0, !!e.flip);
+		EM.draw(t, "mid");
+		drawRings(rings);
+		for (const q of parts) if (q.k === "chunk") { const a = 1 - q.age / q.life, s = q.s; for (let y = -s; y <= s; y++) for (let x = -s; x <= s; x++) { const rx = x * Math.cos(q.ang) - y * Math.sin(q.ang), ry = x * Math.sin(q.ang) + y * Math.cos(q.ang); if (Math.abs(rx) + Math.abs(ry) > s * 1.3) continue; put(q.x + x, q.y + y, y < 0 ? FROST[4] : FROST[3], a); } put(q.x - 1, q.y - 1, "#ffffff", a); }
+		drawParts(parts.filter((q) => q.k !== "chunk"), t);
+		EM.draw(t, "front");
+		if (t >= Q.CRASH && t < Q.CRASH + 0.05) impactFrame("#f2f8ff", "#0a0c18", 0.34);
+		OX = 0; OY = 0;
+		if (t >= Q.MOVE) { readout.textContent = t < Q.AT ? "phase two · the screaming mask; it crawls to the middle of the ceiling" : t < Q.SWING ? "warning · it lowers itself on a chain; the swing's whole arc dashed out · get low" : t < Q.SNAP ? "the pendulum · it swings the room, legs out, candles flaring · stay crouched" : t < Q.CRASH ? "the chain snaps; its landing outlined" : t < Q.CRASH + 0.6 ? "the crash · ice spikes race out both ways · jump" : t < Q.WINCH ? "weak window · crumpled on the floor, the weeping mask · hit it" : "it winches itself up and crawls home"; return; }
+		readout.textContent = t < T.CRAWL ? "it hangs from the ceiling, candles burning cold; the serene mask" : t < T.SNAP0 - 0.4 ? "tick · the weeping mask; it crawls the ceiling and icicles grow in its wake" : t < T.TURN ? "icicle fall · they tremble, their shadows sharpen, they snap and stab the floor in sequence" : t < T.GATHER ? "it turns back, over the corner and down the wall" : t < T.BREATH ? "tick · the screaming mask; it draws back against the wall, mouth opening; the breath's corridor outlined · crouch" : t < T.BREATHEND ? "frost breath · across the room; every ember dies; the lava falls turn to glass" : t < T.OVER ? "it climbs back up and crosses the ceiling to hang over Elfy" : t < T.LETGO ? "tick · the sleeping mask; candles flare; a target, and the spikes' reach" : t < T.WINCH ? "it lets go · the crash, a frost nova, a wave of ice spikes · jump · then it lies wrecked" : "weak window ends · it winches itself back up on its chain";
+	}
+	return { cv, update, paint, reset };
+}
+
+// ================================================================ Saint Rime's chapel: a miniature you walk all the way round
+// A frozen chapel on a floating rock, with a cloister walk round all four sides under open rafters. The track runs
+// round the walk, so the fight circles the building. Each side is seen almost face on; when the fight goes round a
+// corner the whole miniature turns a quarter with it (Fez), so forward stays to the right. The near side's columns
+// are left out (a dollhouse cut), the rafters stay (the chandelier hangs from them), and an attack can be dodged by
+// ducking round the corner out of its line.
+
+// ---------------------------------------------------------------- the renderer (as in the bathhouse study)
+const ZB = new Float32Array(N), BASE = new Float32Array(N * 3), BASEZ = new Float32Array(N);
+let ZT = null;
+const TH0 = -0.42;
+const CAM = { th: TH0, F: [130, 286, 60], sx: 320, sy: 206 };
+const FROST = ["#0e2a48", "#2a5a8a", "#5aa0d8", "#a8dcff", "#e4f6ff", "#ffffff"];
+const CSTONE = ["#141a2a", "#202a40", "#2e3a56", "#425070", "#5a6a8c", "#7a8aac", "#a8b8d4"];
+const SNOWC = ["#8a9ac0", "#b8c8e4", "#dce8f8", "#f4f8ff"];
+const WOODC = ["#1a100c", "#2e1c14", "#4a2e1e", "#6a4428", "#8e5e36"];
+const GLASS = ["#1a2a6a", "#3a4ab0", "#7a5ad0", "#c8a0ff", "#ffd080"];
+const LAMPC = ["#4a1808", "#a03a14", "#e07a30", "#ffc070", "#fff0c8"];
+function proj(X, Y, Z) {
+	const c = Math.cos(CAM.th), s = Math.sin(CAM.th), dx = X - CAM.F[0], dy = Y - CAM.F[1];
+	const xr = dx * c - dy * s, yr = dx * s + dy * c;
+	return [CAM.sx + xr - yr, CAM.sy + (xr + yr) / 2 - (Z - CAM.F[2]), xr + yr + Z];
+}
+function quad(dst, dstZ, O, U, V, n, fn, st = 0.5) {
+	const c = Math.cos(CAM.th), s = Math.sin(CAM.th);
+	if (n && (n[0] * c - n[1] * s) + (n[0] * s + n[1] * c) + n[2] <= 0.001) return;
+	const lu = Math.hypot(U[0], U[1], U[2]), lv = Math.hypot(V[0], V[1], V[2]);
+	const p0 = proj(O[0], O[1], O[2]), pu = proj(O[0] + U[0], O[1] + U[1], O[2] + U[2]), pv = proj(O[0] + V[0], O[1] + V[1], O[2] + V[2]);
+	const ux = (pu[0] - p0[0]) / lu, uy = (pu[1] - p0[1]) / lu, uz = (pu[2] - p0[2]) / lu, vx = (pv[0] - p0[0]) / lv, vy = (pv[1] - p0[1]) / lv, vz = (pv[2] - p0[2]) / lv;
+	const det = ux * vy - uy * vx;
+	if (lu * lv >= 40 && Math.abs(det) > 0.02) {
+		const xs = [p0[0], pu[0], pv[0], pu[0] + pv[0] - p0[0]], ys = [p0[1], pu[1], pv[1], pu[1] + pv[1] - p0[1]];
+		const x0 = Math.max(0, Math.floor(Math.min(...xs))), x1 = Math.min(W - 1, Math.ceil(Math.max(...xs))), y0 = Math.max(0, Math.floor(Math.min(...ys))), y1 = Math.min(H - 1, Math.ceil(Math.max(...ys)));
+		const ia = vy / det, ib = -vx / det, ic = -uy / det, id = ux / det;
+		for (let py = y0; py <= y1; py++) for (let px = x0; px <= x1; px++) {
+			const dx = px + 0.5 - p0[0], dy = py + 0.5 - p0[1], u = ia * dx + ib * dy, v = ic * dx + id * dy;
+			if (u < 0 || v < 0 || u >= lu || v >= lv) continue;
+			const i = py * W + px, z = p0[2] + uz * u + vz * v; if (z < dstZ[i]) continue;
+			const h = fn(u, v, px, py); if (!h) continue;
+			const cc = hx(h); dstZ[i] = z; dst[i * 3] = cc[0]; dst[i * 3 + 1] = cc[1]; dst[i * 3 + 2] = cc[2];
+		}
+		return;
+	}
+	for (let u = 0; u < lu; u += st) { const rx = p0[0] + ux * u, ry = p0[1] + uy * u, rz = p0[2] + uz * u; for (let v = 0; v < lv; v += st) { const px = Math.floor(rx + vx * v), py = Math.floor(ry + vy * v); if (px < 0 || py < 0 || px >= W || py >= H) continue; const i = py * W + px, z = rz + vz * v; if (z < dstZ[i]) continue; const h = fn(u, v, px, py); if (!h) continue; const cc = hx(h); dstZ[i] = z; dst[i * 3] = cc[0]; dst[i * 3 + 1] = cc[1]; dst[i * 3 + 2] = cc[2]; } }
+}
+function box(x0, y0, z0, x1, y1, z1, f) {
+	const B = BASE, Z = BASEZ, dx = x1 - x0, dy = y1 - y0, dz = z1 - z0, F = (g) => (typeof g === "string" ? () => g : g);
+	if (f.top) quad(B, Z, [x0, y0, z1], [dx, 0, 0], [0, dy, 0], [0, 0, 1], F(f.top));
+	if (f.side || f.yp) quad(B, Z, [x0, y1, z0], [dx, 0, 0], [0, 0, dz], [0, 1, 0], F(f.yp || f.side));
+	if (f.side || f.yn) quad(B, Z, [x0, y0, z0], [dx, 0, 0], [0, 0, dz], [0, -1, 0], F(f.yn || f.side));
+	if (f.side || f.xp) quad(B, Z, [x1, y0, z0], [0, dy, 0], [0, 0, dz], [1, 0, 0], F(f.xp || f.side));
+	if (f.side || f.xn) quad(B, Z, [x0, y0, z0], [0, dy, 0], [0, 0, dz], [-1, 0, 0], F(f.xn || f.side));
+}
+function glowW(X, Y, Z, r, h, k) { const p = proj(X, Y, Z), px = Math.floor(p[0]), py = Math.floor(p[1]); if (px < 0 || py < 0 || px >= W || py >= H) return; if (ZB[py * W + px] > p[2] + 3) return; glow(p[0], p[1], r, h, k); }
+
+// ---------------------------------------------------------------- the place: the chapel, the walk round it, the track
+const CORE = 260, WALK = 44, TOFF = 26, PURL = 14, BEAMZ = 112;
+const SEG = CORE + 2 * TOFF; // 312: one side of the track
+// the track: four sides, anticlockwise seen from above; s from 0 at the front-left corner
+function trackAt(s) {
+	s = ((s % (4 * SEG)) + 4 * SEG) % (4 * SEG);
+	const a = -TOFF, b = CORE + TOFF, k = Math.floor(s / SEG), u = s - k * SEG;
+	return [[a + u, b], [b, b - u], [b - u, a], [a, a + u]][k];
+}
+// which way is "out" from the wall on each side (toward the camera when that side is in front)
+const SIDE_OUT = [[0, 1], [1, 0], [0, -1], [-1, 0]];
+function sideOf(s) { return Math.floor((((s % (4 * SEG)) + 4 * SEG) % (4 * SEG)) / SEG); }
+// a point beside the track: dOff toward the wall (negative) or out (positive)
+function trackOff(s, dOff) { const p = trackAt(s), o = SIDE_OUT[sideOf(s)]; return [p[0] + o[0] * dOff, p[1] + o[1] * dOff]; }
+let FRONT = 0; // which side is nearest the camera now: its columns are cut away
+
+function backdrop() {
+	const set = (x, y, h) => { if (x < 0 || y < 0 || x >= W || y >= H) return; const c = hx(h), k = (y * W + x) * 3; BASE[k] = c[0]; BASE[k + 1] = c[1]; BASE[k + 2] = c[2]; };
+	const pan = (CAM.th - TH0) * 260; // turning the miniature pans the far world past behind it
+	const A = ["#060a1c", "#0a1230", "#121a40", "#1c2450", "#2a2e5e", "#3a3a6a"];
+	for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { const v = clamp(y / H) * 5, i = Math.min(4, Math.floor(v)), f = v - i; set(x, y, f > bayer(x, y) ? A[i + 1] : A[i]); }
+	for (let i = 0; i < 110; i++) set(Math.floor(((hash(i, 1) * W * 3 - pan * 0.1) % W + W) % W), Math.floor(hash(i, 2) * 160), hash(i, 3) < 0.3 ? "#e0e8ff" : "#6a74a8");
+	// an aurora in cyan, violet and rose (no green: that is Elfy's)
+	for (let x = 0; x < W; x++) { const xx = x + pan * 0.15, top = 30 + 26 * Math.sin(xx * 0.012) + 12 * Math.sin(xx * 0.031 + 2); for (let j = 0; j < 46; j++) { const y = Math.floor(top + j); const k = (1 - j / 46) * (0.5 + 0.5 * Math.sin(xx * 0.02 + j * 0.05)); if (k > 0.25 + bayer(x, y) * 0.5) set(x, y, j < 8 ? "#8a7ad8" : j < 22 ? "#4a8ab8" : "#6a4a9a"); } }
+	// three ranges of icy peaks, each sliding by its own amount as the miniature turns
+	for (const [k, base, amp, c0, c1, seed] of [[0.25, 250, 70, "#1a2448", "#2e3c68", 3], [0.5, 290, 60, "#141c3a", "#26325a", 7], [0.8, 330, 40, "#0e1430", "#1c2648", 11]]) for (let x = 0; x < W; x++) { const xx = x + pan * k, h = amp * (0.5 * noise1(xx * 0.012, seed) + 0.5 * noise1(xx * 0.035, seed + 1)), top = Math.floor(base - h); for (let y = top; y < H; y++) set(x, y, y < top + 3 && noise1(xx * 0.2, seed + 2) > 0.4 ? "#c8d4f0" : y < top + 10 ? c1 : c0); }
+	// far floating rocks with lit windows
+	for (const [x0, y0, w, sd] of [[60, 120, 40, 1], [520, 160, 30, 2], [300, 80, 18, 3]]) { const x = Math.floor(((x0 - pan * 0.35) % (W + 80) + W + 80) % (W + 80) - 40); for (let y = 0; y < w; y++) { const hw = y < 4 ? w : w * (1 - (y - 4) / w); for (let dx = -hw; dx <= hw; dx++) set(x + Math.round(dx), y0 + y, y < 2 ? "#c8d4f0" : y < 5 ? "#3a4470" : "#1a2040"); } set(x - 3, y0 - 3, "#ffc070"); set(x + 4, y0 - 4, "#ffc070"); for (let y = -8; y < 0; y++) { set(x - 5, y0 + y, "#2a3050"); set(x + 6, y0 + y, "#2a3050"); } }
+	BASEZ.fill(-1e9);
+}
+function scene() {
+	const B = BASE, Z = BASEZ, R = (u, v) => hash(Math.floor(u), Math.floor(v)), E = -WALK - 16, E2 = CORE + WALK + 16;
+	// the rock: a snowy top, earth and ice sides, rock hanging under it
+	quad(B, Z, [E, E, 0], [E2 - E, 0, 0], [0, E2 - E, 0], [0, 0, 1], (u, v) => { const X = u + E, Y = v + E; if (X > -WALK && X < CORE + WALK && Y > -WALK && Y < CORE + WALK) return null; return noise1(X * 0.08 + Y * 0.05, 4) > 0.6 ? SNOWC[3] : SNOWC[2]; });
+	const earth = (u, v) => (v > 14 ? SNOWC[2] : v > 11 ? SNOWC[0] : ((Math.floor(v / 3) + Math.floor(u / 19)) % 3 === 0) ? CSTONE[3] : v > 6 ? CSTONE[2] : CSTONE[1]);
+	for (const [O, U, n] of [[[E, E2, -18], [E2 - E, 0, 0], [0, 1, 0]], [[E2, E, -18], [0, E2 - E, 0], [1, 0, 0]], [[E, E, -18], [E2 - E, 0, 0], [0, -1, 0]], [[E, E, -18], [0, E2 - E, 0], [-1, 0, 0]]]) quad(B, Z, O, U, [0, 0, 18], n, earth);
+	{
+		const cs = [[E, E], [E2, E], [E2, E2], [E, E2]].map(([x, y]) => proj(x, y, -18)), xs = cs.map((p) => p[0]), x0 = Math.floor(Math.min(...xs)), x1 = Math.ceil(Math.max(...xs)), cx = (x0 + x1) / 2, hw = (x1 - x0) / 2;
+		for (let x = x0; x <= x1; x++) { let top = -1e9; for (let e = 0; e < 4; e++) { const a = cs[e], b = cs[(e + 1) % 4]; if ((x - a[0]) * (x - b[0]) <= 0 && a[0] !== b[0]) top = Math.max(top, lerp(a[1], b[1], (x - a[0]) / (b[0] - a[0]))); } if (top < -1e8) continue; const k = 1 - Math.abs(x - cx) / hw, L = Math.max(0, k) ** 1.2 * 120 + noise1(x * 0.07, 9) * 24 * k; for (let y = Math.floor(top); y < top + L; y++) { if (x < 0 || y < 0 || x >= W || y >= H) continue; const i = y * W + x; if (Z[i] > -1e8) continue; const d = (y - top) / Math.max(1, L), h = d > 0.9 ? CSTONE[0] : Math.floor((y + noise1(x * 0.05, 2) * 6) / 6) % 4 === 0 ? CSTONE[3] : d > 0.55 ? CSTONE[1] : CSTONE[2], c = hx(h); B[i * 3] = c[0]; B[i * 3 + 1] = c[1]; B[i * 3 + 2] = c[2]; Z[i] = -1e8; if (d > 0.7 && hash(x, 3) < 0.04) { const c2 = hx(FROST[3]); B[i * 3] = c2[0]; B[i * 3 + 1] = c2[1]; B[i * 3 + 2] = c2[2]; } } }
+	}
+	// the cloister walk: stone flags, snow drifted along the outer edge
+	quad(B, Z, [-WALK, -WALK, 0], [CORE + 2 * WALK, 0, 0], [0, CORE + 2 * WALK, 0], [0, 0, 1], (u, v) => { const X = u - WALK, Y = v - WALK; if (X > 0 && X < CORE && Y > 0 && Y < CORE) return null; const out = Math.min(X + WALK, Y + WALK, CORE + WALK - X, CORE + WALK - Y); if (out < 6 + 3 * noise1((X + Y) * 0.1, 5)) return SNOWC[out < 3 ? 3 : 2]; const fx = Math.floor((X + 400) / 13), fy = Math.floor((Y + 400) / 13); return ((X + 400) % 13 < 1 || (Y + 400) % 13 < 1) ? CSTONE[2] : R(fx, fy) < 0.3 ? CSTONE[4] : CSTONE[5]; });
+	// the chapel: four walls of pale blue stone, a lancet window of stained glass in the middle of each, buttresses
+	const wallTex = (L) => (u, v) => { const mid = L / 2, w = 26, top = 128, sill = 30; const inWin = Math.abs(u - mid) < w / 2 && v > sill && (v < top - w / 2 || Math.hypot(u - mid, v - (top - w / 2)) < w / 2); if (inWin) { const lead = Math.abs(u - mid) % 7 < 1 || (v - sill) % 11 < 1; if (lead) return CSTONE[0]; const k = noise1(u * 0.3 + v * 0.13, 6); return k > 0.72 ? GLASS[4] : k > 0.5 ? GLASS[3] : k > 0.3 ? GLASS[2] : GLASS[1]; } const rim = Math.abs(u - mid) < w / 2 + 3 && v > sill - 3 && (v < top - w / 2 + 3 || Math.hypot(u - mid, v - (top - w / 2)) < w / 2 + 3); if (rim) return CSTONE[6]; if (v > 150) return v > 154 ? SNOWC[3] : CSTONE[6]; const row = Math.floor(v / 9), off = row % 2 ? 9 : 0; if (v % 9 < 1 || (u + off) % 18 < 1) return CSTONE[3]; return R((u + off) / 18, row) < 0.2 ? CSTONE[4] : CSTONE[5]; };
+	quad(B, Z, [0, CORE, 0], [CORE, 0, 0], [0, 0, 158], [0, 1, 0], wallTex(CORE));
+	quad(B, Z, [CORE, CORE, 0], [0, -CORE, 0], [0, 0, 158], [1, 0, 0], wallTex(CORE));
+	quad(B, Z, [CORE, 0, 0], [-CORE, 0, 0], [0, 0, 158], [0, -1, 0], wallTex(CORE));
+	quad(B, Z, [0, 0, 0], [0, CORE, 0], [0, 0, 158], [-1, 0, 0], wallTex(CORE));
+	for (const [x, y] of [[-8, -8], [CORE - 4, -8], [CORE - 4, CORE - 4], [-8, CORE - 4]]) box(x, y, 0, x + 12, y + 12, 166, { top: SNOWC[3], side: (u, v) => (v % 22 < 1 ? CSTONE[3] : v > 160 ? SNOWC[2] : CSTONE[5]) });
+	// the roof: four slopes of slate with snow on them, a little bell spire
+	const roofTex = (u, v, px, py) => { const n = noise1(u * 0.03, 8) * 0.6 + noise1(v * 0.05 + u * 0.01, 9) * 0.4; if (v % 9 < 1 && n < 0.55) return CSTONE[2]; return n > 0.62 ? SNOWC[2] : n > 0.45 ? SNOWC[1] : (n + bayer(px, py) * 0.08 > 0.4 ? SNOWC[0] : CSTONE[4]); };
+	const RZ = 158, RH = 70, ov = 8;
+	quad(B, Z, [-ov, CORE + ov, RZ], [CORE + 2 * ov, 0, 0], [0, -(CORE / 2 + ov), RH], [0, 0.6, 0.8], roofTex);
+	quad(B, Z, [CORE + ov, CORE + ov, RZ], [0, -(CORE + 2 * ov), 0], [-(CORE / 2 + ov), 0, RH], [0.6, 0, 0.8], roofTex);
+	quad(B, Z, [CORE + ov, -ov, RZ], [-(CORE + 2 * ov), 0, 0], [0, CORE / 2 + ov, RH], [0, -0.6, 0.8], roofTex);
+	quad(B, Z, [-ov, -ov, RZ], [0, CORE + 2 * ov, 0], [CORE / 2 + ov, 0, RH], [-0.6, 0, 0.8], roofTex);
+	box(CORE / 2 - 12, CORE / 2 - 12, RZ + RH - 10, CORE / 2 + 12, CORE / 2 + 12, RZ + RH + 30, { top: SNOWC[3], side: (u, v) => (u > 8 && u < 16 && v > 12 && v < 30 ? "#0a0e1c" : CSTONE[5]) });
+	// the walk's columns (none on the side nearest the camera), with capitals and a beam along the top
+	for (let side = 0; side < 4; side++) {
+		const o = SIDE_OUT[side];
+		for (let k = 0; k <= 6; k++) {
+			const along = -WALK + k * ((CORE + 2 * WALK) / 6), pos = side === 0 ? [along, CORE + WALK] : side === 1 ? [CORE + WALK, CORE - along] : side === 2 ? [CORE - along, -WALK] : [-WALK, along];
+			if (side === FRONT || (k === 0 && (side + 3) % 4 === FRONT) || (k === 6 && (side + 1) % 4 === FRONT)) continue;
+			const [x, y] = [pos[0] - 4, pos[1] - 4];
+			box(x, y, 0, x + 8, y + 8, BEAMZ - 6, { side: (u, v) => (u < 1.5 ? CSTONE[6] : v < 4 ? CSTONE[3] : CSTONE[5]), top: CSTONE[6] });
+			box(x - 2, y - 2, BEAMZ - 6, x + 10, y + 10, BEAMZ, { side: CSTONE[6], top: SNOWC[3] });
+		}
+		if (side === FRONT) continue;
+		const s0 = side === 0 ? [-WALK, CORE + WALK - 3, CORE + WALK, CORE + WALK + 3] : side === 1 ? [CORE + WALK - 3, -WALK, CORE + WALK + 3, CORE + WALK] : side === 2 ? [-WALK, -WALK - 3, CORE + WALK, -WALK + 3] : [-WALK - 3, -WALK, -WALK + 3, CORE + WALK];
+		box(s0[0], s0[1], BEAMZ, s0[2], s0[3], BEAMZ + 8, { top: SNOWC[3], side: (u, v) => (v < 2 ? CSTONE[3] : CSTONE[5]) });
+	}
+	// the rafters over the walk: cross beams from the wall out, two purlins along (the chandelier hooks onto the inner one)
+	const beam = { top: SNOWC[3], side: (u, v) => (v < 1.5 ? WOODC[1] : u % 11 < 1 ? WOODC[2] : WOODC[3]) };
+	for (let side = 0; side < 4; side++) {
+		for (let k = 0; k <= 12; k++) { const a = -WALK + k * ((CORE + 2 * WALK) / 12); if (side === 0) box(a - 2, CORE, BEAMZ, a + 2, CORE + WALK, BEAMZ + 6, beam); if (side === 1) box(CORE, a - 2, BEAMZ, CORE + WALK, a + 2, BEAMZ + 6, beam); if (side === 2) box(a - 2, -WALK, BEAMZ, a + 2, 0, BEAMZ + 6, beam); if (side === 3) box(-WALK, a - 2, BEAMZ, 0, a + 2, BEAMZ + 6, beam); }
+		for (const off of [PURL, PURL + 20]) { if (side === 0) box(-WALK, CORE + off - 2, BEAMZ + 6, CORE + WALK, CORE + off + 2, BEAMZ + 10, beam); if (side === 1) box(CORE + off - 2, -WALK, BEAMZ + 6, CORE + off + 2, CORE + WALK, BEAMZ + 10, beam); if (side === 2) box(-WALK, -off - 2, BEAMZ + 6, CORE + WALK, -off + 2, BEAMZ + 10, beam); if (side === 3) box(-off - 2, -WALK, BEAMZ + 6, -off + 2, CORE + WALK, BEAMZ + 10, beam); }
+	}
+	// benches and a frozen font along the walk
+	for (const [x, y, w, d] of [[40, CORE + 6, 40, 8], [CORE + 6, 150, 8, 40], [180, -14, 40, 8]]) box(x, y, 0, x + w, y + d, 10, { top: (u, v) => (u % 8 < 1 ? WOODC[1] : SNOWC[1]), side: WOODC[2] });
+	box(CORE + 8, 40, 0, CORE + 22, 54, 16, { top: (u, v) => (Math.hypot(u - 7, v - 7) < 5 ? FROST[3] : CSTONE[6]), side: CSTONE[5] });
+}
+function renderStatic() { backdrop(); scene(); }
+
+// ---------------------------------------------------------------- the stage
+function makeChapelStage(cv, readout) {
+	const HANGZ = BEAMZ + 6, HUBZ = BEAMZ - 22, WALLD = -TOFF + 2, PURLD = -(TOFF - PURL); // depths: on the wall, under the purlin
+	const T = { CRAWL: 1.0, ARRIVE: 3.0, SNAP0: 3.2, BACK: 3.4, CORNER1: 4.45, TURN1: [4.5, 5.3], AB: 5.2, WALLDOWN: 5.9, GATHER: 6.3, BREATH: 6.9, BREATHEND: 7.8, CLIMB: 7.9, OVER: 8.7, LETGO: 9.2, CRASH: 9.45, WINCH: 11.6, UP: 12.4, CORNER2: 12.9, TURN2: [12.8, 13.6], AT: 13.6, SWING: 14.3, SNAP: 16.4, CRASH2: 16.75, WINCH2: 18.6, FADE: 19.3, LOOP: 19.8 };
+	const ICS = [210, 185, 160, 135, 110, 85, 60].map((s, i) => ({ s, grow: T.CRAWL + 0.28 * i, snap: T.SNAP0 + 0.12 * i }));
+	const SPIKE_V = 150, DROP1 = 380, PIV = 790, PL = 52, AMP = 0.8, HITS1 = [10.5, 10.85, 11.2], HITS2 = [17.7, 18.05, 18.4];
+	let S, parts, J;
+	const reset = () => { S = { t: 0, flags: {}, pops: [], last: null }; parts = []; J = makeJuice(); };
+	reset();
+	const once = (k) => (S.flags[k] ? false : (S.flags[k] = true));
+	const spring = (dt, amp, freq = 16, damp = 7) => (dt < 0 ? 0 : amp * Math.exp(-dt * damp) * Math.cos(dt * freq));
+	const pop = (w, s, h, t, c) => S.pops.push({ w, s, h, t0: t, c });
+	const swingA = (t) => (t < T.SWING ? AMP * smooth(T.AT, T.SWING, t) : AMP * Math.cos(TAU * (t - T.SWING)));
+	const crash2S = () => PIV + Math.sin(swingA(T.SNAP)) * PL + 40;
+	// ---------------------------------------------------------------- Saint Rime: along the track (s), its hub's height, how far in toward the wall
+	function rime(t) {
+		const o = { s: 230, h: HUBZ, d: PURLD, walking: false, flare: 0, legsFold: 0, crumple: 0, open: 0, rot: 0, sx: 1, sy: 1, chain: null };
+		const walkTo = (a, b, t0, t1) => { o.s = lerp(a, b, smooth(t0, t1, t)); o.walking = true; };
+		if (t < T.CRAWL) return o;
+		if (t < T.ARRIVE) { walkTo(230, 40, T.CRAWL, T.ARRIVE); return o; }
+		if (t < T.BACK) { o.s = 40; return o; }
+		if (t < T.AB) { walkTo(40, 400, T.BACK, T.AB); return o; }
+		if (t < T.WALLDOWN) { walkTo(400, 560, T.AB, T.WALLDOWN); return o; }
+		if (t < T.GATHER) { const k = smooth(T.WALLDOWN, T.GATHER, t); o.s = 560; o.h = lerp(HUBZ, 60, k); o.d = lerp(PURLD, WALLD, k); o.walking = true; return o; }
+		if (t < T.CLIMB) { o.s = 560; o.h = 60; o.d = WALLD; if (t < T.BREATH) { const k = smooth(T.GATHER, T.BREATH, t); o.flare = k; o.open = k * 0.6; o.sy = 1 - 0.12 * k; } else if (t < T.BREATHEND) { o.open = 1; o.flare = 1; o.s += Math.sin(t * 50) * 1.5; } else { o.open = 1 - (t - T.BREATHEND) / 0.1; } return o; }
+		if (t < T.OVER) { const k = smooth(T.CLIMB, T.CLIMB + 0.3, t); o.h = lerp(60, HUBZ, k); o.d = lerp(WALLD, PURLD, k); o.s = lerp(560, DROP1, smooth(T.CLIMB + 0.3, T.OVER, t)); o.walking = true; return o; }
+		if (t < T.LETGO) { o.s = DROP1; o.flare = smooth(T.OVER, T.LETGO, t); o.sy = 1 + 0.1 * o.flare; return o; }
+		if (t < T.CRASH) { const k = (t - T.LETGO) / (T.CRASH - T.LETGO); o.s = DROP1; o.h = lerp(HUBZ, 12, k * k); o.legsFold = smooth(0, 0.4, k); o.sy = 1.2; o.sx = 0.85; return o; }
+		if (t < T.WINCH) { const a = t - T.CRASH; o.s = DROP1; o.h = 12; o.crumple = 1; o.legsFold = 0.3; o.sy = a < 0.08 ? 0.6 : 0.85 + 0.1 * spring(a - 0.08, 1, 14, 5); o.sx = 2 - o.sy; o.chain = 1; o.flash = HITS1.some((h) => t >= h && t < h + 0.12) ? 1 : 0; return o; }
+		if (t < T.UP) { const k = smooth(T.WINCH, T.UP, t); o.s = DROP1; o.h = lerp(12, HUBZ, k); o.legsFold = 0.9 * (1 - k); o.chain = 1; return o; }
+		if (t < T.AT) { walkTo(DROP1, PIV, T.UP, T.AT); return o; }
+		if (t < T.SNAP) { const a = swingA(t), L = lerp(HANGZ - HUBZ, PL, smooth(T.AT, T.SWING, t)); o.s = PIV + Math.sin(a) * L; o.h = HANGZ - Math.cos(a) * L; o.rot = a; o.flare = 1; o.open = 0.7; o.chain = "swing"; return o; }
+		if (t < T.CRASH2) { const a0 = swingA(T.SNAP), u = (t - T.SNAP) / (T.CRASH2 - T.SNAP); o.s = PIV + Math.sin(a0) * PL + 40 * u; o.h = lerp(HANGZ - Math.cos(a0) * PL, 12, u * u); o.rot = a0 * (1 - u); o.legsFold = u; o.flare = 1; return o; }
+		if (t < T.WINCH2) { const a = t - T.CRASH2; o.s = crash2S(); o.h = 12; o.crumple = 1; o.legsFold = 0.3; o.sy = a < 0.08 ? 0.6 : 0.85 + 0.1 * spring(a - 0.08, 1, 14, 5); o.sx = 2 - o.sy; o.flash = HITS2.some((h) => t >= h && t < h + 0.12) ? 1 : 0; return o; }
+		const k = smooth(T.WINCH2, T.FADE, t); o.s = crash2S(); o.h = lerp(12, HUBZ, k); o.chain = 1; o.legsFold = 0.9 * (1 - k); return o;
+	}
+	const FACES = [[0, "serene"], [T.CRAWL - 0.3, "weeping"], [T.BACK - 0.2, "serene"], [T.GATHER - 0.35, "scream"], [T.OVER - 0.4, "sleep"], [T.LETGO - 0.12, "scream"], [T.CRASH + 0.3, "weeping"], [T.UP, "serene"], [T.AT - 0.2, "scream"], [T.CRASH2, "weeping"]];
+	function mask(t) { let f = "serene", t0 = -9; for (const [ft, name] of FACES) if (t >= ft) { f = name; t0 = ft; } return { face: f, turn: clamp((t - t0) / 0.22) }; }
+	// ---------------------------------------------------------------- Elfy: s along the track and her height
+	function elfy(t) {
+		const run = (a, b, t0, t1) => ({ a: "run", at: t, s: lerp(a, b, smooth(t0, t1, t)), h: 0, flip: b < a });
+		const idle = (s, flip, a = "idle", at = t) => ({ a, at, s, h: 0, flip });
+		const jump = (s, t0, d, hh, flip) => { const k = clamp((t - t0) / d); return { a: k < 0.3 ? "jump" : k < 0.6 ? "apex" : "fall", at: k, s, h: 4 * hh * k * (1 - k), flip }; };
+		const hitAt = (s, hits, flip) => { const h = hits.findLast((q) => t >= q - 0.06); return h !== undefined && t - h < 0.3 ? { a: "strike_side", at: t - h + 0.06, s, h: 0, flip } : idle(s, flip); };
+		if (t < 2.3) return idle(80, t > 1.2);
+		if (t < 2.75) return run(80, 268, 2.3, 2.75);
+		if (t < 4.6) return idle(268, t < 3.4);
+		if (t < 5.1) return run(268, 360, 4.6, 5.1);
+		if (t < 6.45) return idle(360);
+		if (t < 6.8) return run(360, 236, 6.45, 6.8); // round the corner, out of the breath's line
+		if (t < 8.0) return idle(236);
+		if (t < 8.4) return run(236, DROP1, 8.0, 8.4);
+		if (t < 8.85) return idle(DROP1);
+		if (t < 9.1) return run(DROP1, 446, 8.85, 9.1);
+		const tj = T.CRASH + (446 - DROP1 - 8) / SPIKE_V - 0.18;
+		if (t >= tj && t < tj + 0.38) return jump(446, tj, 0.38, 28, true);
+		if (t < 10.1) return idle(446, true);
+		if (t < 10.3) return run(446, 426, 10.1, 10.3);
+		if (t < T.WINCH) return hitAt(426, HITS1, true);
+		if (t < 12.6) return idle(426, false);
+		if (t < 13.6) return run(426, 770, 12.6, 13.6);
+		if (t < 14.1) return idle(770);
+		if (t < T.SNAP + 0.05) return { a: t < 14.2 ? "crouch_down" : "crouch", at: t - 14.1, s: 770, h: 0 };
+		const tj2 = T.CRASH2 + (crash2S() - 770 - 8) / SPIKE_V - 0.18;
+		if (t >= tj2 && t < tj2 + 0.38) return jump(770, tj2, 0.38, 28);
+		if (t < 17.3) return idle(770);
+		if (t < 17.5) return run(770, crash2S() - 44, 17.3, 17.5);
+		if (t < T.WINCH2) return hitAt(crash2S() - 44, HITS2, false);
+		return idle(crash2S() - 44);
+	}
+	// ---------------------------------------------------------------- the camera: one side face on; a quarter turn round each corner; a slow sway
+	function camAt(t) {
+		const k = smooth(T.TURN1[0], T.TURN1[1], t) + smooth(T.TURN2[0], T.TURN2[1], t);
+		const sw = k % 1 === 0 ? Math.round(0.03 * Math.sin((t / 11) * TAU) * 400) / 400 : 0.03 * Math.sin((t / 11) * TAU);
+		const focusS = t < T.TURN1[0] ? 170 : t < T.TURN1[1] ? lerp(170, 470, smooth(T.TURN1[0], T.TURN1[1], t)) : t < T.TURN2[0] ? (t > T.GATHER - 0.4 && t < 8.3 ? lerp(470, 352, smooth(T.GATHER - 0.4, T.GATHER, t) * (1 - smooth(7.9, 8.3, t))) : 470) : t < T.TURN2[1] ? lerp(470, 790, smooth(T.TURN2[0], T.TURN2[1], t)) : 790;
+		const f = trackOff(focusS, -30);
+		const q = (v) => (k % 1 === 0 ? Math.round(v * 2) / 2 : v);
+		return { th: TH0 + sw + k * Math.PI / 2, F: [q(f[0]), q(f[1]), 62], k };
+	}
+	// ---------------------------------------------------------------- the sim
+	function update(dt) {
+		if (juiceStep(J, dt)) return;
+		const t = (S.t += dt), R = Math.random;
+		if (t >= T.LOOP) { reset(); return; }
+		const burst = (s, h, n, c, sp = 100, up = 60) => { const [X, Y] = trackAt(s); for (let i = 0; i < n; i++) parts.push({ X, Y, Z: h, vs: (R() - 0.5) * sp, vz: up * (0.4 + R()), g: 320, life: 0.6 + R() * 0.4, age: 0, c, s }); };
+		for (const [i, ic] of ICS.entries()) if (t >= ic.snap + 0.3 && once("ic" + i)) { kick(J, 1.2, 0.08, 0.02); burst(ic.s, 1, 8, FROST[4]); if (i === 0) pop("KRSSH", ic.s, 40, t, FROST[4]); }
+		for (const [k, tt] of [["m1", T.CRAWL - 0.3], ["m2", T.GATHER - 0.35], ["m3", T.OVER - 0.4], ["m4", T.AT - 0.2]]) if (t >= tt && once(k)) pop("TICK", rime(t).s, HANGZ + 18, t, PORCELAIN[3]);
+		if (t >= T.BREATH && once("br")) { kick(J, 3, 0.3, 0.1); pop("HAAAAH", 520, 90, t, FROST[4]); }
+		if (t > T.BREATH && t < T.BREATHEND && R() < dt * 14) kick(J, 1, 0.08);
+		if (t >= T.CRASH && once("c1")) { kick(J, 4.4, 0.45, 0.18); pop("CRASH!", DROP1, 70, t, FROST[4]); burst(DROP1, 6, 24, FROST[4], 200, 90); }
+		if (t >= T.SNAP && once("snap")) { kick(J, 1.6, 0.12, 0.05); pop("SNAP", PIV, HANGZ + 6, t, "#d8d8e8"); }
+		if (t >= T.CRASH2 && once("c2")) { kick(J, 4.6, 0.5, 0.2); pop("CRASH!", crash2S(), 70, t, FROST[4]); burst(crash2S(), 6, 24, FROST[4], 200, 90); }
+		for (const h of [...HITS1, ...HITS2]) if (t >= h && once("h" + h)) { kick(J, 2.2, 0.16, 0.07); const r = rime(t); burst(r.s + (t > T.CRASH2 ? -22 : 22), 18, 12, h === HITS1[2] || h === HITS2[2] ? "#ffffff" : COLDFIRE[1], 160, 60); }
+		if (t > T.SWING && t < T.SNAP && Math.abs(Math.sin(TAU * (t - T.SWING))) > 0.97 && R() < dt * 20) kick(J, 0.6, 0.06);
+		for (const p of parts) { p.age += dt; p.vz -= p.g * dt; p.s += p.vs * dt; p.Z += p.vz * dt; if (p.Z < 0) { p.Z = 0; p.vz *= -0.3; p.vs *= 0.5; } }
+		parts = parts.filter((p) => p.age < p.life);
+	}
+	// ---------------------------------------------------------------- drawing Saint Rime (the page 3 chandelier, drawn about its hub on screen)
+	function xf(r) { const c = Math.cos(r.rot), s = Math.sin(r.rot); return (lx, ly) => [r.x + (lx * r.sx) * c - (ly * r.sy) * s, r.y + (lx * r.sx) * s + (ly * r.sy) * c]; }
+	function drawRime(r, m, t) {
+		const P = xf(r), px = (lx, ly, h, a = 1) => { const p = P(lx, ly); put(p[0], p[1], h, a); put(p[0] + 0.6, p[1], h, a); put(p[0], p[1] + 0.6, h, a); };
+		const thick = (a, b, h, w = 1.4) => { const n = Math.ceil(Math.hypot(b[0] - a[0], b[1] - a[1]) * 1.5); for (let j = 0; j <= n; j++) { const u = j / n; disc(lerp(a[0], b[0], u), lerp(a[1], b[1], u), w * r.sx * 1.25, h); } };
+		const HANG = 26, OFF = [-46, -30, -14, 14, 30, 46];
+		for (const [i, o] of OFF.entries()) {
+			const g = i % 2, dist = r.walking ? t * 3.2 : 0, fr = ((dist + g * 0.5) % 1 + 1) % 1, lift = r.walking && fr > 0.5 ? Math.sin(((fr - 0.5) / 0.5) * Math.PI) * 6 : 0, slide = r.walking ? (fr < 0.5 ? lerp(6, -6, fr / 0.5) : lerp(-6, 6, (fr - 0.5) / 0.5)) : 0;
+			const fold = r.legsFold, cr = r.crumple;
+			const foot = cr ? [o * 0.9, 8 + Math.abs(o) * 0.1 + Math.sin(t * 9 + i) * 1.2] : [lerp(o + slide, o * 0.35, fold), lerp(-HANG + lift, 18, fold)];
+			const hip = [o * 0.22, -4], knee = [lerp(hip[0], foot[0], 0.5) + Math.sign(o) * (10 - fold * 4), Math.min(hip[1], foot[1]) - 14 + fold * 16 + (cr ? 18 : 0)];
+			const a = P(...hip), b = P(...knee), c = P(...foot);
+			thick(a, b, IRON[2], 1.5); thick(b, c, IRON[2], 1.1);
+			line(a[0], a[1] - 1, b[0], b[1] - 1, FROST[2], 0.6); line(b[0], b[1] - 1, c[0], c[1] - 1, FROST[2], 0.5);
+			disc(b[0], b[1], 2, IRON[3]); put(b[0], b[1] - 1, FROST[4]);
+			const hk = P(foot[0] + Math.sign(o) * 3, foot[1] + (cr ? 0 : 3)); line(c[0], c[1], hk[0], hk[1], IRON[4]); put(hk[0], hk[1], FROST[4]);
+		}
+		for (let a = 0; a < TAU; a += 0.05) { const p = P(Math.cos(a) * 14, Math.sin(a) * 4); put(p[0], p[1], Math.sin(a) < 0 ? IRON[4] : IRON[2]); const q = P(Math.cos(a) * 10, 8 + Math.sin(a) * 3); put(q[0], q[1], IRON[3]); }
+		for (let k = 0; k < 9; k++) { const lx = -12 + k * 3; thick(P(lx, 0), P(lx * 0.75, 8), IRON[1], 0.7); const sp = P(lx, -4 - (k % 2 ? 5 : 3)); line(P(lx, -2)[0], P(lx, -2)[1], sp[0], sp[1], IRON[4]); put(sp[0], sp[1], FROST[4]); }
+		for (const sd of [-1, 1]) for (let k = 0; k < 3; k++) {
+			const tip = [sd * (16 + k * 9), 6 + (k === 1 ? -4 : 3)], mid = [sd * (10 + k * 6), 12 + k * 2];
+			const a = P(sd * 10, 4), mm = P(...mid), b = P(...tip);
+			thick(a, mm, IRON[3], 0.8); thick(mm, b, IRON[3], 0.8);
+			const cb = P(tip[0], tip[1] - 1), ct = P(tip[0], tip[1] - 6);
+			line(cb[0], cb[1], ct[0], ct[1], WAX[1]); line(cb[0] + 1, cb[1], ct[0] + 1, ct[1], WAX[0]); put(ct[0], ct[1] + 2, WAX[2]);
+			tongue(ct[0], ct[1], 3 + 3 * r.flare + Math.sin(t * 9 + k + sd) * 1, 1.3, 0.8, k * 7 + sd * 3, t, COLDFIRE);
+			glow(ct[0], ct[1] - 3, 10 + 8 * r.flare, COLDFIRE[2], 0.3 + 0.3 * r.flare);
+			const sw = Math.sin(t * 3 + k * 2 + sd) * 2 - r.vx * 0.03, p1 = [mm[0] + sw, mm[1] + 7], p2 = [mm[0] + sw * 1.3, mm[1] + 11];
+			line(mm[0], mm[1], p1[0], p1[1], IRON[4], 0.7);
+			for (let j = 0; j < 5; j++) { const u = j / 5, w = 1.6 * Math.sin(u * Math.PI); for (let d = -w; d <= w; d++) put(lerp(p1[0], p2[0], u) + d, lerp(p1[1], p2[1], u), Math.abs(d) < 0.6 ? "#ffffff" : FROST[3]); }
+			if (Math.sin(t * 5 + k * 3 + sd) > 0.9) { put(p2[0], p2[1] - 2, "#ffffff"); light(p2[0], p2[1] - 2, COLDFIRE[1], 0.5); }
+		}
+		for (let lx = -10; lx <= 10; lx += 1) { const len = 16 + 6 * hash(lx + 20, 4) + Math.sin(t * 2 + lx) * 1.5; for (let ly = 9; ly < 9 + len; ly += 1) { if (hash(lx + 30, Math.floor(ly)) < 0.22) continue; const sw = Math.sin(t * 2.4 + ly * 0.25 + lx) * (ly - 9) * 0.06 - r.vx * 0.004 * (ly - 9); px(lx * (1 + (ly - 9) * 0.02) + sw, ly, (ly + lx) % 4 === 0 ? FROST[4] : FROST[2], 0.55); } }
+		// the mask on its drum
+		const turnSq = m.turn < 1 ? Math.abs(Math.cos(m.turn * Math.PI)) : 1, w = 7 * Math.max(0.15, turnSq), cy = 17;
+		if (m.turn < 1) for (let ly = cy - 9; ly <= cy + 9; ly++) { px(-w - 1.5, ly, IRON[3]); px(w + 1.5, ly, IRON[2]); }
+		for (let ly = cy - 9; ly <= cy + 9; ly++) { const hw = w * Math.sqrt(Math.max(0, 1 - ((ly - cy) / 9.5) ** 2)); for (let lx = -hw; lx <= hw; lx += 0.7) px(lx, ly, PORCELAIN[clamp(Math.floor((0.7 - 0.35 * lx / 7 - 0.2 * (ly - cy) / 9) * 4), 0, 3)]); }
+		if (turnSq >= 0.6) {
+			const f = m.face, eye = (sd) => [sd * 2.8, cy - 2.5], cold = (lx, ly) => { const p = P(lx, ly); glow(p[0], p[1], 4, COLDFIRE[2], 0.5); };
+			if (f === "serene" || f === "sleep") for (const sd of [-1, 1]) { const [ex, ey] = eye(sd); for (let x = -1.5; x <= 1.5; x += 0.5) px(ex + x, ey + Math.abs(x) * (f === "sleep" ? -0.4 : 0.4), PORCELAIN[0]); }
+			if (f === "weeping" || f === "scream") for (const sd of [-1, 1]) { const [ex, ey] = eye(sd); for (let y = -1.6; y <= 1.6; y += 0.5) for (let x = -1.4; x <= 1.4; x += 0.5) if (x * x + y * y < 2.4) px(ex + x, ey + y * (f === "scream" ? 1.3 : 1), "#06060c"); px(ex, ey, COLDFIRE[1]); cold(ex, ey); }
+			if (f === "weeping") for (const sd of [-1, 1]) for (let j = 0; j < 9; j++) px(sd * 2.8 + Math.sin(j) * 0.3, cy + j * 0.8, "#06060c", 0.9);
+			if (f === "serene") for (let x = -1.5; x <= 1.5; x += 0.5) px(x, cy + 4, PORCELAIN[0]);
+			if (f === "sleep") for (let x = -1; x <= 1; x += 0.5) px(x, cy + 4.5, PORCELAIN[0]);
+			if (f === "weeping") for (let x = -2; x <= 2; x += 0.5) px(x, cy + 3.8 + Math.abs(x) * 0.4, "#06060c");
+			if (f === "scream") { const oh = 2 + 3.5 * r.open; for (let y = -oh; y <= oh; y += 0.5) for (let x = -2.2; x <= 2.2; x += 0.5) if ((x / 2.2) ** 2 + (y / oh) ** 2 <= 1) px(x, cy + 5 + y * 0.8, r.open > 0.4 ? (Math.abs(y) < oh * 0.5 ? "#ffffff" : COLDFIRE[2]) : "#06060c"); if (r.open > 0.4) { const mp = P(0, cy + 5); glow(mp[0], mp[1], 10, COLDFIRE[1], 0.7 * r.open); } }
+			for (let j = 0; j < 6; j++) px(-6 + j * 1.2, cy - 6 + j * 0.7 + (j % 2) * 0.5, PORCELAIN[0], 0.8);
+		}
+		glow(P(0, 14)[0], P(0, 14)[1], 34, COLDFIRE[3], 0.18 + 0.2 * r.flare);
+		if (r.flash) for (let i = 0; i < 60; i++) put(r.x + (Math.random() - 0.5) * 60, r.y + (Math.random() - 0.4) * 40, "#ffffff", 0.6);
+	}
+	// ---------------------------------------------------------------- painting a frame
+	let camKey = "";
+	const showTrack = { on: true };
+	function paint() {
+		const t = S.t, cam = camAt(t);
+		CAM.th = cam.th; CAM.F = cam.F; FRONT = ((Math.round(cam.k) % 4) + 4) % 4;
+		const key = cam.th.toFixed(4) + "," + cam.F.map((v) => v.toFixed(2)).join(",") + FRONT;
+		if (key !== camKey) { renderStatic(); camKey = key; }
+		col.set(BASE); ZB.set(BASEZ); lit.fill(0);
+		juiceShake(J, t); const SX = OX, SY = OY; OX = 0; OY = 0;
+		const on = Math.sin(t * 30) > -0.2, P = proj;
+		const at = (s, dOff, Z) => { const [X, Y] = trackOff(s, dOff); return P(X, Y, Z); };
+		const dot = (s, dOff, Z, h, a = 1) => { const p = at(s, dOff, Z); ZT = p[2] + 2; put(p[0], p[1], h, a); ZT = null; return p; };
+		// light: the stained glass glowing out, warm lanterns on the beams, swaying
+		for (let side = 0; side < 4; side++) { const [X, Y] = trackOff(side * SEG + SEG / 2, -TOFF); glowW(X, Y, 80, 60, GLASS[3], 0.35); glowW(X, Y, 80, 22, GLASS[4], 0.3); }
+		for (let i = 0; i < 12; i++) { const s = i * 104 + 52, [X, Y] = trackOff(s, PURLD + 10), sw = Math.sin(t * 1.2 + i) * 1.5, top = P(X, Y, BEAMZ), c = P(X + sw * 0.3, Y, BEAMZ - 14); ZT = c[2] + 2; line(top[0], top[1], c[0], c[1] - 4, WOODC[0]); for (let yy = -4; yy <= 4; yy++) for (let dx = -3; dx <= 3; dx++) if ((dx / 3.4) ** 2 + (yy / 4.6) ** 2 <= 1) put(c[0] + dx, c[1] + yy, Math.abs(yy) > 3 ? WOODC[0] : dx < 0 ? LAMPC[4] : LAMPC[3]); ZT = null; glowW(X, Y, BEAMZ - 14, 40, LAMPC[2], 0.4); }
+		// icicles along the inner purlin, where it crawled; their shadows on the track sharpen before they snap
+		for (const ic of ICS) {
+			if (t < ic.grow || t > ic.snap + 1.4) continue;
+			const len = 16 * smooth(ic.grow, ic.grow + 0.6, t), tr = t > ic.snap - 0.5 && t < ic.snap ? Math.sin(t * 60) * 0.7 : 0;
+			const fall = t > ic.snap ? Math.min(BEAMZ, 0.5 * 700 * (t - ic.snap) ** 2) : 0, landed = fall >= BEAMZ - 4;
+			if (!landed) for (let j = 0; j < len; j++) { const p = at(ic.s, PURLD + 4, BEAMZ - j - fall); ZT = p[2] + 2; const w = 2.2 * (1 - j / len); for (let d = -w; d <= w; d++) put(p[0] + d + tr, p[1], d < -w + 1 ? "#ffffff" : FROST[3]); ZT = null; }
+			if (t < ic.snap + 0.1) { const k = smooth(ic.snap - 0.7, ic.snap, t), p = at(ic.s, 0, 0); ZT = p[2] + 3; for (let a = 0; a < TAU; a += 0.3) put(p[0] + Math.cos(a) * (2 + 4 * k), p[1] + Math.sin(a) * (1 + 2 * k), "#0a0c18", 0.6 * k); put(p[0], p[1], FROST[3], k); ZT = null; }
+			if (landed) { const k = 1 - clamp((t - ic.snap - 0.6) / 0.8); for (let j = 0; j < 7; j++) dot(ic.s + (j % 2), 0, j, FROST[3], k); }
+		}
+		// warnings: the breath's corridor (straight along the side, past the corner and off the rock); the drop's ring and
+		// the spikes' reach along the track; the swing's arc; the second landing
+		const lineW = (s0, s1, dOff, Z, c, a) => { for (let s = Math.min(s0, s1); s <= Math.max(s0, s1); s += 3) dot(s, dOff, Z, c, a); };
+		const ringW = (s, dOff, Z, r, c, a) => { const [X, Y] = trackOff(s, dOff); for (let an = 0; an < TAU; an += 0.2) { const p = P(X + Math.cos(an) * r, Y + Math.sin(an) * r, Z); ZT = p[2] + 3; put(p[0], p[1], c, a); ZT = null; } };
+		const breathLine = (k) => { const m0 = trackOff(560, WALLD + 8), dir = [0, 1]; return [m0[0] + dir[0] * k, m0[1] + dir[1] * k]; };
+		if (t > T.GATHER && t < T.BREATH) for (let k = 0; k < 420; k += 3) for (const sd of [-1, 1]) { const [X, Y] = breathLine(k), p = P(X + sd * (6 + k * 0.03), Y, 30 + sd * (6 + k * 0.03)); ZT = p[2] + 3; put(p[0], p[1], t > T.BREATH - 0.1 ? "#ffffff" : FROST[3], on ? 0.85 : 0.3); ZT = null; }
+		if (t > T.OVER && t < T.CRASH) { ringW(DROP1, 0, 0.5, 14, FROST[3], on ? 0.9 : 0.4); lineW(200, 560, 0, 0.5, FROST[2], on ? 0.5 : 0.15); }
+		if (t > T.AT && t < T.SWING + 0.6) { const k = smooth(T.AT, T.AT + 0.15, t) * (1 - smooth(T.SWING + 0.3, T.SWING + 0.6, t)); for (let a = -AMP; a <= AMP; a += 0.03) dot(PIV + Math.sin(a) * (PL + 14), PURLD, HANGZ - Math.cos(a) * (PL + 14), FROST[4], (on ? 0.85 : 0.3) * k); }
+		if (t > T.SNAP - 0.25 && t < T.CRASH2) ringW(crash2S(), 0, 0.5, 18, t > T.CRASH2 - 0.1 ? "#ffffff" : FROST[4], on ? 0.9 : 0.4);
+		// the breath: a corridor of cold light and frost puffs, straight along this side and on past the corner
+		if (t > T.BREATH && t < T.BREATHEND) { const len = Math.min(420, (t - T.BREATH) * 420); for (let k = 4; k < len; k += 2) { const [X, Y] = breathLine(k), w = 5 + k * 0.05; for (let q = -w; q <= w; q += 1) { const p = P(X, Y, 30 + q + Math.sin(t * 40 + k) * 1); ZT = p[2] + 3; put(p[0], p[1], Math.abs(q) < 2 ? "#ffffff" : Math.abs(q) < w * 0.6 ? FROST[4] : FROST[3], 0.55); ZT = null; } if (k % 14 === 0) { const p = P(X, Y, 30); glow(p[0], p[1], 14, FROST[3], 0.25); } } }
+		// the spike waves: jagged ice racing both ways along the track from each crash (and round the corners)
+		for (const [tc, sc] of [[T.CRASH, DROP1], [T.CRASH2, crash2S()]]) { const a = t - tc; if (a < 0 || a > 1.6) continue; for (const d of [-1, 1]) for (let k = 1; k < 22; k++) { const s = sc + d * k * 9, tt = (k * 9) / SPIKE_V, b = a - tt; if (b < 0 || b > 0.5) continue; const hh = (12 - k * 0.3) * Math.min(1, b / 0.06) * (b > 0.4 ? 1 - (b - 0.4) / 0.1 : 1); for (let n = 0; n < 3; n++) for (let y = 0; y < hh * (0.6 + 0.4 * hash(n, k)); y++) { const p = at(s + n * 3 - 3, (n - 1) * 4, y); ZT = p[2] + 2; const w2 = 1.6 * (1 - y / hh); for (let dd = -w2; dd <= w2; dd++) put(p[0] + dd, p[1], dd < -w2 + 0.8 ? "#ffffff" : FROST[3]); ZT = null; } } }
+		// Saint Rime, with the chain it hangs on when it hangs
+		const r0 = rime(t), m = mask(t), hp = at(r0.s, r0.d, r0.h);
+		const prev = S.last || hp; const vx = (hp[0] - prev[0]) * 60; S.last = hp;
+		if (r0.chain) { const top = r0.chain === "swing" ? at(PIV, PURLD, HANGZ) : at(r0.s, PURLD, HANGZ); ZT = hp[2] + 4; for (let j = 0; j < 60; j++) { const u = j / 60; put(lerp(top[0], hp[0], u), lerp(top[1], hp[1] - 10, u), j % 3 ? "#8a8aa0" : "#d8d8e8", 0.9); } ZT = null; }
+		ZT = hp[2] + 6; drawRime({ ...r0, x: hp[0], y: hp[1], vx }, m, t); ZT = null;
+		// Elfy, lit warm by the lanterns and cool by the glass
+		const e = elfy(t), ep = at(e.s, 0, e.h);
+		{ const sav = col.slice(); ZT = ep[2] + 2; drawElfy(e.a, e.at, Math.round(ep[0]), Math.round(ep[1]), 0, !!e.flip); ZT = null; for (let i = 0; i < N * 3; i += 3) if (col[i] !== sav[i] || col[i + 1] !== sav[i + 1] || col[i + 2] !== sav[i + 2]) { lit[i] += 0.16; lit[i + 1] += 0.13; lit[i + 2] += 0.16; } }
+		for (const p of parts) { const [X, Y] = trackAt(p.s), q = P(X, Y, p.Z); ZT = q[2] + 2; put(q[0], q[1], p.c, 1 - p.age / p.life * 0.5); ZT = null; }
+		// snow falling over the whole miniature, drifting with the turn
+		for (let i = 0; i < 90; i++) { const x = ((hash(i, 1) * W + t * 12 - (CAM.th - TH0) * 300) % W + W) % W, y = (hash(i, 2) * H + t * (22 + hash(i, 3) * 20)) % H; put(x, y, "#e8eeff", 0.6); }
+		for (const w of S.pops) { const q = at(w.s, 0, w.h), a = t - w.t0; soundWord(w.w, clamp(q[0], 40, W - 40), clamp(q[1], 8, H - 20), Math.min(1, a / 0.7) * (a < 0.95 ? 1 : 0), w.c || FROST[4], "#06060c", 2); }
+		// the track view: the loop unrolled, the corners dashed
+		if (showTrack.on) {
+			const bx = 8, by = H - 52, bw = 230, bh = 44, sc = bw / (4 * SEG) * 0.98;
+			for (let y = by; y < by + bh; y++) for (let x = bx; x < bx + bw; x++) put(x, y, "#05070d", 0.82);
+			for (let x = bx; x < bx + bw; x++) { put(x, by, "#7ae8ff", 0.5); put(x, by + bh - 1, "#7ae8ff", 0.5); } for (let y = by; y < by + bh; y++) { put(bx, y, "#7ae8ff", 0.5); put(bx + bw - 1, y, "#7ae8ff", 0.5); }
+			const TX = (s) => bx + 2 + s * sc, TY = (h) => by + bh - 6 - h * 0.26;
+			for (let s = 0; s < 4 * SEG; s += 1) { put(TX(s), TY(0), "#c8d0dc"); put(TX(s), TY(BEAMZ + 6), "#8a90a0"); }
+			for (let k = 1; k < 4; k++) for (let y = by + 3; y < by + bh - 3; y += 2) put(TX(k * SEG), y, "#7ae8ff", 0.6);
+			for (let y = -2; y <= 2; y++) for (let x = -2; x <= 2; x++) put(TX(r0.s) + x, TY(r0.h) + y, "#e0283a");
+			for (let y = 0; y < 4; y++) for (let x = -1; x <= 1; x++) put(TX(e.s) + x, TY(e.h) - y, "#4dff6a");
+			soundWord("TRACK", bx + 20, by + 4, 1, "#7ae8ff", "#05070d", 1);
+		}
+		if ((t >= T.CRASH && t < T.CRASH + 0.05) || (t >= T.CRASH2 && t < T.CRASH2 + 0.05)) impactFrame("#f2f8ff", "#0a0c18", 0.34);
+		const fade = Math.min(smooth(0, 0.5, t), 1 - smooth(T.FADE, T.LOOP, t));
+		if (fade < 1) for (let i = 0; i < N * 3; i++) { col[i] *= fade; lit[i] *= fade; }
+		OX = SX; OY = SY;
+		readout.textContent = t < T.CRAWL ? "Saint Rime hangs from the rafters of the cloister walk, candles burning cold; the serene mask" : t < T.BACK ? "tick · the weeping mask · it crawls the rafters and icicles grow in its wake; their shadows sharpen on the track, then they snap" : t < T.TURN1[1] ? "it turns back and crawls on round the corner; Elfy follows it round, and the whole chapel turns with her" : t < T.BREATH ? "the next side · it climbs down onto the chapel wall; the screaming mask; the breath's line is dashed along this whole side · get round the corner, out of the line" : t < T.CLIMB ? "frost breath, straight down this side and out past the corner into the air; Elfy is round the corner, out of it" : t < T.CRASH ? "back on the rafters, over Elfy; the sleeping mask; a ring, and the spikes' reach along the track · move" : t < T.WINCH ? "the crash; a wave of ice spikes runs both ways along the track (and round the corner) · jump · then it lies wrecked: hit it" : t < T.TURN2[1] ? "it winches itself up and crawls round the next corner; Elfy follows; the chapel turns again" : t < T.SNAP ? "phase two · the screaming mask · it swings on a chain from the rafters, the arc dashed out · stay crouched" : t < T.WINCH2 ? "the chain snaps; the landing ringed; spikes · jump · then hit it" : "it winches up into the rafters";
+	}
+	return { cv, update, paint, reset, showTrack };
+}
+
+const pix = document.createElement("canvas"), lig = document.createElement("canvas");
+pix.width = lig.width = W; pix.height = lig.height = H;
+const pctx = pix.getContext("2d"), lctx = lig.getContext("2d");
+const pimg = pctx.createImageData(W, H), limg = lctx.createImageData(W, H);
+function present(cv) {
+	const pd = pimg.data, ld = limg.data, sctx = cv.getContext("2d");
+	for (let i = 0, j = 0; i < N * 3; i += 3, j += 4) {
+		pd[j] = clamp(col[i] + lit[i] * 0.5) * 255; pd[j + 1] = clamp(col[i + 1] + lit[i + 1] * 0.5) * 255; pd[j + 2] = clamp(col[i + 2] + lit[i + 2] * 0.5) * 255; pd[j + 3] = 255;
+		ld[j] = clamp(lit[i] * 0.9) * 255; ld[j + 1] = clamp(lit[i + 1] * 0.9) * 255; ld[j + 2] = clamp(lit[i + 2] * 0.9) * 255; ld[j + 3] = 255;
+	}
+	pctx.putImageData(pimg, 0, 0); lctx.putImageData(limg, 0, 0);
+	const cw = cv.width, ch = cv.height, k = cw / W, ox = OX * k, oy = OY * k;
+	sctx.fillStyle = "#05060d"; sctx.fillRect(0, 0, cw, ch);
+	sctx.imageSmoothingEnabled = false; sctx.drawImage(pix, ox, oy, cw, ch);
+	sctx.imageSmoothingEnabled = true; sctx.globalCompositeOperation = "lighter"; sctx.drawImage(lig, ox, oy, cw, ch); sctx.globalCompositeOperation = "source-over";
+}
+const cvs = document.getElementById("stage-chapel"), st = makeChapelStage(cvs, document.getElementById("readout-chapel"));
+function resize() { const w = Math.max(W, Math.round(cvs.clientWidth * Math.min(2, window.devicePixelRatio || 1) / W) * W); cvs.width = w; cvs.height = Math.round(w * 9 / 16); }
+window.addEventListener("resize", resize); resize();
+let paused = window.matchMedia("(prefers-reduced-motion: reduce)").matches, slow = false, last = 0;
+function frame(now) {
+	const dt = Math.min(0.05, (now - last) / 1000 || 0); last = now;
+	if (!paused) { let left = dt * (slow ? 0.25 : 1); while (left > 0) { const s = Math.min(left, 1 / 120); st.update(s); left -= s; } }
+	st.paint(); present(cvs);
+	requestAnimationFrame(frame);
+}
+const pauseBtn = document.getElementById("pause"), slowBtn = document.getElementById("slow"), trackBtn = document.getElementById("track");
+const setPaused = (v) => { paused = v; pauseBtn.setAttribute("aria-pressed", String(v)); pauseBtn.firstChild.textContent = v ? "Play" : "Pause"; };
+const setSlow = (v) => { slow = v; slowBtn.setAttribute("aria-pressed", String(v)); };
+const setTrack = (v) => { st.showTrack.on = v; trackBtn.setAttribute("aria-pressed", String(v)); };
+setPaused(paused);
+pauseBtn.addEventListener("click", () => setPaused(!paused));
+slowBtn.addEventListener("click", () => setSlow(!slow));
+trackBtn.addEventListener("click", () => setTrack(!st.showTrack.on));
+document.getElementById("replay").addEventListener("click", () => { st.reset(); setPaused(false); });
+window.addEventListener("keydown", (e) => {
+	if (e.target instanceof HTMLButtonElement && (e.key === " " || e.key === "Enter")) return;
+	const k = e.key.toLowerCase();
+	if (k === " ") { e.preventDefault(); setPaused(!paused); } else if (k === "s") setSlow(!slow); else if (k === "r") { st.reset(); setPaused(false); } else if (k === "t") setTrack(!st.showTrack.on);
+});
+if (window.__STUDY_TIME__ !== undefined) { st.reset(); for (let i = 0; i < window.__STUDY_TIME__ * 120; i++) st.update(1 / 120); }
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
